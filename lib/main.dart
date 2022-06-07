@@ -6,18 +6,20 @@ import 'package:location/location.dart';
 
 double deviceWidth = 0, deviceHeight = 0;
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   static int coins = 3;
   static int selectedIndex = 0;
+
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "GPSaveMe",
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 
@@ -25,17 +27,17 @@ class MyApp extends StatelessWidget {
     switch (index) {
       case 0:
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => HomePage()));
+            .push(MaterialPageRoute(builder: (context) => const HomePage()));
         break;
       case 1:
         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
           getLocation();
-          return AroundYou();
+          return const AroundYou();
         }));
         break;
       case 2:
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => Profile()));
+            .push(MaterialPageRoute(builder: (context) => const Profile()));
         break;
     }
   }

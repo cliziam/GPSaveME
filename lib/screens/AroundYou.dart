@@ -1,20 +1,32 @@
+// ignore_for_file: file_names
 import 'dart:io';
-
 import 'package:first_prj/models/User.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:first_prj/models/Request.dart';
-import 'package:location/location.dart';
 
 class AroundYou extends StatefulWidget {
   final String title = "GPSaveMe";
   static List<Request> requestList = [
-    Request(0, 3, REQUEST_TYPE.transportation, 'out of fuel',
-        User('Marge', 'Simpson', '339862948', File("images/marge.jpeg"), false), "images/fuel.png"),
-    Request(1, 2, REQUEST_TYPE.health, 'need a med',
-        User('Chiara', 'Griffin', '392164553', File("images/marge.jpeg"), false), "images/fuel.png")
+    Request(
+        0,
+        3,
+        REQUEST_TYPE.transportation,
+        'out of fuel',
+        User('Marge', 'Simpson', '339862948', File("images/marge.jpeg"), false),
+        "images/fuel.png"),
+    Request(
+        1,
+        2,
+        REQUEST_TYPE.health,
+        'need a med',
+        User(
+            'Chiara', 'Griffin', '392164553', File("images/marge.jpeg"), false),
+        "images/fuel.png")
   ];
+
+  const AroundYou({Key? key}) : super(key: key);
+  @override
   _AroundYouState createState() => _AroundYouState();
 }
 
@@ -84,6 +96,7 @@ class _AroundYouState extends State<AroundYou> {
               ),
               onTap: () async {
                 bool accepted = await getLocation();
+                // ignore: avoid_print
                 if (accepted) print("Refreshing...");
               }),
           Expanded(

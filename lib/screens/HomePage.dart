@@ -1,8 +1,11 @@
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 
 class HomePage extends StatefulWidget {
   final String title = "GPSaveMe";
+
+  const HomePage({Key? key}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -18,7 +21,7 @@ class _HomePageState extends State<HomePage> {
         Row(
           children: <Widget>[
             ElevatedButton.icon(
-                icon: Icon(Icons.diamond),
+                icon: const Icon(Icons.diamond),
                 label: Text(MyApp.coins.toString()),
                 onPressed: () => {})
           ],
@@ -26,8 +29,8 @@ class _HomePageState extends State<HomePage> {
       ]),
       body: Container(),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color.fromRGBO(255, 183, 3, 1),
-        selectedItemColor: Color.fromRGBO(33, 158, 188, 1),
+        backgroundColor: const Color.fromRGBO(255, 183, 3, 1),
+        selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),
         unselectedItemColor: Colors.white,
         currentIndex: MyApp.selectedIndex,
         onTap: (_index) {

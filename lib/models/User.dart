@@ -1,13 +1,15 @@
+// ignore_for_file: file_names
+
 import 'dart:io';
 
 class User {
   String name, surname, phoneNumber;
-  bool profile_check;
+  bool profileCheck;
   File imageProfile;
   List<Review> reviewList = [];
 
-  User(this.name, this.surname, this.phoneNumber, this.imageProfile, this.profile_check);
-
+  User(this.name, this.surname, this.phoneNumber, this.imageProfile,
+      this.profileCheck);
 
   String getReview() {
     if (reviewList.isEmpty) return 0.toString();
@@ -17,8 +19,6 @@ class User {
     }
     return (sum / reviewList.length).toString();
   }
-  
-
 }
 
 class Review {
@@ -28,14 +28,12 @@ class Review {
   Review(this.voto, this.description);
 }
 
-class Document{
-  File? Front;
-  File? Retro;
+class Document {
+  File? front;
+  File? retro;
   bool frontcheck;
   bool retrocheck;
   bool check;
-  Document(this.check, this.frontcheck, this.retrocheck, [this.Front, this.Retro]);
-
- 
-
+  Document(this.check, this.frontcheck, this.retrocheck,
+      [this.front, this.retro]);
 }
