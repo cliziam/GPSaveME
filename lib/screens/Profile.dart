@@ -300,23 +300,15 @@ class _ProfileState extends State<Profile> {
                             Container(
                               width: deviceWidth*0.9,
                               height:deviceHeight*0.70 ,
-                              decoration: BoxDecoration(
-                                          border: Border.all(color: const Color.fromRGBO(255, 178, 3, 1),width: deviceWidth*0.135 ),
-                                          borderRadius: BorderRadius.circular(20),
-                                          color: const Color.fromRGBO(255, 178, 3, 1)                               
+                              decoration: const BoxDecoration(
+                                          image: DecorationImage(image: AssetImage("images/sfondoreview.png"), fit: BoxFit.fill)                             
                               ),
-                              padding: EdgeInsets.all(deviceWidth * 0.02),
-                              
-                              child: Column(
-                                children: const [
-                                           Text("Reviews",
-                                              style: TextStyle(fontSize: 24, color: Colors.white,  fontWeight: FontWeight.bold,),
-                                                textAlign: TextAlign.left
-                                            ),
-                                
-                                ]
-                                
-                              )
+                              padding: const EdgeInsets.fromLTRB(0, 35, 12, 320),
+                              alignment: Alignment.center,
+                              child: const Text("Reviews",
+                                 style: TextStyle(fontSize: 24, color: Colors.white,  fontWeight: FontWeight.bold,),
+                                   textAlign: TextAlign.left
+                               )
                             ),
 
                             Positioned(
@@ -326,7 +318,7 @@ class _ProfileState extends State<Profile> {
                                 radius: 60,
                                 child: CircleAvatar(
                                   backgroundImage: FileImage(imageProfile), 
-                                        radius: deviceWidth*0.135,
+                                        radius: deviceWidth*0.140,
                                       )
                                 ),
                                         
