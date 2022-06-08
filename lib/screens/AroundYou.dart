@@ -157,7 +157,7 @@ class _AroundYouState extends State<AroundYou> {
                     style: const TextStyle(fontSize: 16)),
                 Row(
                   children: <Widget>[
-                    Text(AroundYou.requestList[index].getUser().getReview()),
+                    Text(AroundYou.requestList[index].getUser().getReviewRating()),
                     const Icon(
                       Icons.star,
                       color: Colors.yellow,
@@ -252,7 +252,7 @@ class _AroundYouState extends State<AroundYou> {
                       ),
                       Padding(
                           padding: EdgeInsets.only(left: deviceWidth * 0.01)),
-                      Text(item.getUser().getReview())
+                      Text(item.getUser().getReviewRating())
                     ],
                   ),
                   Padding(

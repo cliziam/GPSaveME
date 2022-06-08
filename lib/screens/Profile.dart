@@ -113,10 +113,14 @@ class _ProfileState extends State<Profile> {
                   Padding(padding: EdgeInsets.all(deviceWidth * 0.003)),
                   Row(
                     children: <Widget>[
-                      Text(Profile.user.getReview()),
-                      const Icon(
-                        Icons.star,
-                        color: Color.fromRGBO(255, 183, 3, 1),
+                      Text(Profile.user.getReviewRating()),
+                      IconButton(
+                        icon:const Icon(Icons.star,
+                        color: Color.fromRGBO(255, 183, 3, 1)
+                        ), 
+                        onPressed: () {_showReviews(Profile.user.imageProfile);  },
+                        
+                        
                       )
                     ],
                   )
@@ -221,7 +225,7 @@ class _ProfileState extends State<Profile> {
                         alignment: Alignment.centerLeft,
                         child: Profile.document.retrocheck
                             ? const Icon(Icons.access_time, color: Colors.black)
-                            : const Icon(Icons.add, color: Colors.black))
+                            : const Icon(Icons.add, color: Colors.black)),
                   ]),
                 )),
           )
@@ -283,4 +287,56 @@ class _ProfileState extends State<Profile> {
       });
     }
   }
+
+  void _showReviews(File imageProfile) {
+     showDialog(
+          context: context,
+          builder: (_) => Dialog(
+                          backgroundColor: Colors.transparent,
+                          insetPadding: const EdgeInsets.all(10),
+                          child: Stack(
+                          clipBehavior: Clip.none, alignment: Alignment.center,
+                          children: <Widget>[
+                            Container(
+                              width: deviceWidth*0.9,
+                              height:deviceHeight*0.70 ,
+                              decoration: BoxDecoration(
+                                          border: Border.all(color: const Color.fromRGBO(255, 178, 3, 1),width: deviceWidth*0.135 ),
+                                          borderRadius: BorderRadius.circular(20),
+                                          color: const Color.fromRGBO(255, 178, 3, 1)                               
+                              ),
+                              padding: EdgeInsets.all(deviceWidth * 0.02),
+                              
+                              child: Column(
+                                children: const [
+                                           Text("Reviews",
+                                              style: TextStyle(fontSize: 24, color: Colors.white,  fontWeight: FontWeight.bold,),
+                                                textAlign: TextAlign.left
+                                            ),
+                                
+                                ]
+                                
+                              )
+                            ),
+
+                            Positioned(
+                              top: -70,
+                              child: CircleAvatar(
+                                backgroundColor: const Color.fromRGBO(255, 178, 3, 1),
+                                radius: 60,
+                                child: CircleAvatar(
+                                  backgroundImage: FileImage(imageProfile), 
+                                        radius: deviceWidth*0.135,
+                                      )
+                                ),
+                                        
+                                      
+                            ),
+                            ],
+                          )
+                          ));
+  }
+
+
+
 }

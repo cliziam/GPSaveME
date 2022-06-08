@@ -11,7 +11,7 @@ class User {
   User(this.name, this.surname, this.phoneNumber, this.imageProfile,
       this.profileCheck);
 
-  String getReview() {
+  String getReviewRating() {
     if (reviewList.isEmpty) return 0.toString();
     double sum = 0;
     for (int i = 0; i < reviewList.length; i++) {
@@ -19,6 +19,8 @@ class User {
     }
     return (sum / reviewList.length).toString();
   }
+  
+
 }
 
 class Review {
