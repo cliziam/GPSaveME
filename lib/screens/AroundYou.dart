@@ -239,8 +239,7 @@ class _AroundYouState extends State<AroundYou> {
                       Text(
                         item.getDistance(item.getUser()),
                       ),
-                      Text(" | Priority of the request: " +
-                          item.getPriorityAsString())
+                      Text(" | Request: " + item.getPriorityAsString())
                     ],
                   ),
                   Padding(
@@ -275,7 +274,9 @@ class _AroundYouState extends State<AroundYou> {
                   ),
                 ]),
                 actions: [
-                  TextButton(onPressed: () {}, child: const Text("CANCEL")),
+                  TextButton(
+                      onPressed: () => {Navigator.pop(context)},
+                      child: const Text("CANCEL")),
                   TextButton(
                     onPressed: () {},
                     child: const Text("SEND HELP"),
