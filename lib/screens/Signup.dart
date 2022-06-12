@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:phone_form_field/phone_form_field.dart';
+import 'package:first_prj/screens/HomePage.dart';
 
 class SignUp extends StatefulWidget {
   final String title = "GPSaveMe";
@@ -102,11 +103,11 @@ class _SignUpPageState extends State<SignUp> {
             ),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: PhoneFormField(
               defaultCountry: IsoCode.IT,
               countrySelectorNavigator:
-                  CountrySelectorNavigator.modalBottomSheet(
+                  const CountrySelectorNavigator.modalBottomSheet(
                 favorites: [IsoCode.IT, IsoCode.US],
               ),
               decoration: InputDecoration(
@@ -123,7 +124,7 @@ class _SignUpPageState extends State<SignUp> {
             ),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
+            margin: const EdgeInsets.fromLTRB(20, 5, 20, 0),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -209,13 +210,13 @@ class _SignUpPageState extends State<SignUp> {
                               : Color.fromRGBO(33, 158, 188, 1))))
           ]),
           Container(
-            margin: EdgeInsets.fromLTRB(220, 20, 20, 0),
+            margin: const EdgeInsets.fromLTRB(220, 20, 20, 0),
             child: TextButton(
                 child: Text("Sign up!".toUpperCase(),
                     style: TextStyle(fontSize: 14, color: Colors.white)),
                 style: ButtonStyle(
                     padding: MaterialStateProperty.all<EdgeInsets>(
-                        EdgeInsets.all(15)),
+                        const EdgeInsets.all(15)),
                     //foregroundColor: MaterialStateProperty.all<Color>(Color.fromRGBO(33, 158, 188, 1)),
                     backgroundColor: MaterialStateProperty.all<Color>(
                         Color.fromRGBO(33, 158, 188, 1)),
@@ -240,6 +241,7 @@ class _SignUpPageState extends State<SignUp> {
                         ? validators[2] = true
                         : validators[2] = false;
                   });
+                   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
                 }),
           ),
         ]),

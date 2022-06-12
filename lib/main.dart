@@ -1,8 +1,10 @@
 import 'package:first_prj/screens/AroundYou.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/screens/HomePage.dart';
+//import 'package:first_prj/screens/HomePage2.dart';
 import 'package:first_prj/screens/Profile.dart';
 import 'package:location/location.dart';
+import 'package:first_prj/screens/Login.dart';
 // import 'package:first_prj/screens/Login.dart'; // da scommentare
 
 double deviceWidth = 0, deviceHeight = 0;
@@ -20,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "GPSaveMe",
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomePage(),
+      home: Login(),
     );
   }
 
