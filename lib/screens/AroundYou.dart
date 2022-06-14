@@ -14,7 +14,7 @@ class AroundYou extends StatefulWidget {
         REQUEST_TYPE.transportation,
         'out of fuel',
         User('Marge', 'Simpson', '339862948', File("images/marge.jpeg"), false),
-        "images/fuel.png"),
+        "images/Fuel.png"),
     Request(
         1,
         2,
@@ -22,11 +22,12 @@ class AroundYou extends StatefulWidget {
         'need a med',
         User(
             'Chiara', 'Griffin', '392164553', File("images/marge.jpeg"), false),
-        "images/fuel.png")
+        "images/Fuel.png")
   ];
 
   const AroundYou({Key? key}) : super(key: key);
   @override
+  // ignore: library_private_types_in_public_api
   _AroundYouState createState() => _AroundYouState();
 }
 
@@ -74,6 +75,7 @@ class _AroundYouState extends State<AroundYou> {
               child: Container(
                 width: deviceWidth * 0.6,
                 height: deviceHeight * 0.07,
+                // ignore: sort_child_properties_last
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
@@ -116,12 +118,12 @@ class _AroundYouState extends State<AroundYou> {
         selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),
         unselectedItemColor: Colors.white,
         currentIndex: MyApp.selectedIndex,
-        onTap: (_index) {
-          if (MyApp.selectedIndex != _index) {
+        onTap: (index) {
+          if (MyApp.selectedIndex != index) {
             setState(() {
-              MyApp.selectedIndex = _index;
+              MyApp.selectedIndex = index;
             });
-            MyApp.navigateToNextScreen(context, _index);
+            MyApp.navigateToNextScreen(context, index);
           }
         },
         items: const <BottomNavigationBarItem>[
@@ -150,21 +152,21 @@ class _AroundYouState extends State<AroundYou> {
             _offerHelp(context, item);
           },
           contentPadding: const EdgeInsets.all(15),
-          title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          title:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                  Widget>[
+            Text(AroundYou.requestList[index].getName(),
+                style: const TextStyle(fontSize: 16)),
+            Row(
               children: <Widget>[
-                Text(AroundYou.requestList[index].getName(),
-                    style: const TextStyle(fontSize: 16)),
-                Row(
-                  children: <Widget>[
-                    Text(AroundYou.requestList[index].getUser().getReviewRating()),
-                    const Icon(
-                      Icons.star,
-                      color: Colors.yellow,
-                    )
-                  ],
+                Text(AroundYou.requestList[index].getUser().getReviewRating()),
+                const Icon(
+                  Icons.star,
+                  color: Colors.yellow,
                 )
-              ]),
+              ],
+            )
+          ]),
           trailing: Container(
               width: 50,
               height: 50,
@@ -239,7 +241,7 @@ class _AroundYouState extends State<AroundYou> {
                       Text(
                         item.getDistance(item.getUser()),
                       ),
-                      Text(" | Request: " + item.getPriorityAsString())
+                      Text(" | Request: ${item.getPriorityAsString()}")
                     ],
                   ),
                   Padding(

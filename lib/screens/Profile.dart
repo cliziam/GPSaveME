@@ -13,6 +13,7 @@ class Profile extends StatefulWidget {
 
   const Profile({Key? key}) : super(key: key);
   @override
+  // ignore: library_private_types_in_public_api
   _ProfileState createState() => _ProfileState();
 }
 
@@ -115,12 +116,11 @@ class _ProfileState extends State<Profile> {
                     children: <Widget>[
                       Text(Profile.user.getReviewRating()),
                       IconButton(
-                        icon:const Icon(Icons.star,
-                        color: Color.fromRGBO(255, 183, 3, 1)
-                        ), 
-                        onPressed: () {_showReviews(Profile.user.imageProfile);  },
-                        
-                        
+                        icon: const Icon(Icons.star,
+                            color: Color.fromRGBO(255, 183, 3, 1)),
+                        onPressed: () {
+                          _showReviews(Profile.user.imageProfile);
+                        },
                       )
                     ],
                   )
@@ -236,12 +236,12 @@ class _ProfileState extends State<Profile> {
         selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),
         unselectedItemColor: Colors.white,
         currentIndex: MyApp.selectedIndex,
-        onTap: (_index) {
-          if (MyApp.selectedIndex != _index) {
+        onTap: (index) {
+          if (MyApp.selectedIndex != index) {
             setState(() {
-              MyApp.selectedIndex = _index;
+              MyApp.selectedIndex = index;
             });
-            MyApp.navigateToNextScreen(context, _index);
+            MyApp.navigateToNextScreen(context, index);
           }
         },
         items: const <BottomNavigationBarItem>[
@@ -259,9 +259,9 @@ class _ProfileState extends State<Profile> {
 
   // Implementing the image picker
   Future<void> _openImagePicker() async {
-    final _picker = ImagePicker();
+    final picker = ImagePicker();
     final XFile? pickedImage =
-        await _picker.pickImage(source: ImageSource.camera);
+        await picker.pickImage(source: ImageSource.camera);
     if (pickedImage != null) {
       setState(() {
         Profile.user.imageProfile = File(pickedImage.path);
@@ -270,9 +270,9 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _openDocumentPicker(bool typeDoc) async {
-    final _picker = ImagePicker();
+    final picker = ImagePicker();
     final XFile? pickedImage =
-        await _picker.pickImage(source: ImageSource.camera);
+        await picker.pickImage(source: ImageSource.camera);
     if (pickedImage != null) {
       setState(() {
         //true-->front
@@ -289,46 +289,42 @@ class _ProfileState extends State<Profile> {
   }
 
   void _showReviews(File imageProfile) {
-     showDialog(
-          context: context,
-          builder: (_) => Dialog(
-                          backgroundColor: Colors.transparent,
-                          insetPadding: const EdgeInsets.all(10),
-                          child: Stack(
-                          clipBehavior: Clip.none, alignment: Alignment.center,
-                          children: <Widget>[
-                            Container(
-                              width: deviceWidth*0.9,
-                              height:deviceHeight*0.70 ,
-                              decoration: const BoxDecoration(
-                                          image: DecorationImage(image: AssetImage("images/sfondoreview.png"), fit: BoxFit.fill)                             
-                              ),
-                              padding: const EdgeInsets.fromLTRB(0, 35, 12, 320),
-                              alignment: Alignment.center,
-                              child: const Text("Reviews",
-                                 style: TextStyle(fontSize: 24, color: Colors.white,  fontWeight: FontWeight.bold,),
-                                   textAlign: TextAlign.left
-                               )
-                            ),
-
-                            Positioned(
-                              top: -70,
-                              child: CircleAvatar(
-                                backgroundColor: const Color.fromRGBO(255, 178, 3, 1),
-                                radius: 60,
-                                child: CircleAvatar(
-                                  backgroundImage: FileImage(imageProfile), 
-                                        radius: deviceWidth*0.140,
-                                      )
-                                ),
-                                        
-                                      
-                            ),
-                            ],
-                          )
-                          ));
+    showDialog(
+        context: context,
+        builder: (_) => Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.all(10),
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: <Widget>[
+                Container(
+                    width: deviceWidth * 0.9,
+                    height: deviceHeight * 0.70,
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("images/sfondoreview.png"),
+                            fit: BoxFit.fill)),
+                    padding: const EdgeInsets.fromLTRB(0, 35, 12, 320),
+                    alignment: Alignment.center,
+                    child: const Text("Reviews",
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.left)),
+                Positioned(
+                  top: -70,
+                  child: CircleAvatar(
+                      backgroundColor: const Color.fromRGBO(255, 178, 3, 1),
+                      radius: 60,
+                      child: CircleAvatar(
+                        backgroundImage: FileImage(imageProfile),
+                        radius: deviceWidth * 0.140,
+                      )),
+                ),
+              ],
+            )));
   }
-
-
-
 }
