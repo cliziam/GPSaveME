@@ -274,7 +274,7 @@ class RequestTypeCard extends StatelessWidget {
   String text;
   Color? fillColor;
 
-  RequestTypeCard(this.imagePath, this.text, this.fillColor, {Key? key}) : super(key: key){
+  RequestTypeCard(this.imagePath, this.text, this.fillColor, {Key? key }) : super(key: key){
     imagePath=imagePath.toLowerCase();
   }
 
