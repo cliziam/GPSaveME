@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 Tooltip(
-                  message: "Select a card to ask for help!",
+                  message: "Select a card below to ask for help!",
                   triggerMode: TooltipTriggerMode.tap,
                   child: Icon(Icons.add_alert_sharp,
                       color: Colors.white60, size: 24.0),
