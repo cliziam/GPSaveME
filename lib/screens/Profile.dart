@@ -21,16 +21,26 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title), actions: <Widget>[
-        Row(
-          children: <Widget>[
-            ElevatedButton.icon(
-                icon: const Icon(Icons.diamond),
-                label: Text(MyApp.coins.toString()),
-                onPressed: () => {})
-          ],
-        )
-      ]),
+      appBar: AppBar(
+        title: Text(widget.title),
+        automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Tooltip(
+                  message: "Remaining coins to ask for help!",
+                  triggerMode: TooltipTriggerMode.tap,
+                  child: Icon(Icons.diamond_sharp),
+                ),
+                Text(MyApp.coins.toString()),
+              ],
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: <Widget>[
           Container(

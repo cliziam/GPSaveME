@@ -14,7 +14,7 @@ class AroundYou extends StatefulWidget {
         REQUEST_TYPE.transportation,
         'out of fuel',
         User('Marge', 'Simpson', '339862948', File("images/marge.jpeg"), false),
-        "images/Fuel.png"),
+        "images/fuel.png"),
     Request(
         1,
         2,
@@ -22,7 +22,7 @@ class AroundYou extends StatefulWidget {
         'need a med',
         User(
             'Chiara', 'Griffin', '392164553', File("images/marge.jpeg"), false),
-        "images/Fuel.png")
+        "images/fuel.png")
   ];
 
   const AroundYou({Key? key}) : super(key: key);
@@ -36,16 +36,26 @@ class _AroundYouState extends State<AroundYou> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title), actions: <Widget>[
-        Row(
-          children: <Widget>[
-            ElevatedButton.icon(
-                icon: const Icon(Icons.diamond),
-                label: Text(MyApp.coins.toString()),
-                onPressed: () => {})
-          ],
-        )
-      ]),
+      appBar: AppBar(
+        title: Text(widget.title),
+        automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Tooltip(
+                  message: "Remaining coins to ask for help!",
+                  triggerMode: TooltipTriggerMode.tap,
+                  child: Icon(Icons.diamond_sharp),
+                ),
+                Text(MyApp.coins.toString()),
+              ],
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: <Widget>[
           Container(

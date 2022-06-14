@@ -13,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,12 +80,14 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: const Color.fromRGBO(255, 183, 3, 1),
         selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),
         unselectedItemColor: Colors.white,
-        currentIndex: _selectedIndex,
+        currentIndex: MyApp.selectedIndex,
         onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-          MyApp.navigateToNextScreen(context, index);
+          if (MyApp.selectedIndex != index) {
+            setState(() {
+              MyApp.selectedIndex = index;
+            });
+            MyApp.navigateToNextScreen(context, index);
+          }
         },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -128,6 +129,7 @@ class _DropDownListWithPicState extends State<DropDownListWithPic> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("Test Drop"),
       ),
       // ignore: unnecessary_new
