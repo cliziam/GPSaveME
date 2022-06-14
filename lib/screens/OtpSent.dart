@@ -70,7 +70,7 @@ class _OtpSentPageState extends State<OtpSent> {
                     height: 28,
                   ),
                   Container(
-                    padding: const EdgeInsets.all(28),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),

@@ -72,20 +72,16 @@ class _SignUpPageState extends State<SignUp> {
                         clipper: TopWaveClipper(),
                         child: Container(
                           color: const Color.fromRGBO(28, 158, 188, 1),
-                          height: deviceHeight * 0.17,
+                          height: deviceHeight * 0.06,
                         )),
                   ),
                   ClipPath(
                       clipper: TopWaveClipper(),
                       child: Container(
                         color: const Color.fromRGBO(28, 158, 188, 1),
-                        height: deviceHeight * 0.15,
+                        height: deviceHeight * 0.04,
                       )),
                 ],
-              ),
-              const Text(
-                "Sign up",
-                style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
               ),
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
@@ -141,6 +137,7 @@ class _SignUpPageState extends State<SignUp> {
                 child: TextField(
                   controller: nameController,
                   decoration: InputDecoration(
+                     errorStyle: const TextStyle(fontSize: 10),
                     labelText: 'Name',
                     errorText: validators[0] == false
                         ? null
@@ -153,6 +150,7 @@ class _SignUpPageState extends State<SignUp> {
                 child: TextField(
                   controller: surnameController,
                   decoration: InputDecoration(
+                    errorStyle: const TextStyle(fontSize: 10),
                     labelText: 'Surname',
                     errorText: validators[1] == false
                         ? null
@@ -170,6 +168,7 @@ class _SignUpPageState extends State<SignUp> {
                   ),
                   decoration: InputDecoration(
                     labelText: 'Phone number',
+                    errorStyle: const TextStyle(fontSize: 10),
                     errorText: validators[2] == false
                         ? null
                         : 'Please write your phone number!',
@@ -183,9 +182,9 @@ class _SignUpPageState extends State<SignUp> {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.fromLTRB(20, 5, 20, 0),
+                margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "Date of birth",
@@ -326,7 +325,7 @@ class _SignUpPageState extends State<SignUp> {
                         clipper: BottomWaveClipper(),
                         child: Container(
                           color: const Color.fromRGBO(255, 183, 3, 1),
-                          height: deviceHeight * 0.17,
+                          height: deviceHeight * 0.06,
                         )),
                   ),
                   Column(
@@ -338,7 +337,7 @@ class _SignUpPageState extends State<SignUp> {
                           clipper: BottomWaveClipper(),
                           child: Container(
                             color: const Color.fromRGBO(255, 183, 3, 1),
-                            height: deviceHeight * 0.15,
+                            height: deviceHeight * 0.04,
                           )),
                     ],
                   ),
