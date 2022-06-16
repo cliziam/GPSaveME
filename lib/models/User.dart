@@ -27,10 +27,6 @@ class User {
     return reviewList;
   }
 
-  String getName() {
-    return name;
-  }
-  
 
 }
 
