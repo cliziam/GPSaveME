@@ -10,6 +10,8 @@ class Profile extends StatefulWidget {
   static Document document = Document(false, false, false);
   static User user =
       User("Marge", "Simpson", "383965213", File("images/marge.jpeg"), false);
+  static List<Review> listReviews = [Review(1,"Lores,",User('Marge', 'Simpson', "383965213", File("images/marge.jpeg"), false)),
+    Review(5,"bella",User('Pippo', 'Simpson', "383965213", File("images/ride.jpeg"), false))];
 
   const Profile({Key? key}) : super(key: key);
   @override
@@ -19,18 +21,29 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title), actions: <Widget>[
-        Row(
-          children: <Widget>[
-            ElevatedButton.icon(
-                icon: const Icon(Icons.diamond),
-                label: Text(MyApp.coins.toString()),
-                onPressed: () => {})
-          ],
-        )
-      ]),
+      appBar: AppBar(
+        title: Text(widget.title),
+        automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Tooltip(
+                  message: "Remaining coins to ask for help!",
+                  triggerMode: TooltipTriggerMode.tap,
+                  child: Icon(Icons.diamond_sharp),
+                ),
+                Text(MyApp.coins.toString()),
+              ],
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: <Widget>[
           Container(
@@ -300,22 +313,83 @@ class _ProfileState extends State<Profile> {
               children: <Widget>[
                 Container(
                     width: deviceWidth * 0.9,
-                    height: deviceHeight * 0.70,
+                    height: deviceHeight * 0.8,
                     decoration: const BoxDecoration(
                         image: DecorationImage(
                             image: AssetImage("images/sfondoreview.png"),
                             fit: BoxFit.fill)),
-                    padding: const EdgeInsets.fromLTRB(0, 35, 12, 320),
+                    padding: const EdgeInsets.fromLTRB(0, 45, 12, 250),
                     alignment: Alignment.center,
-                    child: const Text("Reviews",
+                    child: SizedBox(
+                      width: deviceWidth * 0.95,
+                      height: deviceHeight * 0.9,
+                      child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const Text("Reviews",
                         style: TextStyle(
                           fontSize: 24,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
-                        textAlign: TextAlign.left)),
+                        textAlign: TextAlign.center),
+                        const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10)),
+                        for (var reviews in Profile.listReviews)
+                          Card(
+                            margin:const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                            shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                            child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                                    child: ClipOval(
+                                    child: Material(
+                                    color: Colors.transparent,
+                                    child: Ink.image(
+                                        image: FileImage(reviews.getUser().imageProfile),
+                                        fit: BoxFit.cover,
+                                        width: 30,
+                                        height: 30,
+                                        //child: InkWell(onTap: ),
+                                      ),
+                                    ),
+                                      ),
+                                      ),
+                                    Padding(
+                                        padding: const EdgeInsets.fromLTRB(0,2,0,2),
+                                        child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(reviews.getUser().name,
+                                                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                              ),
+                                          Text((reviews.description.length > 10) ? "${reviews.description.substring(0,10)}..." : reviews.description,
+                                                style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+                                                ),
+                                            ],
+                                            ),
+                                      ),
+                                    Row(children: [
+                                          for (int i = 0; i < 5; i++) 
+                                          Icon(Icons.star,
+                                          color: (i < reviews.voto) ?
+                                                const Color.fromRGBO(255, 183, 3, 1): 
+                                                Colors.grey)
+                                        ],
+                                    ),
+                                ],
+                             ),
+                            ),
+                       ],
+                      ),
+                    ),
+                ),
+
                 Positioned(
-                  top: -70,
+                  top: -65,
                   child: CircleAvatar(
                       backgroundColor: const Color.fromRGBO(255, 178, 3, 1),
                       radius: 60,
@@ -324,6 +398,7 @@ class _ProfileState extends State<Profile> {
                         radius: deviceWidth * 0.140,
                       )),
                 ),
+
               ],
             )));
   }

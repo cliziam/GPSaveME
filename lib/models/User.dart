@@ -7,7 +7,6 @@ class User {
   bool profileCheck;
   File imageProfile;
   List<Review> reviewList = [];
-
   User(this.name, this.surname, this.phoneNumber, this.imageProfile,
       this.profileCheck);
 
@@ -19,6 +18,18 @@ class User {
     }
     return (sum / reviewList.length).toString();
   }
+
+  void addReview(Review review) {
+    reviewList.add(review);
+  }
+
+  List<Review> getReviews() {
+    return reviewList;
+  }
+
+  String getName() {
+    return name;
+  }
   
 
 }
@@ -26,8 +37,12 @@ class User {
 class Review {
   int voto;
   String description;
+  User user;
+  Review(this.voto, this.description, this.user);
 
-  Review(this.voto, this.description);
+  User getUser() {
+    return user;
+  }
 }
 
 class Document {
