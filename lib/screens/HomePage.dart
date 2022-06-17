@@ -2,8 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:first_prj/models/HelpCard.dart';
+<<<<<<< HEAD
 import '../models/AlertDialogPending.dart';
 import '../models/Status.dart';
+=======
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
 
 class HomePage extends StatefulWidget {
   final String title = "GPSaveMe";
@@ -15,7 +18,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+<<<<<<< HEAD
   
+=======
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,9 +60,14 @@ class _HomePageState extends State<HomePage> {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+<<<<<<< HEAD
               // ignore: prefer_const_literals_to_create_immutables
               children: <Widget>[
                 const Text(
+=======
+              children: const <Widget>[
+                Text(
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
                   'Ask for help ',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
@@ -64,16 +75,23 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.white,
                   ),
                 ),
+<<<<<<< HEAD
                 const Tooltip(
                   message: "Select a card below to ask for help!",
                   triggerMode: TooltipTriggerMode.tap,
                   // ignore: prefer_const_constructors
+=======
+                Tooltip(
+                  message: "Select a card below to ask for help!",
+                  triggerMode: TooltipTriggerMode.tap,
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
                   child: Icon(Icons.add_alert_sharp,
                       color: Colors.white60, size: 24.0),
                 ),
               ],
             ),
           ),
+<<<<<<< HEAD
           const Padding(padding: EdgeInsets.only(top: 5)),
           if (!Status.requestDone)...
             [HelpCard("images/car.png", "Transportation", false),
@@ -83,6 +101,13 @@ class _HomePageState extends State<HomePage> {
           else...[const AlertDialogPending()]
 
 
+=======
+          Padding(padding: EdgeInsets.only(bottom: deviceHeight * 0.05)),
+          HelpCard("images/car.png", "Transportation", false),
+          HelpCard("images/health.png", "Health", false),
+          HelpCard("images/house.png", "House & Gardening", false),
+          HelpCard("images/hands.png", "General", false),
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

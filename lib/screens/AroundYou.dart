@@ -174,7 +174,11 @@ class _AroundYouState extends State<AroundYou> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
                   Widget>[
             Text(AroundYou.requestList[index].getName(),
+<<<<<<< HEAD
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+=======
+                style: const TextStyle(fontSize: 16)),
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
             Row(
               children: <Widget>[
                 Text(AroundYou.requestList[index].getUser().getReviewRating()),

@@ -1,8 +1,14 @@
+<<<<<<< HEAD
 // ignore_for_file: file_names, deprecated_member_use, non_constant_identifier_names
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import '../screens/HomePage.dart';
 import 'Status.dart';
+=======
+// ignore_for_file: file_names, deprecated_member_use
+import 'package:flutter/material.dart';
+import 'package:first_prj/main.dart';
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
 
 final Map<String, Iterable<dynamic>> dict = {
   "Transportation": ["Puncture", "Fuel", "Other"],
@@ -24,7 +30,11 @@ class HelpCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
+<<<<<<< HEAD
           (!Status.requestDone) ? requestHelp(context) : null;
+=======
+          requestHelp(context);
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
         },
         child: Card(
           elevation: 5,
@@ -80,6 +90,7 @@ class _RequestCardState extends State<RequestCard> {
   var reqSelected = "";
   var priSelected = "";
 
+<<<<<<< HEAD
   // ignore: non_constant_identifier_names
   var listVariables_transportation = ["Puncture", "Fuel", "Other"];
   var listVariables_health =["Meds", "Injury", "Other"];
@@ -87,6 +98,11 @@ class _RequestCardState extends State<RequestCard> {
   var listVariables_general = ["Street", "Personal", "Other"];
   var listColors = ["Low", "Medium", "High"];
   
+=======
+  var listVariables = ["Puncture", "Fuel", "Other"];
+  var listColors = ["Low", "Medium", "High"];
+
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -100,10 +116,14 @@ class _RequestCardState extends State<RequestCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+<<<<<<< HEAD
               for (var k in widget.title == 'Transportation' ? 
               listVariables_transportation : widget.title == 'Health' ? 
               listVariables_health : widget.title == 'General' ? 
               listVariables_general : listVariables_house)
+=======
+              for (var k in listVariables)
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
                 Padding(
                   padding: const EdgeInsets.only(right: 5),
                   child: InkWell(
@@ -198,10 +218,14 @@ class _RequestCardState extends State<RequestCard> {
                   informations == "" ||
                   !timeIsSelected
               ? null
+<<<<<<< HEAD
               : {
                 Status.setRequestDone(),
                 Navigator.push( context, MaterialPageRoute( builder: (context) => const HomePage()), ).then((value) => setState(() {}))},
                 //Navigator.pop(context, 'OK')},
+=======
+              : Navigator.pop(context, 'OK'),
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
           child: Text('REQUEST HELP',
               style: TextStyle(
                 color: priSelected == "" ||

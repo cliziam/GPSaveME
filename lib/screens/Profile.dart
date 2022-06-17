@@ -10,7 +10,11 @@ class Profile extends StatefulWidget {
   static Document document = Document(false, false, false);
   static User user =
       User("Marge", "Simpson", "383965213", File("images/marge.jpeg"), false);
+<<<<<<< HEAD
   static List<Review> listReviews = [Review(1,"Bravo",User('Marge', 'Simpson', "383965213", File("images/marge.jpeg"), false)),
+=======
+  static List<Review> listReviews = [Review(1,"Lores,",User('Marge', 'Simpson', "383965213", File("images/marge.jpeg"), false)),
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
     Review(5,"bella",User('Pippo', 'Simpson', "383965213", File("images/ride.jpeg"), false))];
 
   const Profile({Key? key}) : super(key: key);
@@ -301,13 +305,19 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
   void _showReviews(File imageProfile) {
     showDialog(
         context: context,
         builder: (_) => Dialog(
+<<<<<<< HEAD
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(32.0))),
+=======
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
             backgroundColor: Colors.transparent,
             insetPadding: const EdgeInsets.all(10),
             child: Stack(
@@ -323,6 +333,7 @@ class _ProfileState extends State<Profile> {
                             fit: BoxFit.fill)),
                     padding: const EdgeInsets.fromLTRB(0, 45, 12, 250),
                     alignment: Alignment.center,
+<<<<<<< HEAD
 
                     child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -421,6 +432,87 @@ class _ProfileState extends State<Profile> {
                       )),
                 ),
                
+=======
+                    child: SizedBox(
+                      width: deviceWidth * 0.95,
+                      height: deviceHeight * 0.9,
+                      child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const Text("Reviews",
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center),
+                        const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10)),
+                        for (var reviews in Profile.listReviews)
+                          Card(
+                            margin:const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                            shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                            child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                                    child: ClipOval(
+                                    child: Material(
+                                    color: Colors.transparent,
+                                    child: Ink.image(
+                                        image: FileImage(reviews.getUser().imageProfile),
+                                        fit: BoxFit.cover,
+                                        width: 30,
+                                        height: 30,
+                                        //child: InkWell(onTap: ),
+                                      ),
+                                    ),
+                                      ),
+                                      ),
+                                    Padding(
+                                        padding: const EdgeInsets.fromLTRB(0,2,0,2),
+                                        child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(reviews.getUser().name,
+                                                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                              ),
+                                          Text((reviews.description.length > 10) ? "${reviews.description.substring(0,10)}..." : reviews.description,
+                                                style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+                                                ),
+                                            ],
+                                            ),
+                                      ),
+                                    Row(children: [
+                                          for (int i = 0; i < 5; i++) 
+                                          Icon(Icons.star,
+                                          color: (i < reviews.voto) ?
+                                                const Color.fromRGBO(255, 183, 3, 1): 
+                                                Colors.grey)
+                                        ],
+                                    ),
+                                ],
+                             ),
+                            ),
+                       ],
+                      ),
+                    ),
+                ),
+
+                Positioned(
+                  top: -65,
+                  child: CircleAvatar(
+                      backgroundColor: const Color.fromRGBO(255, 178, 3, 1),
+                      radius: 60,
+                      child: CircleAvatar(
+                        backgroundImage: FileImage(imageProfile),
+                        radius: deviceWidth * 0.140,
+                      )),
+                ),
+
+>>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
               ],
             )));
   }
