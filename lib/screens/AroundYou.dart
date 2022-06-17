@@ -4,6 +4,8 @@ import 'package:first_prj/models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:first_prj/models/Request.dart';
+import '../models/AlertAroundYouPending.dart';
+import '../models/Status.dart';
 
 class AroundYou extends StatefulWidget {
   final String title = "GPSaveMe";
@@ -13,7 +15,7 @@ class AroundYou extends StatefulWidget {
         3,
         REQUEST_TYPE.transportation,
         'out of fuel',
-        User('Marge', 'Simpson', '339862948', File("images/marge.jpeg"), false),
+        User('Marge', 'Simpson', '339862948', File("images/marge.jpeg"), false,),
         "images/fuel.png"),
     Request(
         1,
@@ -21,12 +23,13 @@ class AroundYou extends StatefulWidget {
         REQUEST_TYPE.health,
         'need a med',
         User(
-            'Chiara', 'Griffin', '392164553', File("images/marge.jpeg"), false),
+            'Chiara', 'Griffin', '392164553', File("images/marge.jpeg"), false,),
         "images/fuel.png")
   ];
 
   const AroundYou({Key? key}) : super(key: key);
   @override
+  // ignore: library_private_types_in_public_api
   _AroundYouState createState() => _AroundYouState();
 }
 
@@ -35,16 +38,26 @@ class _AroundYouState extends State<AroundYou> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title), actions: <Widget>[
-        Row(
-          children: <Widget>[
-            ElevatedButton.icon(
-                icon: const Icon(Icons.diamond),
-                label: Text(MyApp.coins.toString()),
-                onPressed: () => {})
-          ],
-        )
-      ]),
+      appBar: AppBar(
+        title: Text(widget.title),
+        automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Tooltip(
+                  message: "Remaining coins to ask for help!",
+                  triggerMode: TooltipTriggerMode.tap,
+                  child: Icon(Icons.diamond_sharp),
+                ),
+                Text(MyApp.coins.toString()),
+              ],
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: <Widget>[
           Container(
@@ -74,6 +87,7 @@ class _AroundYouState extends State<AroundYou> {
               child: Container(
                 width: deviceWidth * 0.6,
                 height: deviceHeight * 0.07,
+                // ignore: sort_child_properties_last
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
@@ -84,7 +98,7 @@ class _AroundYouState extends State<AroundYou> {
                           fontSize: 20,
                           color: Colors.white,
                         )),
-                    Padding(padding: EdgeInsets.only(left: deviceWidth * 0.13)),
+                    Padding(padding: EdgeInsets.only(left: deviceWidth * 0.10)),
                     const Icon(Icons.refresh),
                     Padding(
                         padding: EdgeInsets.only(right: deviceWidth * 0.03)),
@@ -99,6 +113,7 @@ class _AroundYouState extends State<AroundYou> {
                 // ignore: avoid_print
                 if (accepted) print("Refreshing...");
               }),
+          if (!Status.requestDone)...[
           Expanded(
             child: AnimatedList(
                 key: _key,
@@ -108,7 +123,10 @@ class _AroundYouState extends State<AroundYou> {
                   return _buildItem(
                       AroundYou.requestList[index], animation, index);
                 }),
-          )
+           )
+          ]else...[
+            const Padding(padding: EdgeInsets.all(10)), AlertAroundYouPending()]
+         
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -116,12 +134,12 @@ class _AroundYouState extends State<AroundYou> {
         selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),
         unselectedItemColor: Colors.white,
         currentIndex: MyApp.selectedIndex,
-        onTap: (_index) {
-          if (MyApp.selectedIndex != _index) {
+        onTap: (index) {
+          if (MyApp.selectedIndex != index) {
             setState(() {
-              MyApp.selectedIndex = _index;
+              MyApp.selectedIndex = index;
             });
-            MyApp.navigateToNextScreen(context, _index);
+            MyApp.navigateToNextScreen(context, index);
           }
         },
         items: const <BottomNavigationBarItem>[
@@ -142,6 +160,8 @@ class _AroundYouState extends State<AroundYou> {
       key: UniqueKey(),
       sizeFactor: animation,
       child: Card(
+         shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         margin: const EdgeInsets.all(10),
         elevation: 2,
         color: const Color.fromRGBO(222, 240, 248, 1),
@@ -150,21 +170,21 @@ class _AroundYouState extends State<AroundYou> {
             _offerHelp(context, item);
           },
           contentPadding: const EdgeInsets.all(15),
-          title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          title:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                  Widget>[
+            Text(AroundYou.requestList[index].getName(),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Row(
               children: <Widget>[
-                Text(AroundYou.requestList[index].getName(),
-                    style: const TextStyle(fontSize: 16)),
-                Row(
-                  children: <Widget>[
-                    Text(AroundYou.requestList[index].getUser().getReviewRating()),
-                    const Icon(
-                      Icons.star,
-                      color: Colors.yellow,
-                    )
-                  ],
+                Text(AroundYou.requestList[index].getUser().getReviewRating()),
+                const Icon(
+                  Icons.star,
+                  color: Colors.yellow,
                 )
-              ]),
+              ],
+            )
+          ]),
           trailing: Container(
               width: 50,
               height: 50,
@@ -239,7 +259,7 @@ class _AroundYouState extends State<AroundYou> {
                       Text(
                         item.getDistance(item.getUser()),
                       ),
-                      Text(" | Request: " + item.getPriorityAsString())
+                      Text(" | Request: ${item.getPriorityAsString()}")
                     ],
                   ),
                   Padding(

@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 import 'package:first_prj/models/User.dart';
 
+// ignore: camel_case_types
 enum REQUEST_TYPE { transportation, health, safety, house, general }
 
 class Request {
@@ -14,7 +15,7 @@ class Request {
       this.imagePath);
 
   String getName() {
-    return helped.name + " " + helped.surname[0] + ".";
+    return "${helped.name} ${helped.surname[0]}.";
   }
 
   int getPriority() {

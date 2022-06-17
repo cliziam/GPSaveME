@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "621782320534",
+    "project_id": "gpsaveme-877b1",
+    "storage_bucket": "gpsaveme-877b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:621782320534:android:704445757e2f61310689b7",
+        "android_client_info": {
+          "package_name": "com.example.first_prj"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "621782320534-grugebm18478ff4isds48semiqovdu3j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiYPNEC3YdXe9BkQH7Btpz9oJkuI1VM8M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "621782320534-grugebm18478ff4isds48semiqovdu3j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

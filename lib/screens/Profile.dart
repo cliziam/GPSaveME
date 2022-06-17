@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, prefer_const_constructors
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
@@ -10,26 +10,40 @@ class Profile extends StatefulWidget {
   static Document document = Document(false, false, false);
   static User user =
       User("Marge", "Simpson", "383965213", File("images/marge.jpeg"), false);
+  static List<Review> listReviews = [Review(1,"Bravo",User('Marge', 'Simpson', "383965213", File("images/marge.jpeg"), false)),
+    Review(5,"bella",User('Pippo', 'Simpson', "383965213", File("images/ride.jpeg"), false))];
 
   const Profile({Key? key}) : super(key: key);
   @override
+  // ignore: library_private_types_in_public_api
   _ProfileState createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title), actions: <Widget>[
-        Row(
-          children: <Widget>[
-            ElevatedButton.icon(
-                icon: const Icon(Icons.diamond),
-                label: Text(MyApp.coins.toString()),
-                onPressed: () => {})
-          ],
-        )
-      ]),
+      appBar: AppBar(
+        title: Text(widget.title),
+        automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Tooltip(
+                  message: "Remaining coins to ask for help!",
+                  triggerMode: TooltipTriggerMode.tap,
+                  child: Icon(Icons.diamond_sharp),
+                ),
+                Text(MyApp.coins.toString()),
+              ],
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: <Widget>[
           Container(
@@ -115,12 +129,11 @@ class _ProfileState extends State<Profile> {
                     children: <Widget>[
                       Text(Profile.user.getReviewRating()),
                       IconButton(
-                        icon:const Icon(Icons.star,
-                        color: Color.fromRGBO(255, 183, 3, 1)
-                        ), 
-                        onPressed: () {_showReviews(Profile.user.imageProfile);  },
-                        
-                        
+                        icon: const Icon(Icons.star,
+                            color: Color.fromRGBO(255, 183, 3, 1)),
+                        onPressed: () {
+                          _showReviews(Profile.user.imageProfile);
+                        },
                       )
                     ],
                   )
@@ -236,12 +249,12 @@ class _ProfileState extends State<Profile> {
         selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),
         unselectedItemColor: Colors.white,
         currentIndex: MyApp.selectedIndex,
-        onTap: (_index) {
-          if (MyApp.selectedIndex != _index) {
+        onTap: (index) {
+          if (MyApp.selectedIndex != index) {
             setState(() {
-              MyApp.selectedIndex = _index;
+              MyApp.selectedIndex = index;
             });
-            MyApp.navigateToNextScreen(context, _index);
+            MyApp.navigateToNextScreen(context, index);
           }
         },
         items: const <BottomNavigationBarItem>[
@@ -259,9 +272,9 @@ class _ProfileState extends State<Profile> {
 
   // Implementing the image picker
   Future<void> _openImagePicker() async {
-    final _picker = ImagePicker();
+    final picker = ImagePicker();
     final XFile? pickedImage =
-        await _picker.pickImage(source: ImageSource.camera);
+        await picker.pickImage(source: ImageSource.camera);
     if (pickedImage != null) {
       setState(() {
         Profile.user.imageProfile = File(pickedImage.path);
@@ -270,9 +283,9 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _openDocumentPicker(bool typeDoc) async {
-    final _picker = ImagePicker();
+    final picker = ImagePicker();
     final XFile? pickedImage =
-        await _picker.pickImage(source: ImageSource.camera);
+        await picker.pickImage(source: ImageSource.camera);
     if (pickedImage != null) {
       setState(() {
         //true-->front
@@ -288,47 +301,127 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+
   void _showReviews(File imageProfile) {
-     showDialog(
-          context: context,
-          builder: (_) => Dialog(
-                          backgroundColor: Colors.transparent,
-                          insetPadding: const EdgeInsets.all(10),
-                          child: Stack(
-                          clipBehavior: Clip.none, alignment: Alignment.center,
-                          children: <Widget>[
-                            Container(
-                              width: deviceWidth*0.9,
-                              height:deviceHeight*0.70 ,
-                              decoration: const BoxDecoration(
-                                          image: DecorationImage(image: AssetImage("images/sfondoreview.png"), fit: BoxFit.fill)                             
-                              ),
-                              padding: const EdgeInsets.fromLTRB(0, 35, 12, 320),
-                              alignment: Alignment.center,
-                              child: const Text("Reviews",
-                                 style: TextStyle(fontSize: 24, color: Colors.white,  fontWeight: FontWeight.bold,),
-                                   textAlign: TextAlign.left
-                               )
-                            ),
+    showDialog(
+        context: context,
+        builder: (_) => Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(32.0))),
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.all(10),
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: <Widget>[
+                Container(
+                    width: deviceWidth * 0.9,
+                    height: deviceHeight * 0.8,
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("images/sfondoreview.png"),
+                            fit: BoxFit.fill)),
+                    padding: const EdgeInsets.fromLTRB(0, 45, 12, 250),
+                    alignment: Alignment.center,
 
-                            Positioned(
-                              top: -70,
-                              child: CircleAvatar(
-                                backgroundColor: const Color.fromRGBO(255, 178, 3, 1),
-                                radius: 60,
-                                child: CircleAvatar(
-                                  backgroundImage: FileImage(imageProfile), 
-                                        radius: deviceWidth*0.140,
-                                      )
-                                ),
-                                        
-                                      
-                            ),
-                            ],
-                          )
-                          ));
+                    child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [ 
+                      // ignore: prefer_const_constructors, duplicate_ignore
+                      const Padding(padding: EdgeInsets.only(top: 10)),
+                      Card(
+                      margin:const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                  // ignore: prefer_const_constructors
+                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Column(children: 
+                      [
+                      const Padding(padding: EdgeInsets.only(top: 3)),
+                       Row( mainAxisAlignment: MainAxisAlignment.center,
+                       
+                       children: [
+                      Text('${Profile.user.getReviewRating()}/5', style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+                       const Padding(padding: EdgeInsets.only(right: 3)),
+                       Icon(Icons.star,
+                       size: 50,
+                            color: const Color.fromRGBO(255, 183, 3, 1))]),
+                      const Padding(padding: EdgeInsets.all(3)),
+                      Center(child: Text('Average rating', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold))),
+                      Text('Based on the opinions of ${Profile.listReviews.length} users', style: const TextStyle(fontSize: 15, 
+                      fontWeight: FontWeight.bold, color: Colors.black38)),
+                      const Padding(padding: EdgeInsets.all(3))
+                      ],
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.only(top: 10)),
+                    const Text("Reviews",
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center),
+                        const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10)),
+                        for (var reviews in Profile.listReviews)
+                          Card(
+                            margin:const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                            shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                            child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                                    child: ClipOval(
+                                    child: Material(
+                                    color: Colors.transparent,
+                                    child: Ink.image(
+                                        image: FileImage(reviews.getUser().imageProfile),
+                                        fit: BoxFit.cover,
+                                        width: 30,
+                                        height: 30,
+
+                                    ),),),),
+                                    Padding(
+                                        padding: const EdgeInsets.fromLTRB(0,2,0,2),
+                                        child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(reviews.getUser().name,
+                                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                          ),
+                                          Padding(padding: EdgeInsets.only(bottom: deviceHeight * 0.02)),
+                                          Text((reviews.description.length > 10) ? "${reviews.description.substring(0,10)}..." : reviews.description,
+                                                style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+                                                ),
+                                            ],
+                                            ),
+                                    ),
+                                    Row(children: [
+                                          for (int i = 0; i < 5; i++) 
+                                          Icon(Icons.star,
+                                          color: (i < reviews.voto) ?
+                                                const Color.fromRGBO(255, 183, 3, 1): 
+                                                Colors.grey)
+                                        ],
+                                    ),
+                                ],
+                             ),        
+                 ),])),
+                 Positioned(
+                  top: -65,
+                  child: CircleAvatar(
+                      backgroundColor: const Color.fromRGBO(255, 178, 3, 1),
+                      radius: 60,
+                      child: CircleAvatar(
+                        backgroundImage: FileImage(imageProfile),
+                        radius: deviceWidth * 0.140,
+                      )),
+                ),
+               
+              ],
+            )));
   }
-
-
-
 }

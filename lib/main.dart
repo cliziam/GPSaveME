@@ -1,8 +1,12 @@
+
 import 'package:first_prj/screens/AroundYou.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/screens/HomePage.dart';
+//import 'package:first_prj/screens/HomePage2.dart';
 import 'package:first_prj/screens/Profile.dart';
 import 'package:location/location.dart';
+import 'package:first_prj/screens/Login.dart';
+// import 'package:first_prj/screens/Login.dart'; // da scommentare
 
 double deviceWidth = 0, deviceHeight = 0;
 
@@ -19,7 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "GPSaveMe",
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomePage(),
+      home: const Login(),
     );
   }
 
@@ -45,21 +49,21 @@ class MyApp extends StatelessWidget {
 
 Future<bool> getLocation() async {
   Location location = Location();
-  bool _serviceEnabled;
-  PermissionStatus _permissionGranted;
+  bool serviceEnabled;
+  PermissionStatus permissionGranted;
 
-  _serviceEnabled = await location.serviceEnabled();
-  if (!_serviceEnabled) {
-    _serviceEnabled = await location.requestService();
-    if (!_serviceEnabled) {
+  serviceEnabled = await location.serviceEnabled();
+  if (!serviceEnabled) {
+    serviceEnabled = await location.requestService();
+    if (!serviceEnabled) {
       return false;
     }
   }
 
-  _permissionGranted = await location.hasPermission();
-  if (_permissionGranted == PermissionStatus.denied) {
-    _permissionGranted = await location.requestPermission();
-    if (_permissionGranted != PermissionStatus.granted) {
+  permissionGranted = await location.hasPermission();
+  if (permissionGranted == PermissionStatus.denied) {
+    permissionGranted = await location.requestPermission();
+    if (permissionGranted != PermissionStatus.granted) {
       return false;
     }
   }
