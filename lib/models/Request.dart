@@ -49,23 +49,23 @@ class Request {
     return helped;
   }
 
-  String getDistance(userlat,userlon, reqlat, reqlon) {
-     var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(reqlat-userlat);  // deg2rad below
-  var dLon = deg2rad(reqlon-userlon); 
-  var a = 
-    sin(dLat/2) * sin(dLat/2) +
-    cos(deg2rad(userlat)) *cos(deg2rad(reqlat)) * 
-    sin(dLon/2) * sin(dLon/2); 
-  var c = 2 * atan2(sqrt(a), sqrt(1-a)); 
-  var d = R * c; // Distance in km
-  return (d * 1000).round().toString() + " mt";
+  String getDistance(userlat, userlon, reqlat, reqlon) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(reqlat - userlat); // deg2rad below
+    var dLon = deg2rad(reqlon - userlon);
+    var a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(deg2rad(userlat)) *
+            cos(deg2rad(reqlat)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+    var c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return "${(d * 1000).round()} mt";
   }
-  
-double deg2rad(deg) {
-  return deg * (pi/180);
-}
 
+  double deg2rad(deg) {
+    return deg * (pi / 180);
+  }
 
   String getDescription() {
     return description;

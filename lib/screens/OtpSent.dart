@@ -4,8 +4,9 @@ import 'package:first_prj/screens/HomePage.dart';
 import 'package:first_prj/screens/Login.dart';
 import 'package:first_prj/main.dart';
 import 'dart:math';
-import 'package:flutter_sms/flutter_sms.dart';
+//import 'package:flutter_sms/flutter_sms.dart';
 
+// ignore: must_be_immutable
 class OtpSent extends StatefulWidget {
   String otpTyped = "";
   final String generatedOtp = (Random().nextInt(1000) + 9000).toString();
@@ -104,8 +105,8 @@ class _OtpSentPageState extends State<OtpSent> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => const HomePage()));
                               } else {
-                                print(widget.otpTyped);
-                                print(widget.generatedOtp);
+                                //print(widget.otpTyped);
+                                //print(widget.generatedOtp);
                                 showDialog(
                                     context: context,
                                     builder: (_) => AlertDialog(

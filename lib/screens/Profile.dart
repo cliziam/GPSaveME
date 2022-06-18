@@ -263,8 +263,8 @@ class _ProfileState extends State<Profile> {
             });
             MyApp.navigateToNextScreen(context, index);
           }
-           if(index==1){
-             bool accepted=await getLocation();
+          if (index == 1) {
+            bool accepted = await getLocation();
           }
         },
         items: const <BottomNavigationBarItem>[
@@ -294,7 +294,7 @@ class _ProfileState extends State<Profile> {
       await toupload.writeAsBytes(byteData.buffer
           .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
       setState(() {
-        print("ciao");
+        //print("ciao");
         // punta a un percorso nel cloud storage
         final path = "users/${u!.phoneNumber}/images/profile.jpg";
         final ref = FirebaseStorage.instance.ref().child(path);

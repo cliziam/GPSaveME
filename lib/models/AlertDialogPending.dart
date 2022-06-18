@@ -1,5 +1,6 @@
-import 'dart:io';
-import 'dart:typed_data';
+//import 'dart:io';
+//import 'dart:typed_data';
+// ignore_for_file: file_names
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
@@ -9,9 +10,7 @@ import 'Status.dart';
 
 class AlertDialogPending extends StatefulWidget {
   const AlertDialogPending({Key? key}) : super(key: key);
-  static List<User> helpers = [
-   
-  ];
+  static List<User> helpers = [];
   @override
   // ignore: library_private_types_in_public_api
   _AlertDialogPendingState createState() => _AlertDialogPendingState();
@@ -153,7 +152,7 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                             child: Material(
                               color: Colors.transparent,
                               child: Ink.image(
-                                image: AssetImage("images/marge.jpeg"),
+                                image: const AssetImage("images/marge.jpeg"),
                                 fit: BoxFit.cover,
                                 width: 120,
                                 height: 120,

@@ -1,23 +1,24 @@
 // ignore_for_file: file_names
 import 'dart:convert';
-import 'dart:io';
+//import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+//import 'package:path_provider/path_provider.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'SignUpNumber.dart';
-import 'Signup.dart';
+//import 'Signup.dart';
 import 'OtpSent.dart';
 //import 'package:flutter_otp/flutter_otp.dart';
-import 'package:permission_handler/permission_handler.dart';
+//import 'package:permission_handler/permission_handler.dart';
 import 'package:first_prj/models/User.dart';
 
 User? u;
 
+// ignore: must_be_immutable
 class Login extends StatefulWidget {
   Login({Key? key}) : super(key: key);
   String phoneNumber = "";
@@ -115,6 +116,7 @@ class _LoginPageState extends State<Login> {
                       if (b) {
                         // ignore: use_build_context_synchronously
                         instantiateUser(widget.phoneNumber);
+                        // ignore: use_build_context_synchronously
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => OtpSent()));
                       } else {
@@ -271,5 +273,5 @@ void instantiateUser(String phone) async {
   }
 //SETTARE LATITUDE E LONGITUDE
   u = User(data["name"], data["surname"], phone, image, data["verified"], 0, 0);
-  print(data.runtimeType);
+  //print(data.runtimeType);
 }

@@ -1,9 +1,9 @@
 // ignore_for_file: file_names
 
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-import 'package:firebase_storage/firebase_storage.dart';
+//import 'dart:io';
+//import 'dart:typed_data';
+//import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -14,7 +14,6 @@ class User {
   String reviewMean = " ";
   double latitude;
   double longitude;
-  
 
   User(this.name, this.surname, this.phoneNumber, this.imageProfile,
       this.profileCheck, this.latitude, this.longitude) {
@@ -33,15 +32,13 @@ class User {
     reviewMean = (accumulator / reviews.length).toString();
   }
 
-  double getlatitude(){
+  double getlatitude() {
     return latitude;
   }
-  
-  double getlongitude(){
+
+  double getlongitude() {
     return longitude;
   }
-
- 
 }
 
 class Review {

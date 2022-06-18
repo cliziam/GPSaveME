@@ -10,9 +10,9 @@ import 'package:location/location.dart';
 import 'package:first_prj/screens/Login.dart';
 // import 'package:first_prj/screens/Login.dart'; // da scommentare
 import 'dart:async' show Future;
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path_provider/path_provider.dart';
+//import 'package:flutter/services.dart' show rootBundle;
+//import 'package:firebase_storage/firebase_storage.dart';
+//import 'package:path_provider/path_provider.dart';
 
 import 'models/User.dart';
 

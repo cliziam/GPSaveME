@@ -5,7 +5,6 @@ import 'package:first_prj/models/HelpCard.dart';
 import '../models/Status.dart';
 import '../models/AlertDialogPending.dart';
 
-
 class HomePage extends StatefulWidget {
   final String title = "GPSaveMe";
 
@@ -72,13 +71,15 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-        const Padding(padding: EdgeInsets.only(top: 5)),
-          if (!Status.requestDone)...
-            [HelpCard("images/car.png", "Transportation", false),
+          const Padding(padding: EdgeInsets.only(top: 5)),
+          if (!Status.requestDone) ...[
+            HelpCard("images/car.png", "Transportation", false),
             HelpCard("images/health.png", "Health", false),
             HelpCard("images/house.png", "House & Gardening", false),
-            HelpCard("images/hands.png", "General", false),]
-          else...[const AlertDialogPending()]
+            HelpCard("images/hands.png", "General", false),
+          ] else ...[
+            const AlertDialogPending()
+          ]
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -93,8 +94,8 @@ class _HomePageState extends State<HomePage> {
             });
             MyApp.navigateToNextScreen(context, index);
           }
-          if(index==1){
-             bool accepted=await getLocation();
+          if (index == 1) {
+            bool accepted = await getLocation();
           }
         },
         items: const <BottomNavigationBarItem>[
@@ -120,34 +121,36 @@ class _HomePageState extends State<HomePage> {
             context: context,
             builder: (BuildContext context) => AlertDialog(
               title: const Text('DANGER REQUEST'),
-              content: const Text('Are you sure you want to send a danger request?'),
+              content:
+                  const Text('Are you sure you want to send a danger request?'),
               actions: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary:
-                        const Color.fromRGBO(33, 158, 188, 1),
+                        primary: const Color.fromRGBO(33, 158, 188, 1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      onPressed: () =>
-                          Navigator.pop(context, 'Cancel'),
+                      onPressed: () => Navigator.pop(context, 'Cancel'),
                       child: const Text('Cancel'),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary:
-                        const Color.fromRGBO(255, 183, 3, 1),
+                        primary: const Color.fromRGBO(255, 183, 3, 1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      onPressed: () => { Status.setRequestDone(),
-                        Navigator.push( context, MaterialPageRoute(
-                            builder: (context) => const HomePage()), ).then((value) => setState(() {}))
+                      onPressed: () => {
+                        Status.setRequestDone(),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomePage()),
+                        ).then((value) => setState(() {}))
                       },
                       child: const Text('YES'),
                     ),

@@ -3,11 +3,11 @@ import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/main.dart';
-import 'package:first_prj/screens/Login.dart';
+//import 'package:first_prj/screens/Login.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:phone_form_field/phone_form_field.dart';
+//import 'package:phone_form_field/phone_form_field.dart';
 import 'package:first_prj/screens/HomePage.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/User.dart';
@@ -162,7 +162,6 @@ class _SignUpPageState extends State<SignUp> {
                   ),
                 ),
               ),
-
               Container(
                 margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Row(
@@ -331,7 +330,7 @@ class _SignUpPageState extends State<SignUp> {
         await picker.pickImage(source: ImageSource.camera);
     if (pickedImage != null) {
       setState(() async {
-        print("ciao");
+        //print("ciao");
         final byteData = await pickedImage.readAsBytes();
         String tempPath = (await getTemporaryDirectory()).path;
         // crea il file nella cache

@@ -1,23 +1,24 @@
 // ignore_for_file: file_names
 import 'dart:convert';
-import 'dart:io';
+//import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+//import 'package:path_provider/path_provider.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'Signup.dart';
-import 'OtpSent.dart';
+//import 'OtpSent.dart';
 //import 'package:flutter_otp/flutter_otp.dart';
-import 'package:permission_handler/permission_handler.dart';
+//import 'package:permission_handler/permission_handler.dart';
 import 'package:first_prj/models/User.dart';
 
 User? u;
 
-class  SignUpNumber extends StatefulWidget {
+// ignore: must_be_immutable
+class SignUpNumber extends StatefulWidget {
   SignUpNumber({Key? key}) : super(key: key);
   String phoneNumber = "";
   @override
@@ -67,7 +68,7 @@ class _SignUpNumberPageState extends State<SignUpNumber> {
               // ignore: prefer_const_constructors
               Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: const Text(
                       "Enter your mobile phone to continue your registration",
                       textAlign: TextAlign.center,
@@ -85,7 +86,7 @@ class _SignUpNumberPageState extends State<SignUpNumber> {
                 child: PhoneFormField(
                     defaultCountry: IsoCode.IT,
                     countrySelectorNavigator:
-                    const CountrySelectorNavigator.modalBottomSheet(
+                        const CountrySelectorNavigator.modalBottomSheet(
                       favorites: [IsoCode.IT, IsoCode.US],
                     ),
                     onSaved: (number) {
@@ -102,7 +103,7 @@ class _SignUpNumberPageState extends State<SignUpNumber> {
                     // ignore: sort_child_properties_last
                     child: Text("Sign Up".toUpperCase(),
                         style:
-                        const TextStyle(fontSize: 14, color: Colors.white)),
+                            const TextStyle(fontSize: 14, color: Colors.white)),
                     style: ButtonStyle(
                         padding: MaterialStateProperty.all<EdgeInsets>(
                             const EdgeInsets.all(15)),
@@ -110,14 +111,17 @@ class _SignUpNumberPageState extends State<SignUpNumber> {
                         backgroundColor: MaterialStateProperty.all<Color>(
                             const Color.fromRGBO(33, 158, 188, 1)),
                         shape:
-                        MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                                side: const BorderSide(
-                                    color:
-                                    Color.fromRGBO(33, 158, 188, 1))))),
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                    side: const BorderSide(
+                                        color:
+                                            Color.fromRGBO(33, 158, 188, 1))))),
                     onPressed: () {
-                      Navigator.push( context, MaterialPageRoute( builder: (context) => const SignUp()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignUp()));
                     },
                   )),
 
@@ -164,7 +168,7 @@ class TopWaveClipper extends CustomClipper<Path> {
     path.quadraticBezierTo(
         firstStart.dx, firstStart.dy, firstEnd.dx, firstEnd.dy);
     var secondStart =
-    Offset(size.width - (size.width / 3.24), size.height - 105);
+        Offset(size.width - (size.width / 3.24), size.height - 105);
     var secondEnd = Offset(size.width, size.height - 10);
     path.quadraticBezierTo(
         secondStart.dx, secondStart.dy, secondEnd.dx, secondEnd.dy);
@@ -190,7 +194,7 @@ class BottomWaveClipper extends CustomClipper<Path> {
     path.quadraticBezierTo(
         firstStart.dx, firstStart.dy, firstEnd.dx, firstEnd.dy);
     var secondStart =
-    Offset(size.width - (size.width / 3.24), startingPoint + 105);
+        Offset(size.width - (size.width / 3.24), startingPoint + 105);
     var secondEnd = Offset(size.width, startingPoint + 10);
     path.quadraticBezierTo(
         secondStart.dx, secondStart.dy, secondEnd.dx, secondEnd.dy);
@@ -211,7 +215,7 @@ Future<bool> checkLogin(String phone) async {
 
   // Create a reference with an initial file path and name
   final pathReference =
-  storageRef.child("userlist.json"); // questa linea funziona
+      storageRef.child("userlist.json"); // questa linea funziona
   const oneMegabyte = 1024 * 1024;
   final Uint8List? data1 = await pathReference.getData(oneMegabyte);
   var list = data1!.toList();
@@ -232,7 +236,7 @@ void instantiateUser(String phone) async {
     image = Image.memory(Uint8List.fromList([]));
   } else {
     final pathReference =
-    FirebaseStorage.instance.ref().child("users/$phone/images/profile.jpg");
+        FirebaseStorage.instance.ref().child("users/$phone/images/profile.jpg");
     var url = await pathReference.getDownloadURL();
     image = Image.network(url);
   }
