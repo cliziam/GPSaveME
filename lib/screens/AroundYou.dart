@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:first_prj/models/Request.dart';
 
+import '../models/AlertAroundYouPending.dart';
+import '../models/Status.dart';
+
 class AroundYou extends StatefulWidget {
   final String title = "GPSaveMe";
   static List<Request> requestList = [
@@ -113,7 +116,8 @@ class _AroundYouState extends State<AroundYou> {
                 // ignore: avoid_print
                 if (accepted) print("Refreshing...");
               }),
-          Expanded(
+           if (!Status.requestDone)...[
+            Expanded(
             child: AnimatedList(
                 key: _key,
                 initialItemCount: AroundYou.requestList.length,
@@ -122,7 +126,9 @@ class _AroundYouState extends State<AroundYou> {
                   return _buildItem(
                       AroundYou.requestList[index], animation, index);
                 }),
-          )
+           )
+          ]else...[
+            const Padding(padding: EdgeInsets.all(10)), const AlertAroundYouPending()]
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

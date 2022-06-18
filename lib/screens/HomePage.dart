@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:first_prj/models/HelpCard.dart';
+import '../models/Status.dart';
+import '../models/AlertDialogPending.dart';
+
 
 class HomePage extends StatefulWidget {
   final String title = "GPSaveMe";
@@ -69,11 +72,13 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          Padding(padding: EdgeInsets.only(bottom: deviceHeight * 0.05)),
-          HelpCard("images/car.png", "Transportation", false),
-          HelpCard("images/health.png", "Health", false),
-          HelpCard("images/house.png", "House & Gardening", false),
-          HelpCard("images/hands.png", "General", false),
+        const Padding(padding: EdgeInsets.only(top: 5)),
+          if (!Status.requestDone)...
+            [HelpCard("images/car.png", "Transportation", false),
+            HelpCard("images/health.png", "Health", false),
+            HelpCard("images/house.png", "House & Gardening", false),
+            HelpCard("images/hands.png", "General", false),]
+          else...[const AlertDialogPending()]
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
