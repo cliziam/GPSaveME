@@ -70,11 +70,7 @@ packages:
       name: cupertino_icons
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< HEAD
     version: "1.0.5"
-=======
-    version: "1.0.4"
->>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
   dart_countries:
     dependency: transitive
     description:
@@ -318,11 +314,7 @@ packages:
       name: path_provider_windows
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< HEAD
     version: "2.1.0"
-=======
-    version: "2.0.7"
->>>>>>> bad701c5a62e12e0ba50579882abe7872f3a50d6
   phone_form_field:
     dependency: "direct main"
     description:

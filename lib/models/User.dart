@@ -6,6 +6,8 @@ class User {
   String name, surname, phoneNumber;
   bool profileCheck;
   File imageProfile;
+  //inserire coordinate utente
+  //List<double> position;
   List<Review> reviewList = [];
   User(this.name, this.surname, this.phoneNumber, this.imageProfile,
       this.profileCheck);
@@ -50,3 +52,4 @@ class Document {
   Document(this.check, this.frontcheck, this.retrocheck,
       [this.front, this.retro]);
 }
+
