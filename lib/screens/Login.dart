@@ -1,14 +1,25 @@
 // ignore_for_file: file_names
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'Signup.dart';
 import 'OtpSent.dart';
 //import 'package:flutter_otp/flutter_otp.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:first_prj/models/User.dart';
+
+User? u;
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
-
+  Login({Key? key}) : super(key: key);
+  String phoneNumber = "";
   @override
   // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
@@ -70,10 +81,12 @@ class _LoginPageState extends State<Login> {
                         const CountrySelectorNavigator.modalBottomSheet(
                       favorites: [IsoCode.IT, IsoCode.US],
                     ),
-                    //onSaved: (number) {print('saved $p');},
+                    onSaved: (number) {
+                      widget.phoneNumber = number!.nsn;
+                    },
                     onChanged: (number) {
                       // ignore: avoid_print
-                      print('changed $number');
+                      widget.phoneNumber = number!.nsn;
                     }),
               ),
               Container(
@@ -96,9 +109,29 @@ class _LoginPageState extends State<Login> {
                                     side: const BorderSide(
                                         color:
                                             Color.fromRGBO(33, 158, 188, 1))))),
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const OtpSent()));
+                    onPressed: () async {
+                      bool b = await checkLogin(widget.phoneNumber);
+                      if (b) {
+                        // ignore: use_build_context_synchronously
+                        instantiateUser(widget.phoneNumber);
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => OtpSent()));
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                                  title: const Text("Login error!"),
+                                  content: const Text(
+                                      "The inserted number is not registered"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, 'Ok'),
+                                      child: const Text('Ok'),
+                                    )
+                                  ],
+                                ));
+                      }
                     },
                   )),
               Row(children: [
@@ -201,4 +234,41 @@ class BottomWaveClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+Future<bool> checkLogin(String phone) async {
+  // Create a storage reference from our app
+  final storageRef = FirebaseStorage.instance
+      .ref(); // scommentare se si vuole fare il download
+
+  // Create a reference with an initial file path and name
+  final pathReference =
+      storageRef.child("userlist.json"); // questa linea funziona
+  const oneMegabyte = 1024 * 1024;
+  final Uint8List? data1 = await pathReference.getData(oneMegabyte);
+  var list = data1!.toList();
+  var jsonAsString = String.fromCharCodes(list);
+  final data = await json.decode(jsonAsString);
+  bool b = false;
+  var lista = data["ids"];
+  if (lista.contains(phone)) b = true;
+  return b;
+}
+
+void instantiateUser(String phone) async {
+  final String response = await rootBundle.loadString('storage/userdata.json');
+  final data = await json.decode(response);
+  Image image = Image.memory(Uint8List.fromList([]));
+
+  if (data["image_profile"] == "") {
+    image = Image.memory(Uint8List.fromList([]));
+  } else {
+    final pathReference =
+        FirebaseStorage.instance.ref().child("users/$phone/images/profile.jpg");
+    var url = await pathReference.getDownloadURL();
+    image = Image.network(url);
+  }
+
+  u = User(data["name"], data["surname"], phone, image, data["verified"]);
+  print(data.runtimeType);
 }

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:first_prj/screens/AroundYou.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/screens/HomePage.dart';
@@ -6,6 +9,10 @@ import 'package:first_prj/screens/Profile.dart';
 import 'package:location/location.dart';
 import 'package:first_prj/screens/Login.dart';
 // import 'package:first_prj/screens/Login.dart'; // da scommentare
+import 'dart:async' show Future;
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path_provider/path_provider.dart';
 
 double deviceWidth = 0, deviceHeight = 0;
 
@@ -19,10 +26,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Firebase.initializeApp();
     return MaterialApp(
       title: "GPSaveMe",
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const Login(),
+      home: Login(),
     );
   }
 
@@ -68,3 +76,7 @@ Future<bool> getLocation() async {
   }
   return true;
 }
+
+//Future<String> loadAsset() async {
+//  return await rootBundle.loadString('storage/prova.txt');
+//}

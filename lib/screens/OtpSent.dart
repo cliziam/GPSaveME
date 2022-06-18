@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:first_prj/screens/HomePage.dart';
 import 'package:first_prj/screens/Login.dart';
 import 'package:first_prj/main.dart';
+import 'dart:math';
+import 'package:flutter_sms/flutter_sms.dart';
 
 class OtpSent extends StatefulWidget {
-  const OtpSent({Key? key}) : super(key: key);
+  String otpTyped = "";
+  final String generatedOtp = (Random().nextInt(1000) + 9000).toString();
+
+  OtpSent({Key? key}) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
   _OtpSentPageState createState() => _OtpSentPageState();
@@ -14,6 +19,8 @@ class OtpSent extends StatefulWidget {
 class _OtpSentPageState extends State<OtpSent> {
   @override
   Widget build(BuildContext context) {
+    var localOtp = widget.generatedOtp;
+
     // Build a Form widget using the _formKey created above.
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -57,9 +64,9 @@ class _OtpSentPageState extends State<OtpSent> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text(
-                    "Enter your OTP code number sent by SMS",
-                    style: TextStyle(
+                  Text(
+                    "Enter your OTP code number: $localOtp",
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: Colors.black38,
@@ -93,8 +100,27 @@ class _OtpSentPageState extends State<OtpSent> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => const HomePage()));
+                              if (widget.otpTyped == widget.generatedOtp) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => const HomePage()));
+                              } else {
+                                print(widget.otpTyped);
+                                print(widget.generatedOtp);
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                          title: const Text("OTP error!"),
+                                          content: const Text(
+                                              "The inserted OTP is not valid"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, 'Ok'),
+                                              child: const Text('Ok'),
+                                            )
+                                          ],
+                                        ));
+                              }
                             },
                             style: ButtonStyle(
                               foregroundColor: MaterialStateProperty.all<Color>(
@@ -184,6 +210,9 @@ class _OtpSentPageState extends State<OtpSent> {
           onChanged: (value) {
             if (value.length == 1 && last == false) {
               FocusScope.of(context).nextFocus();
+              widget.otpTyped += value.toString();
+            } else {
+              widget.otpTyped += value.toString();
             }
             if (value.isEmpty && first == false) {
               FocusScope.of(context).previousFocus();

@@ -1,26 +1,34 @@
 // ignore_for_file: file_names
 
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
 
 class User {
   String name, surname, phoneNumber;
   bool profileCheck;
-  File imageProfile;
-  List<Review> reviewList = [];
+  Image imageProfile;
+  String reviewMean = "";
 
   User(this.name, this.surname, this.phoneNumber, this.imageProfile,
-      this.profileCheck);
-
-  String getReviewRating() {
-    if (reviewList.isEmpty) return 0.toString();
-    double sum = 0;
-    for (int i = 0; i < reviewList.length; i++) {
-      sum += reviewList.elementAt(i).voto;
-    }
-    return (sum / reviewList.length).toString();
+      this.profileCheck) {
+    getReviewRating();
   }
-  
 
+  getReviewRating() async {
+    num accumulator = 0;
+    final String response =
+        await rootBundle.loadString('storage/userdata.json');
+    final data = await json.decode(response);
+    var reviews = data["review_list"];
+    for (int i = 0; i < reviews.length; i++) {
+      accumulator += reviews[i][0];
+    }
+    reviewMean = (accumulator / reviews.length).toString();
+  }
 }
 
 class Review {
@@ -31,11 +39,8 @@ class Review {
 }
 
 class Document {
-  File? front;
-  File? retro;
   bool frontcheck;
   bool retrocheck;
   bool check;
-  Document(this.check, this.frontcheck, this.retrocheck,
-      [this.front, this.retro]);
+  Document(this.check, this.frontcheck, this.retrocheck);
 }

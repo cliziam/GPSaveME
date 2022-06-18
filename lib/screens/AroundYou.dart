@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:first_prj/models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
@@ -13,15 +14,16 @@ class AroundYou extends StatefulWidget {
         3,
         REQUEST_TYPE.transportation,
         'out of fuel',
-        User('Marge', 'Simpson', '339862948', File("images/marge.jpeg"), false),
+        User('Marge', 'Simpson', '339862948',
+            Image.memory(Uint8List.fromList([])), false),
         "images/fuel.png"),
     Request(
         1,
         2,
         REQUEST_TYPE.health,
         'need a med',
-        User(
-            'Chiara', 'Griffin', '392164553', File("images/marge.jpeg"), false),
+        User('Chiara', 'Griffin', '392164553',
+            Image.memory(Uint8List.fromList([])), false),
         "images/fuel.png")
   ];
 
@@ -162,21 +164,21 @@ class _AroundYouState extends State<AroundYou> {
             _offerHelp(context, item);
           },
           contentPadding: const EdgeInsets.all(15),
-          title:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-                  Widget>[
-            Text(AroundYou.requestList[index].getName(),
-                style: const TextStyle(fontSize: 16)),
-            Row(
+          title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(AroundYou.requestList[index].getUser().getReviewRating()),
-                const Icon(
-                  Icons.star,
-                  color: Colors.yellow,
+                Text(AroundYou.requestList[index].getName(),
+                    style: const TextStyle(fontSize: 16)),
+                Row(
+                  children: <Widget>[
+                    Text(AroundYou.requestList[index].getUser().reviewMean),
+                    const Icon(
+                      Icons.star,
+                      color: Colors.yellow,
+                    )
+                  ],
                 )
-              ],
-            )
-          ]),
+              ]),
           trailing: Container(
               width: 50,
               height: 50,
@@ -264,7 +266,7 @@ class _AroundYouState extends State<AroundYou> {
                       ),
                       Padding(
                           padding: EdgeInsets.only(left: deviceWidth * 0.01)),
-                      Text(item.getUser().getReviewRating())
+                      Text(item.getUser().reviewMean)
                     ],
                   ),
                   Padding(

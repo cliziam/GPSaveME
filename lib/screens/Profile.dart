@@ -1,15 +1,19 @@
 // ignore_for_file: file_names
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../models/User.dart';
+import 'package:first_prj/screens/Login.dart';
 
 class Profile extends StatefulWidget {
   final String title = "GPSaveMe";
   static Document document = Document(false, false, false);
-  static User user =
-      User("Marge", "Simpson", "383965213", File("images/marge.jpeg"), false);
 
   const Profile({Key? key}) : super(key: key);
   @override
@@ -21,6 +25,11 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          uploadProfilePic();
+        },
+      ),
       appBar: AppBar(
         title: Text(widget.title),
         automaticallyImplyLeading: false,
@@ -69,18 +78,19 @@ class _ProfileState extends State<Profile> {
                   margin: EdgeInsets.all(deviceWidth * 0.095),
                   child: Stack(
                     children: [
-                      ClipOval(
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Ink.image(
-                            image: FileImage(Profile.user.imageProfile),
-                            fit: BoxFit.cover,
-                            width: 120,
-                            height: 120,
-                            //child: InkWell(onTap: ),
-                          ),
-                        ),
+                      SizedBox(
+                        width: 90,
+                        height: 90,
+                        child: u!.imageProfile,
                       ),
+                      // ClipOval(
+                      //     child: Ink.image(
+                      //   image: (SignUp.user.imageProfile),
+                      //   fit: BoxFit.cover,
+                      //   width: 90,
+                      //   height: 90,
+                      //   //child: InkWell(onTap: ),
+                      // )),
                       Positioned(
                         bottom: 0,
                         right: 4,
@@ -111,25 +121,25 @@ class _ProfileState extends State<Profile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    Profile.user.name,
+                    u!.name,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    Profile.user.surname,
+                    u!.surname,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                   Padding(padding: EdgeInsets.all(deviceWidth * 0.003)),
                   Row(
                     children: <Widget>[
-                      Text(Profile.user.getReviewRating()),
+                      Text(u!.reviewMean),
                       IconButton(
                         icon: const Icon(Icons.star,
                             color: Color.fromRGBO(255, 183, 3, 1)),
                         onPressed: () {
-                          _showReviews(Profile.user.imageProfile);
+                          _showReviews(u!.imageProfile);
                         },
                       )
                     ],
@@ -272,9 +282,22 @@ class _ProfileState extends State<Profile> {
     final picker = ImagePicker();
     final XFile? pickedImage =
         await picker.pickImage(source: ImageSource.camera);
+
     if (pickedImage != null) {
+      final byteData = await pickedImage.readAsBytes();
+      String tempPath = (await getTemporaryDirectory()).path;
+      // crea il file nella cache
+      File toupload = await File('$tempPath/profile.jpeg').create();
+      await toupload.writeAsBytes(byteData.buffer
+          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
       setState(() {
-        Profile.user.imageProfile = File(pickedImage.path);
+        print("ciao");
+        // punta a un percorso nel cloud storage
+        final path = "users/${u!.phoneNumber}/images/profile.jpg";
+        final ref = FirebaseStorage.instance.ref().child(path);
+        // carica il file
+        ref.putFile(toupload);
+        u!.imageProfile = Image.memory(Uint8List.fromList(byteData));
       });
     }
   }
@@ -284,21 +307,36 @@ class _ProfileState extends State<Profile> {
     final XFile? pickedImage =
         await picker.pickImage(source: ImageSource.camera);
     if (pickedImage != null) {
+      final byteData = await pickedImage.readAsBytes();
+      String tempPath = (await getTemporaryDirectory()).path;
+      // crea il file nella cache
+      var name = typeDoc ? "front" : "retro";
+      File toupload = await File('$tempPath/${name}doc.jpeg').create();
+      await toupload.writeAsBytes(byteData.buffer
+          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
       setState(() {
         //true-->front
         //false-->retro
         if (typeDoc) {
-          Profile.document.front = File(pickedImage.path);
+          // punta a un percorso nel cloud storage
+          final path = "users/${u!.phoneNumber}/images/${name}doc.jpg";
+          final ref = FirebaseStorage.instance.ref().child(path);
+          // carica il file
+          ref.putFile(toupload);
           Profile.document.frontcheck = true;
         } else {
-          Profile.document.retro = File(pickedImage.path);
+          // punta a un percorso nel cloud storage
+          final path = "users/${u!.phoneNumber}/images/${name}doc.jpg";
+          final ref = FirebaseStorage.instance.ref().child(path);
+          // carica il file
+          ref.putFile(toupload);
           Profile.document.retrocheck = true;
         }
       });
     }
   }
 
-  void _showReviews(File imageProfile) {
+  void _showReviews(Image imageProfile) {
     showDialog(
         context: context,
         builder: (_) => Dialog(
@@ -329,12 +367,34 @@ class _ProfileState extends State<Profile> {
                   child: CircleAvatar(
                       backgroundColor: const Color.fromRGBO(255, 178, 3, 1),
                       radius: 60,
-                      child: CircleAvatar(
-                        backgroundImage: FileImage(imageProfile),
-                        radius: deviceWidth * 0.140,
+                      child: SizedBox(
+                        width: 90,
+                        height: 90,
+                        child: u!.imageProfile,
                       )),
                 ),
               ],
             )));
+  }
+}
+
+uploadProfilePic() async {
+  // recupera file dal file system com ByteData
+  final byteData = await rootBundle.load('images/marge.jpeg');
+
+  // se l'utente dà il permesso per l'accesso ai file
+  if (await Permission.storage.request().isGranted) {
+    // prendi l'indirizzo della cache
+    String tempPath = (await getTemporaryDirectory()).path;
+    // crea il file nella cache
+    File file = await File('$tempPath/profile.jpeg').create();
+    // trascrivi nel file i ByteData
+    final toupload = await file.writeAsBytes(byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    // punta a un percorso nel cloud storage
+    final path = "users/${u!.phoneNumber}/images/profile.jpg";
+    final ref = FirebaseStorage.instance.ref().child(path);
+    // carica il file
+    ref.putFile(toupload);
   }
 }

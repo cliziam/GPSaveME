@@ -1,14 +1,20 @@
 // ignore_for_file: file_names
+import 'dart:typed_data';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/main.dart';
+import 'package:first_prj/screens/Login.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:first_prj/screens/HomePage.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/User.dart';
 
 class SignUp extends StatefulWidget {
-  static User user = User("", "", "", File("../../images/user.jpg"), false);
+  static User user =
+      User("", "", "", Image.memory(Uint8List.fromList([])), false);
 
   const SignUp({Key? key}) : super(key: key);
   @override
@@ -87,17 +93,19 @@ class _SignUpPageState extends State<SignUp> {
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                 child: Row(children: [
                   Stack(children: [
-                    ClipOval(
-                      child: Material(
-                        color: Colors.transparent,
-                        child: Ink.image(
-                          image: FileImage(SignUp.user.imageProfile),
-                          fit: BoxFit.cover,
-                          width: 90,
-                          height: 90,
-                        ),
-                      ),
+                    SizedBox(
+                      width: 90,
+                      height: 90,
+                      child: Image.memory(Uint8List.fromList([])),
                     ),
+                    // ClipOval(
+                    //     child: Ink.image(
+                    //   image: (SignUp.user.imageProfile),
+                    //   fit: BoxFit.cover,
+                    //   width: 90,
+                    //   height: 90,
+                    //   //child: InkWell(onTap: ),
+                    // )),
                     Positioned(
                       bottom: 0,
                       right: 4,
@@ -107,10 +115,7 @@ class _SignUpPageState extends State<SignUp> {
                           decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.circular(deviceWidth * 0.9),
-                              color: SignUp.user.imageProfile.path !=
-                                      "../../images/user.jpg"
-                                  ? Colors.green
-                                  : Colors.red),
+                              color: Colors.green),
                           child: InkWell(
                             onTap: () => _openImagePicker(),
                             child: const Icon(
@@ -137,7 +142,7 @@ class _SignUpPageState extends State<SignUp> {
                 child: TextField(
                   controller: nameController,
                   decoration: InputDecoration(
-                     errorStyle: const TextStyle(fontSize: 10),
+                    errorStyle: const TextStyle(fontSize: 10),
                     labelText: 'Name',
                     errorText: validators[0] == false
                         ? null
@@ -349,13 +354,24 @@ class _SignUpPageState extends State<SignUp> {
   }
 
   Future<void> _openImagePicker() async {
-    // ignore: no_leading_underscores_for_local_identifiers
-    final _picker = ImagePicker();
+    final picker = ImagePicker();
     final XFile? pickedImage =
-        await _picker.pickImage(source: ImageSource.camera);
+        await picker.pickImage(source: ImageSource.camera);
     if (pickedImage != null) {
-      setState(() {
-        SignUp.user.imageProfile = File(pickedImage.path);
+      setState(() async {
+        print("ciao");
+        final byteData = await pickedImage.readAsBytes();
+        String tempPath = (await getTemporaryDirectory()).path;
+        // crea il file nella cache
+        File toupload = await File('$tempPath/profile.jpeg').create();
+        await toupload.writeAsBytes(byteData.buffer
+            .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+        // punta a un percorso nel cloud storage
+        var phone = "333"; // cambia quando re-implementiamo il SignUp
+        final path = "users/$phone/images/profile.jpg";
+        final ref = FirebaseStorage.instance.ref().child(path);
+        // carica il file
+        ref.putFile(toupload);
       });
     }
   }
