@@ -1,0 +1,16 @@
+{
+    "name" : "Marge",
+    "surname" : "Simpson",
+    "image_profile" : "users/3335447108/images/profile.jpeg",
+    "review_list" : [[4, "He was helpful"],[5, "Very nice person!"]],
+    "location" : "",
+    "front_document" : "",
+    "retro_document" : "",
+    "pending_ask" : false,
+    "pending_give": false,
+    "helper" : "+39600000000",
+    "helped" : "", 
+    "verified" : true
+
+}
+
