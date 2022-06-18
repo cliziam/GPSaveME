@@ -59,7 +59,7 @@ class Request {
     sin(dLon/2) * sin(dLon/2); 
   var c = 2 * atan2(sqrt(a), sqrt(1-a)); 
   var d = R * c; // Distance in km
-  return d.toString();
+  return (d * 1000).round().toString() + " mt";
   }
   
 double deg2rad(deg) {

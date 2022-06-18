@@ -32,8 +32,7 @@ class _SignUpPageState extends State<SignUp> {
   String gender = "";
   String _birthdate = "";
   int age = 0;
-  String phoneNumber = "";
-  List<bool> validators = [false, false, false];
+  List<bool> validators = [false, false];
 
   void setAge(DateTime date) {
     /**function to set the age of the user*/
@@ -163,29 +162,7 @@ class _SignUpPageState extends State<SignUp> {
                   ),
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: PhoneFormField(
-                  defaultCountry: IsoCode.IT,
-                  countrySelectorNavigator:
-                      const CountrySelectorNavigator.modalBottomSheet(
-                    favorites: [IsoCode.IT, IsoCode.US],
-                  ),
-                  decoration: InputDecoration(
-                    labelText: 'Phone number',
-                    errorStyle: const TextStyle(fontSize: 10),
-                    errorText: validators[2] == false
-                        ? null
-                        : 'Please write your phone number!',
-                  ),
-                  validator: PhoneValidator.compose([
-                    PhoneValidator.required(
-                        errorText: "You must enter a value"),
-                    PhoneValidator.validMobile(),
-                  ]),
-                  onChanged: (p) => setState(() => phoneNumber = p.toString()),
-                ),
-              ),
+
               Container(
                 margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Row(
@@ -301,11 +278,6 @@ class _SignUpPageState extends State<SignUp> {
                         surnameController.text.isEmpty
                             ? validators[1] = true
                             : validators[1] = false;
-                      });
-                      setState(() {
-                        phoneNumber == ""
-                            ? validators[2] = true
-                            : validators[2] = false;
                       });
                       bool check = true;
                       for (var i in validators) {

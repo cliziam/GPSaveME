@@ -177,7 +177,7 @@ class _AroundYouState extends State<AroundYou> {
         color: const Color.fromRGBO(222, 240, 248, 1),
         child: ListTile(
           onTap: () {
-            _offerHelp(context, item);
+            _offerHelp(context, item, index);
           },
           contentPadding: const EdgeInsets.all(15),
           title: Column(
@@ -218,7 +218,7 @@ class _AroundYouState extends State<AroundYou> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset("images/distance.png", width: 40, height: 40),
-                const Text("200m"),
+                Text(item.getDistance(user.latitude, user.longitude, AroundYou.requestList[index].getUser().latitude, AroundYou.requestList[index].getUser().longitude),),
               ]),
         ),
       ),
@@ -240,7 +240,7 @@ class _AroundYouState extends State<AroundYou> {
     return path;
   }
 
-  void _offerHelp(BuildContext context, Request item) async {
+  void _offerHelp(BuildContext context, Request item, int index) async {
    
       showDialog(
           context: context,
@@ -265,8 +265,9 @@ class _AroundYouState extends State<AroundYou> {
                   Row(
                     children: <Widget>[
                       Text(
-                        item.getDistance(user.latitude, user.longitude, 41.90853481013936, 12.538626627581532)
-                        //item.getDistance(user.latitude, user.longitude, AroundYou.requestList[0].getUser().latitude, AroundYou.requestList[0].getUser().longitude),
+                        //item.getDistance(41.90842302663548, 12.538669542923634,
+                        //    41.90853880240373, 12.544473843077867)
+                        item.getDistance(user.latitude, user.longitude, AroundYou.requestList[index].getUser().latitude, AroundYou.requestList[index].getUser().longitude),
                       ),
                       Text(" | Request: ${item.getPriorityAsString()}")
                     ],

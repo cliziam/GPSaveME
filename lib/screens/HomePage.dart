@@ -115,7 +115,48 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         backgroundColor: Colors.red,
-        onPressed: () {},
+        onPressed: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('DANGER REQUEST'),
+              content: const Text('Are you sure you want to send a danger request?'),
+              actions: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary:
+                        const Color.fromRGBO(33, 158, 188, 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      onPressed: () =>
+                          Navigator.pop(context, 'Cancel'),
+                      child: const Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary:
+                        const Color.fromRGBO(255, 183, 3, 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      onPressed: () => { Status.setRequestDone(),
+                        Navigator.push( context, MaterialPageRoute(
+                            builder: (context) => const HomePage()), ).then((value) => setState(() {}))
+                      },
+                      child: const Text('YES'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
         icon: const Icon(Icons.warning_rounded),
       ),
     );
