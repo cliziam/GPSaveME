@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:first_prj/models/HelpCard.dart';
+import '../models/Status.dart';
+import '../models/AlertDialogPending.dart';
+
 
 class HomePage extends StatefulWidget {
   final String title = "GPSaveMe";
@@ -69,11 +72,13 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          Padding(padding: EdgeInsets.only(bottom: deviceHeight * 0.05)),
-          HelpCard("images/car.png", "Transportation", false),
-          HelpCard("images/health.png", "Health", false),
-          HelpCard("images/house.png", "House & Gardening", false),
-          HelpCard("images/hands.png", "General", false),
+        const Padding(padding: EdgeInsets.only(top: 5)),
+          if (!Status.requestDone)...
+            [HelpCard("images/car.png", "Transportation", false),
+            HelpCard("images/health.png", "Health", false),
+            HelpCard("images/house.png", "House & Gardening", false),
+            HelpCard("images/hands.png", "General", false),]
+          else...[const AlertDialogPending()]
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -81,12 +86,15 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),
         unselectedItemColor: Colors.white,
         currentIndex: MyApp.selectedIndex,
-        onTap: (index) {
+        onTap: (index) async {
           if (MyApp.selectedIndex != index) {
             setState(() {
               MyApp.selectedIndex = index;
             });
             MyApp.navigateToNextScreen(context, index);
+          }
+          if(index==1){
+             bool accepted=await getLocation();
           }
         },
         items: const <BottomNavigationBarItem>[
@@ -107,7 +115,48 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         backgroundColor: Colors.red,
-        onPressed: () {},
+        onPressed: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('DANGER REQUEST'),
+              content: const Text('Are you sure you want to send a danger request?'),
+              actions: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary:
+                        const Color.fromRGBO(33, 158, 188, 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      onPressed: () =>
+                          Navigator.pop(context, 'Cancel'),
+                      child: const Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary:
+                        const Color.fromRGBO(255, 183, 3, 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      onPressed: () => { Status.setRequestDone(),
+                        Navigator.push( context, MaterialPageRoute(
+                            builder: (context) => const HomePage()), ).then((value) => setState(() {}))
+                      },
+                      child: const Text('YES'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
         icon: const Icon(Icons.warning_rounded),
       ),
     );

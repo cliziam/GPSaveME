@@ -10,20 +10,7 @@ import 'Status.dart';
 class AlertDialogPending extends StatefulWidget {
   const AlertDialogPending({Key? key}) : super(key: key);
   static List<User> helpers = [
-    User(
-      'Marge',
-      'Simpson',
-      '339862948',
-      Image.asset("images/marge.jpeg"),
-      false,
-    ),
-    User(
-      'Chiara',
-      'Griffin',
-      '392164553',
-      Image.asset("images/marge.jpeg"),
-      false,
-    )
+   
   ];
   @override
   // ignore: library_private_types_in_public_api
@@ -31,6 +18,7 @@ class AlertDialogPending extends StatefulWidget {
 }
 
 class _AlertDialogPendingState extends State<AlertDialogPending> {
+  @override
   Widget build(BuildContext context) {
     return Column(children: [
       Card(

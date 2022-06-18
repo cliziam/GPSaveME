@@ -1,13 +1,18 @@
 // ignore_for_file: file_names
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:first_prj/models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:first_prj/models/Request.dart';
+import '../models/AlertAroundYouPending.dart';
+import '../models/Status.dart';
 
 class AroundYou extends StatefulWidget {
   final String title = "GPSaveMe";
+  User user= User('Marge', 'Simpson', '339862948',
+            Image.memory(Uint8List.fromList([])), false, 0, 0);
   static List<Request> requestList = [
     Request(
         0,
@@ -15,7 +20,7 @@ class AroundYou extends StatefulWidget {
         REQUEST_TYPE.transportation,
         'out of fuel',
         User('Marge', 'Simpson', '339862948',
-            Image.memory(Uint8List.fromList([])), false),
+            Image.memory(Uint8List.fromList([])), false, 41.908236221281534, 12.535103079414553),
         "images/fuel.png"),
     Request(
         1,
@@ -23,11 +28,11 @@ class AroundYou extends StatefulWidget {
         REQUEST_TYPE.health,
         'need a med',
         User('Chiara', 'Griffin', '392164553',
-            Image.memory(Uint8List.fromList([])), false),
+            Image.memory(Uint8List.fromList([])), false,41.908236221281534, 12.535103079414553),
         "images/fuel.png")
   ];
 
-  const AroundYou({Key? key}) : super(key: key);
+  AroundYou({Key? key}) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
   _AroundYouState createState() => _AroundYouState();
@@ -35,6 +40,8 @@ class AroundYou extends StatefulWidget {
 
 class _AroundYouState extends State<AroundYou> {
   final GlobalKey<AnimatedListState> _key = GlobalKey();
+  bool accepted= false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +95,8 @@ class _AroundYouState extends State<AroundYou> {
                 width: deviceWidth * 0.6,
                 height: deviceHeight * 0.07,
                 // ignore: sort_child_properties_last
-                child: Row(
+                child: 
+                  Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     const Text('Refresh',
@@ -109,11 +117,11 @@ class _AroundYouState extends State<AroundYou> {
                     color: const Color.fromRGBO(255, 183, 3, 1)),
               ),
               onTap: () async {
-                bool accepted = await getLocation();
                 // ignore: avoid_print
                 if (accepted) print("Refreshing...");
               }),
-          Expanded(
+           if (!Status.requestDone)...[
+            Expanded(
             child: AnimatedList(
                 key: _key,
                 initialItemCount: AroundYou.requestList.length,
@@ -122,7 +130,9 @@ class _AroundYouState extends State<AroundYou> {
                   return _buildItem(
                       AroundYou.requestList[index], animation, index);
                 }),
-          )
+           )
+          ]else...[
+            const Padding(padding: EdgeInsets.all(10)), const AlertAroundYouPending()]
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -130,13 +140,17 @@ class _AroundYouState extends State<AroundYou> {
         selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),
         unselectedItemColor: Colors.white,
         currentIndex: MyApp.selectedIndex,
-        onTap: (index) {
+        onTap: (index) async {
           if (MyApp.selectedIndex != index) {
             setState(() {
               MyApp.selectedIndex = index;
             });
             MyApp.navigateToNextScreen(context, index);
           }
+          if(index==1){
+             accepted=await getLocation();
+          }
+       
         },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -144,7 +158,9 @@ class _AroundYouState extends State<AroundYou> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.gps_fixed), label: 'Around You'),
+            
+              icon: Icon(Icons.gps_fixed), 
+              label: 'Around You'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
         ],
       ),
@@ -161,7 +177,7 @@ class _AroundYouState extends State<AroundYou> {
         color: const Color.fromRGBO(222, 240, 248, 1),
         child: ListTile(
           onTap: () {
-            _offerHelp(context, item);
+            _offerHelp(context, item, index);
           },
           contentPadding: const EdgeInsets.all(15),
           title: Column(
@@ -202,7 +218,7 @@ class _AroundYouState extends State<AroundYou> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset("images/distance.png", width: 40, height: 40),
-                const Text("200m"),
+                Text(item.getDistance(user.latitude, user.longitude, AroundYou.requestList[index].getUser().latitude, AroundYou.requestList[index].getUser().longitude),),
               ]),
         ),
       ),
@@ -224,10 +240,8 @@ class _AroundYouState extends State<AroundYou> {
     return path;
   }
 
-  void _offerHelp(BuildContext context, Request item) async {
-    bool accepted = await getLocation();
-
-    if (accepted) {
+  void _offerHelp(BuildContext context, Request item, int index) async {
+   
       showDialog(
           context: context,
           builder: (_) => AlertDialog(
@@ -251,7 +265,9 @@ class _AroundYouState extends State<AroundYou> {
                   Row(
                     children: <Widget>[
                       Text(
-                        item.getDistance(item.getUser()),
+                        //item.getDistance(41.90842302663548, 12.538669542923634,
+                        //    41.90853880240373, 12.544473843077867)
+                        item.getDistance(user.latitude, user.longitude, AroundYou.requestList[index].getUser().latitude, AroundYou.requestList[index].getUser().longitude),
                       ),
                       Text(" | Request: ${item.getPriorityAsString()}")
                     ],
@@ -298,6 +314,10 @@ class _AroundYouState extends State<AroundYou> {
                 ],
                 actionsAlignment: MainAxisAlignment.spaceEvenly,
               ));
-    }
+    
   }
+
+
+
+
 }

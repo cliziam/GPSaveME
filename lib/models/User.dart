@@ -11,10 +11,13 @@ class User {
   String name, surname, phoneNumber;
   bool profileCheck;
   Image imageProfile;
-  String reviewMean = "";
+  String reviewMean = " ";
+  double latitude;
+  double longitude;
+  
 
   User(this.name, this.surname, this.phoneNumber, this.imageProfile,
-      this.profileCheck) {
+      this.profileCheck, this.latitude, this.longitude) {
     getReviewRating();
   }
 
@@ -29,6 +32,16 @@ class User {
     }
     reviewMean = (accumulator / reviews.length).toString();
   }
+
+  double getlatitude(){
+    return latitude;
+  }
+  
+  double getlongitude(){
+    return longitude;
+  }
+
+ 
 }
 
 class Review {
