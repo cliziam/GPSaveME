@@ -14,7 +14,7 @@ import '../models/User.dart';
 
 class SignUp extends StatefulWidget {
   static User user =
-      User("", "", "", Image.memory(Uint8List.fromList([])), false);
+      User("", "", "", Image.memory(Uint8List.fromList([])), false, 0, 0);
 
   const SignUp({Key? key}) : super(key: key);
   @override

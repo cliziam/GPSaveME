@@ -256,12 +256,15 @@ class _ProfileState extends State<Profile> {
         selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),
         unselectedItemColor: Colors.white,
         currentIndex: MyApp.selectedIndex,
-        onTap: (index) {
+        onTap: (index) async {
           if (MyApp.selectedIndex != index) {
             setState(() {
               MyApp.selectedIndex = index;
             });
             MyApp.navigateToNextScreen(context, index);
+          }
+           if(index==1){
+             bool accepted=await getLocation();
           }
         },
         items: const <BottomNavigationBarItem>[

@@ -268,7 +268,7 @@ void instantiateUser(String phone) async {
     var url = await pathReference.getDownloadURL();
     image = Image.network(url);
   }
-
-  u = User(data["name"], data["surname"], phone, image, data["verified"]);
+//SETTARE LATITUDE E LONGITUDE
+  u = User(data["name"], data["surname"], phone, image, data["verified"], 0, 0);
   print(data.runtimeType);
 }
