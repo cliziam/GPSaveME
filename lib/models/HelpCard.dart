@@ -1,3 +1,4 @@
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import '../screens/HomePage.dart';
@@ -89,7 +90,7 @@ class _RequestCardState extends State<RequestCard> {
   // ignore: non_constant_identifier_names
   var listVariables_general = ["Street", "Personal", "Other"];
   var listColors = ["Low", "Medium", "High"];
-  
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -103,10 +104,13 @@ class _RequestCardState extends State<RequestCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              for (var k in widget.title == 'Transportation' ? 
-              listVariables_transportation : widget.title == 'Health' ? 
-              listVariables_health : widget.title == 'General' ? 
-              listVariables_general : listVariables_house)
+              for (var k in widget.title == 'Transportation'
+                  ? listVariables_transportation
+                  : widget.title == 'Health'
+                      ? listVariables_health
+                      : widget.title == 'General'
+                          ? listVariables_general
+                          : listVariables_house)
                 Padding(
                   padding: const EdgeInsets.only(right: 5),
                   child: InkWell(
@@ -202,9 +206,13 @@ class _RequestCardState extends State<RequestCard> {
                   !timeIsSelected
               ? null
               : {
-                Status.setRequestDone(),
-                Navigator.push( context, MaterialPageRoute( builder: (context) => const HomePage()), ).then((value) => setState(() {}))},
-                //Navigator.pop(context, 'OK')},
+                  Status.setRequestDone(),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  ).then((value) => setState(() {}))
+                },
+          //Navigator.pop(context, 'OK')},
           child: Text('REQUEST HELP',
               style: TextStyle(
                 color: priSelected == "" ||
@@ -289,10 +297,10 @@ class RequestTypeCard extends StatelessWidget {
   String text;
   Color? fillColor;
 
-  RequestTypeCard(this.imagePath, this.text, this.fillColor, {Key? key }) : super(key: key){
-    imagePath=imagePath.toLowerCase();
+  RequestTypeCard(this.imagePath, this.text, this.fillColor, {Key? key})
+      : super(key: key) {
+    imagePath = imagePath.toLowerCase();
   }
-
 
   @override
   Widget build(BuildContext context) {

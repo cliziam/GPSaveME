@@ -164,10 +164,16 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                     children: [
                       Row(
                         children: [
-                          CircleAvatar(
-                           radius: 40,
-                           backgroundColor: Colors.transparent,
-                            child:  ClipRRect(borderRadius: BorderRadius.circular(40.0),child: helper.imageProfile,
+                          ClipOval(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: Ink.image(
+                                image: const AssetImage("images/marge.jpeg"),
+                                fit: BoxFit.cover,
+                                width: 120,
+                                height: 120,
+                                //child: InkWell(onTap: ),
+                              ),
                             ),
                           ),
                           const Padding(padding: EdgeInsets.only(left: 0.2)),

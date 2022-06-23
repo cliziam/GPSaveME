@@ -2,13 +2,14 @@ import 'dart:typed_data';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:first_prj/screens/AroundYou.dart';
+import 'package:first_prj/screens/NFC.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/screens/HomePage.dart';
 //import 'package:first_prj/screens/HomePage2.dart';
 import 'package:first_prj/screens/Profile.dart';
 import 'package:location/location.dart';
 import 'package:first_prj/screens/Login.dart';
-import 'package:first_prj/screens/SignUpNumber.dart';
+// import 'package:first_prj/screens/Login.dart'; // da scommentare
 import 'dart:async' show Future;
 //import 'package:flutter/services.dart' show rootBundle;
 //import 'package:firebase_storage/firebase_storage.dart';
@@ -17,7 +18,8 @@ import 'dart:async' show Future;
 import 'models/User.dart';
 
 double deviceWidth = 0, deviceHeight = 0;
-
+User user = User('Marge', 'Simpson', '339862948',
+    Image.memory(Uint8List.fromList([])), false, 0, 0);
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
@@ -44,8 +46,8 @@ class MyApp extends StatelessWidget {
         break;
       case 1:
         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          getLocation();
-          return AroundYou();
+          const NFC();
+          return const NFC();
         }));
         break;
       case 2:
@@ -77,9 +79,9 @@ Future<bool> getLocation() async {
     }
   }
   LocationData locationData = await location.getLocation();
-  u!.latitude = locationData.latitude!;
-  u!.longitude = locationData.longitude!;
-  await u!.updateLocation();
+  user.latitude = locationData.latitude!;
+  user.longitude = locationData.longitude!;
+  await user.updateLocation();
 
   return true;
 }

@@ -14,7 +14,6 @@ import 'package:googleapis/bigquery/v2.dart';
 import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:math';
-
 class User {
   String name, surname, phoneNumber;
   bool profileCheck;
