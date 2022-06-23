@@ -1,11 +1,14 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:first_prj/screens/HomePage.dart';
-import 'package:first_prj/screens/Login.dart';
+import '../models/AlertDialogPending.dart';
+import 'SignUpNumber.dart';
 import 'package:first_prj/main.dart';
 import 'dart:math';
-import 'package:flutter_sms/flutter_sms.dart';
 
+//import 'package:flutter_sms/flutter_sms.dart';
+
+// ignore: must_be_immutable
 class OtpSent extends StatefulWidget {
   String otpTyped = "";
   final String generatedOtp = (Random().nextInt(1000) + 9000).toString();
@@ -99,13 +102,16 @@ class _OtpSentPageState extends State<OtpSent> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              AlertDialogPending.helpers =
+                                  await u!.checkForHelp();
+                              if (!mounted) return;
                               if (widget.otpTyped == widget.generatedOtp) {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => const HomePage()));
                               } else {
-                                print(widget.otpTyped);
-                                print(widget.generatedOtp);
+                                //print(widget.otpTyped);
+                                //print(widget.generatedOtp);
                                 showDialog(
                                     context: context,
                                     builder: (_) => AlertDialog(

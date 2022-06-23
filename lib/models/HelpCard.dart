@@ -79,10 +79,14 @@ class _RequestCardState extends State<RequestCard> {
   var reqSelected = "";
   var priSelected = "";
 
+
   // ignore: non_constant_identifier_names
   var listVariables_transportation = ["Puncture", "Fuel", "Other"];
-  var listVariables_health =["Meds", "Injury", "Other"];
+  // ignore: non_constant_identifier_names
+  var listVariables_health = ["Meds", "Injury", "Other"];
+  // ignore: non_constant_identifier_names
   var listVariables_house = ["Shopping", "Furniture", "Other"];
+  // ignore: non_constant_identifier_names
   var listVariables_general = ["Street", "Personal", "Other"];
   var listColors = ["Low", "Medium", "High"];
   

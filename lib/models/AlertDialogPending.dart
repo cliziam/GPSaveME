@@ -1,23 +1,30 @@
-import 'dart:io';
-import 'dart:typed_data';
+//import 'dart:io';
+//import 'dart:typed_data';
+// ignore_for_file: file_names
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:first_prj/models/User.dart';
 import '../screens/HomePage.dart';
+import 'package:first_prj/screens/SignUpNumber.dart';
 import 'Status.dart';
 
 class AlertDialogPending extends StatefulWidget {
   const AlertDialogPending({Key? key}) : super(key: key);
-  static List<User> helpers = [
-   
-  ];
+  static List<User> helpers = [];
+  static List<dynamic> attributes = [];
   @override
   // ignore: library_private_types_in_public_api
   _AlertDialogPendingState createState() => _AlertDialogPendingState();
 }
 
 class _AlertDialogPendingState extends State<AlertDialogPending> {
+  var attributes = AlertDialogPending.attributes;
+  var priority = AlertDialogPending.attributes[0];
+  var reqType = AlertDialogPending.attributes[1];
+  var reqSubType = AlertDialogPending.attributes[2];
+  var reqText = AlertDialogPending.attributes[3];
+
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -37,14 +44,20 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                     // ignore: prefer_const_literals_to_create_immutables
                     children: [
                       // ignore: prefer_const_constructors
-                      Text("Transportation",
+                      Text(reqType,
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18)),
                       SizedBox(
                         width: deviceWidth * 0.1,
                         height: deviceWidth * 0.1,
                         child: Image.asset(
-                          "images/car.png",
+                          reqType == "Transportation"
+                              ? "images/car.png"
+                              : reqType == "Health"
+                                  ? "images/health.png"
+                                  : reqType == "House & Gardening"
+                                      ? "images/house.png"
+                                      : "images/hands.png",
                         ),
                       ),
                     ],
@@ -56,15 +69,15 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                           width: deviceWidth * 0.1,
                           height: deviceWidth * 0.1,
                           child: Image.asset(
-                            "images/fuel.png",
+                            "images/${reqSubType.toLowerCase()}.png",
                           ),
                         ),
-                        const Text("Description",
+                        Text(reqText,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black38))
                       ]),
-                  const Text("Your request will be up unti: {orario}",
+                  const Text("Your request will be up unti: 11:30 AM",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                   ElevatedButton(
@@ -108,14 +121,16 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                                       borderRadius: BorderRadius.circular(20.0),
                                     ),
                                   ),
-                                  onPressed: () => {
-                                    Status.setRequestDone(),
+                                  onPressed: () async {
+                                    await u!.deleteRequest();
+                                    if (!mounted) return;
+                                    Status.setRequestDone();
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               const HomePage()),
-                                    ).then((value) => setState(() {}))
+                                    ).then((value) => setState(() {}));
                                   },
                                   child: const Text('DELETE'),
                                 ),
@@ -149,16 +164,10 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                     children: [
                       Row(
                         children: [
-                          ClipOval(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: Ink.image(
-                                image: AssetImage("images/marge.jpeg"),
-                                fit: BoxFit.cover,
-                                width: 120,
-                                height: 120,
-                                //child: InkWell(onTap: ),
-                              ),
+                          CircleAvatar(
+                           radius: 40,
+                           backgroundColor: Colors.transparent,
+                            child:  ClipRRect(borderRadius: BorderRadius.circular(40.0),child: helper.imageProfile,
                             ),
                           ),
                           const Padding(padding: EdgeInsets.only(left: 0.2)),
@@ -171,27 +180,25 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                                       TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15)),
-                              const Text('100m',
-                                  style: TextStyle(
+                              Text(User.getDistance(u!, helper),
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black38)),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  Text(helper.getReviewRating(),
+                                  Text(helper.reviewMean,
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black38)),
                                   const Padding(
                                       padding: EdgeInsets.only(right: 5)),
-                                  for (int i = 0; i < 5; i++)
+                                   for (int i = 0; i < 5; i++)
                                     Icon(Icons.star,
                                         size: 12,
                                         color: (i <
-                                                int.parse(helper
-                                                        .getReviewRating())
-                                                    .ceil())
+                                               int.parse(helper.reviewMean).ceil())
                                             ? const Color.fromRGBO(
                                                 255, 183, 3, 1)
                                             : Colors.grey)
@@ -211,7 +218,9 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                             ),
-                            onPressed: () => {},
+                            onPressed: () {
+                              u!.rejectRequest(helper.phoneNumber);
+                            },
                             child: const Text('REJECT'),
                           ),
                           ElevatedButton(
@@ -221,7 +230,9 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                             ),
-                            onPressed: () => {},
+                            onPressed: () {
+                              u!.acceptRequest(helper.phoneNumber);
+                            },
                             child: const Text('ACCEPT'),
                           ),
                         ],
@@ -235,7 +246,7 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
           enlargeCenterPage: true,
           autoPlay: true,
           aspectRatio: 15 / 4,
-          height: MediaQuery.of(context).size.height / 3.1,
+          height: deviceHeight / 4,
           autoPlayCurve: Curves.fastLinearToSlowEaseIn,
           enableInfiniteScroll: true,
           autoPlayAnimationDuration: const Duration(milliseconds: 800),

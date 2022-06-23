@@ -1,21 +1,20 @@
 // ignore_for_file: file_names
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/main.dart';
-import 'package:first_prj/screens/Login.dart';
+//import 'package:first_prj/screens/Login.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:phone_form_field/phone_form_field.dart';
+//import 'package:phone_form_field/phone_form_field.dart';
 import 'package:first_prj/screens/HomePage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:first_prj/screens/SignUpNumber.dart';
 import '../models/User.dart';
 
 class SignUp extends StatefulWidget {
-  static User user =
-      User("", "", "", Image.memory(Uint8List.fromList([])), false, 0, 0);
-
   const SignUp({Key? key}) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
@@ -95,7 +94,7 @@ class _SignUpPageState extends State<SignUp> {
                     SizedBox(
                       width: 90,
                       height: 90,
-                      child: Image.memory(Uint8List.fromList([])),
+                      child: u!.imageProfile,
                     ),
                     // ClipOval(
                     //     child: Ink.image(
@@ -147,6 +146,9 @@ class _SignUpPageState extends State<SignUp> {
                         ? null
                         : 'Please write your name.',
                   ),
+                  onChanged: (_) {
+                    u!.name = nameController.text;
+                  },
                 ),
               ),
               Container(
@@ -160,9 +162,11 @@ class _SignUpPageState extends State<SignUp> {
                         ? null
                         : 'Please write your surname.',
                   ),
+                  onChanged: (_) {
+                    u!.surname = surnameController.text;
+                  },
                 ),
               ),
-
               Container(
                 margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Row(
@@ -269,6 +273,7 @@ class _SignUpPageState extends State<SignUp> {
                                         color:
                                             Color.fromRGBO(33, 158, 188, 1))))),
                     onPressed: () async {
+                      bool b = await uploadUserData();
                       setState(() {
                         nameController.text.isEmpty
                             ? validators[0] = true
@@ -286,7 +291,7 @@ class _SignUpPageState extends State<SignUp> {
                           break;
                         }
                       }
-                      if (check) {
+                      if (check && b) {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => const HomePage()));
                       } else {
@@ -329,21 +334,22 @@ class _SignUpPageState extends State<SignUp> {
     final picker = ImagePicker();
     final XFile? pickedImage =
         await picker.pickImage(source: ImageSource.camera);
+
     if (pickedImage != null) {
-      setState(() async {
-        print("ciao");
-        final byteData = await pickedImage.readAsBytes();
-        String tempPath = (await getTemporaryDirectory()).path;
-        // crea il file nella cache
-        File toupload = await File('$tempPath/profile.jpeg').create();
-        await toupload.writeAsBytes(byteData.buffer
-            .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+      final byteData = await pickedImage.readAsBytes();
+      String tempPath = (await getTemporaryDirectory()).path;
+      // crea il file nella cache
+      File toupload = await File('$tempPath/profile.jpeg').create();
+      await toupload.writeAsBytes(byteData.buffer
+          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+      setState(() {
+        //print("ciao");
         // punta a un percorso nel cloud storage
-        var phone = "333"; // cambia quando re-implementiamo il SignUp
-        final path = "users/$phone/images/profile.jpg";
+        final path = "users/${u!.phoneNumber}/images/profile.jpg";
         final ref = FirebaseStorage.instance.ref().child(path);
         // carica il file
         ref.putFile(toupload);
+        u!.imageProfile = Image.memory(Uint8List.fromList(byteData));
       });
     }
   }
@@ -398,4 +404,43 @@ class BottomWaveClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+uploadUserData() async {
+  var jsonFile = {
+    "name": u!.name,
+    "surname": u!.surname,
+    "image_profile": "users/${u!.phoneNumber}/images/profile.jpg",
+    "review_list": [],
+    "latitude": "",
+    "longitude": "",
+    "front_document": "",
+    "retro_document": "",
+    "pending_ask": false,
+    "pending_give": false,
+    "helper": "0",
+    "helped": "",
+    "verified": true,
+    "request_type": "",
+    "request_text": "",
+    "request_subtype": "",
+    "share_number": false,
+    "request_priority": "",
+  };
+  var jsonString = jsonEncode(jsonFile);
+  var bytes = utf8.encode(jsonString);
+  var byteData = base64.encode(bytes);
+
+  var arr = base64.decode(byteData);
+
+  String tempPath = (await getTemporaryDirectory()).path;
+  // crea il file nella cache
+  File toupload = await File('$tempPath/userdata.json').create();
+  await toupload.writeAsBytes(arr);
+  final ref = FirebaseStorage.instance
+      .ref()
+      .child("users/${u!.phoneNumber}/userdata.json");
+  // carica il file
+  ref.putFile(toupload);
+  return true;
 }

@@ -47,6 +47,11 @@ dependencies:
   firebase_core : ^1.17.1
   flutter_sms: ^2.3.3
   carousel_slider: ^4.1.1
+  qr_flutter: ^4.0.0
+  qr_code_scanner: 
+    git:
+      url: https://github.com/X-SLAYER/qr_code_scanner.git
+      ref: flutter-beta
 
 dev_dependencies:
   flutter_test:
@@ -66,7 +71,7 @@ dev_dependencies:
 flutter:
   assets: 
     - images/
-    - storage/
+   
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

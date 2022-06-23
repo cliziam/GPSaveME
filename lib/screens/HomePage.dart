@@ -1,10 +1,13 @@
 // ignore_for_file: file_names
+import 'package:first_prj/screens/AroundYou.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:first_prj/models/HelpCard.dart';
 import '../models/Status.dart';
 import '../models/AlertDialogPending.dart';
+import 'package:first_prj/screens/SignUpNumber.dart';
 
+import '../models/User.dart';
 
 class HomePage extends StatefulWidget {
   final String title = "GPSaveMe";
@@ -16,6 +19,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var refreshColor = Color.fromRGBO(255, 183, 3, 1);
+  List<User> users = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,13 +78,49 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-        const Padding(padding: EdgeInsets.only(top: 5)),
-          if (!Status.requestDone)...
-            [HelpCard("images/car.png", "Transportation", false),
+          const Padding(padding: EdgeInsets.only(top: 5)),
+          InkWell(
+              child: Container(
+                width: deviceWidth * 0.6,
+                height: deviceHeight * 0.07,
+                // ignore: sort_child_properties_last
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    const Text('Refresh',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          color: Colors.white,
+                        )),
+                    Padding(padding: EdgeInsets.only(left: deviceWidth * 0.13)),
+                    const Icon(Icons.refresh),
+                    Padding(
+                        padding: EdgeInsets.only(right: deviceWidth * 0.03)),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: refreshColor),
+              ),
+              onTap: () async {
+                users = await u!.checkForHelp();
+              }),
+          const Padding(padding: EdgeInsets.only(top: 5)),
+          if (!Status.requestDone) ...[
+            HelpCard("images/car.png", "Transportation", false),
             HelpCard("images/health.png", "Health", false),
             HelpCard("images/house.png", "House & Gardening", false),
-            HelpCard("images/hands.png", "General", false),]
-          else...[const AlertDialogPending()]
+            HelpCard("images/hands.png", "General", false),
+          ] else ...[
+            FutureBuilder(
+              builder: (context, AsyncSnapshot<String> text) {
+                return const AlertDialogPending();
+              },
+              future: alertDialogPendingWrapper(),
+            )
+          ]
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -91,10 +133,11 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               MyApp.selectedIndex = index;
             });
+            if (index == 1) {
+              await buildRequests();
+              bool accepted = await getLocation();
+            }
             MyApp.navigateToNextScreen(context, index);
-          }
-          if(index==1){
-             bool accepted=await getLocation();
           }
         },
         items: const <BottomNavigationBarItem>[
@@ -107,58 +150,62 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        label: Row(
-          children: const <Widget>[
-            Padding(padding: EdgeInsets.only(right: 5)),
-            Text("Send a danger request"),
-          ],
-        ),
-        backgroundColor: Colors.red,
-        onPressed: () {
-          showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text('DANGER REQUEST'),
-              content: const Text('Are you sure you want to send a danger request?'),
-              actions: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary:
-                        const Color.fromRGBO(33, 158, 188, 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
+      floatingActionButton: Status.requestDone
+          ? null
+          : FloatingActionButton.extended(
+              label: Row(
+                children: const <Widget>[
+                  Padding(padding: EdgeInsets.only(right: 5)),
+                  Text("Send a danger request"),
+                ],
+              ),
+              backgroundColor: Colors.red,
+              onPressed: () {
+                showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('DANGER REQUEST'),
+                    content: const Text(
+                        'Are you sure you want to send a danger request?'),
+                    actions: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: const Color.fromRGBO(33, 158, 188, 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                            child: const Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: const Color.fromRGBO(255, 183, 3, 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                            onPressed: () => {
+                              Status.setRequestDone(),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const HomePage()),
+                              ).then((value) => setState(() {}))
+                            },
+                            child: const Text('YES'),
+                          ),
+                        ],
                       ),
-                      onPressed: () =>
-                          Navigator.pop(context, 'Cancel'),
-                      child: const Text('Cancel'),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary:
-                        const Color.fromRGBO(255, 183, 3, 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                      ),
-                      onPressed: () => { Status.setRequestDone(),
-                        Navigator.push( context, MaterialPageRoute(
-                            builder: (context) => const HomePage()), ).then((value) => setState(() {}))
-                      },
-                      child: const Text('YES'),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                );
+              },
+              icon: const Icon(Icons.warning_rounded),
             ),
-          );
-        },
-        icon: const Icon(Icons.warning_rounded),
-      ),
     );
   }
 }
@@ -203,4 +250,10 @@ class _DropDownListWithPicState extends State<DropDownListWithPic> {
       ),
     );
   }
+}
+
+Future<String>? alertDialogPendingWrapper() async {
+  var reqAttributes = await u!.getHelpRequest();
+  AlertDialogPending.attributes = reqAttributes;
+  return "done";
 }

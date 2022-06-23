@@ -1,23 +1,24 @@
 // ignore_for_file: file_names
 import 'dart:convert';
-import 'dart:io';
+//import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+//import 'package:path_provider/path_provider.dart';
 import 'package:phone_form_field/phone_form_field.dart';
+import '../models/AlertDialogPending.dart';
+import '../models/Status.dart';
 import 'SignUpNumber.dart';
-import 'Signup.dart';
+//import 'Signup.dart';
 import 'OtpSent.dart';
 //import 'package:flutter_otp/flutter_otp.dart';
-import 'package:permission_handler/permission_handler.dart';
+//import 'package:permission_handler/permission_handler.dart';
 import 'package:first_prj/models/User.dart';
 
-User? u;
-
+// ignore: must_be_immutable
 class Login extends StatefulWidget {
   Login({Key? key}) : super(key: key);
   String phoneNumber = "";
@@ -115,6 +116,7 @@ class _LoginPageState extends State<Login> {
                       if (b) {
                         // ignore: use_build_context_synchronously
                         instantiateUser(widget.phoneNumber);
+                        // ignore: use_build_context_synchronously
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => OtpSent()));
                       } else {
@@ -257,19 +259,27 @@ Future<bool> checkLogin(String phone) async {
 }
 
 void instantiateUser(String phone) async {
-  final String response = await rootBundle.loadString('storage/userdata.json');
-  final data = await json.decode(response);
-  Image image = Image.memory(Uint8List.fromList([]));
-
-  if (data["image_profile"] == "") {
-    image = Image.memory(Uint8List.fromList([]));
-  } else {
-    final pathReference =
-        FirebaseStorage.instance.ref().child("users/$phone/images/profile.jpg");
-    var url = await pathReference.getDownloadURL();
-    image = Image.network(url);
+  final userlistPath =
+      FirebaseStorage.instance.ref().child("users/$phone/userdata.json");
+  const oneMegabyte = 1024 * 1024;
+  final Uint8List? data = await userlistPath.getData(oneMegabyte);
+  var list = data!.toList();
+  var jsonAsString = String.fromCharCodes(list);
+  final jsonFile = await json.decode(jsonAsString);
+  final userimagePath =
+      FirebaseStorage.instance.ref().child("users/$phone/images/profile.jpg");
+  var url = await userimagePath.getDownloadURL();
+  Image profilePic = Image.network(url);
+  u = User(jsonFile["name"], jsonFile["surname"], phone, profilePic, false, 0.0,
+      0.0);
+  if (jsonFile["pending_ask"] == true) {
+    Status.setRequestDone();
+    alertDialogPendingWrapper();
   }
-//SETTARE LATITUDE E LONGITUDE
-  u = User(data["name"], data["surname"], phone, image, data["verified"], 0, 0);
-  print(data.runtimeType);
+}
+
+Future<String>? alertDialogPendingWrapper() async {
+  var reqAttributes = await u!.getHelpRequest();
+  AlertDialogPending.attributes = reqAttributes;
+  return "done";
 }

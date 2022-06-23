@@ -1,6 +1,6 @@
 // ignore_for_file: file_names
+//import 'dart:math';
 import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
 import 'package:first_prj/models/User.dart';
 import 'package:flutter/material.dart';
@@ -8,29 +8,13 @@ import 'package:first_prj/main.dart';
 import 'package:first_prj/models/Request.dart';
 import '../models/AlertAroundYouPending.dart';
 import '../models/Status.dart';
+import 'package:first_prj/screens/SignUpNumber.dart';
 
+// ignore: must_be_immutable
 class AroundYou extends StatefulWidget {
   final String title = "GPSaveMe";
-  User user= User('Marge', 'Simpson', '339862948',
-            Image.memory(Uint8List.fromList([])), false, 0, 0);
-  static List<Request> requestList = [
-    Request(
-        0,
-        3,
-        REQUEST_TYPE.transportation,
-        'out of fuel',
-        User('Marge', 'Simpson', '339862948',
-            Image.memory(Uint8List.fromList([])), false, 41.908236221281534, 12.535103079414553),
-        "images/fuel.png"),
-    Request(
-        1,
-        2,
-        REQUEST_TYPE.health,
-        'need a med',
-        User('Chiara', 'Griffin', '392164553',
-            Image.memory(Uint8List.fromList([])), false,41.908236221281534, 12.535103079414553),
-        "images/fuel.png")
-  ];
+
+  static List<Request> requestList = [];
 
   AroundYou({Key? key}) : super(key: key);
   @override
@@ -40,7 +24,8 @@ class AroundYou extends StatefulWidget {
 
 class _AroundYouState extends State<AroundYou> {
   final GlobalKey<AnimatedListState> _key = GlobalKey();
-  bool accepted= false;
+  bool accepted = false;
+  var refreshColor = Color.fromRGBO(255, 183, 3, 1);
 
   @override
   Widget build(BuildContext context) {
@@ -95,8 +80,7 @@ class _AroundYouState extends State<AroundYou> {
                 width: deviceWidth * 0.6,
                 height: deviceHeight * 0.07,
                 // ignore: sort_child_properties_last
-                child: 
-                  Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     const Text('Refresh',
@@ -114,25 +98,27 @@ class _AroundYouState extends State<AroundYou> {
                 ),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: const Color.fromRGBO(255, 183, 3, 1)),
+                    color: refreshColor),
               ),
               onTap: () async {
-                // ignore: avoid_print
-                if (accepted) print("Refreshing...");
+                await buildRequests();
+                setState(() {});
               }),
-           if (!Status.requestDone)...[
+          if (!Status.requestDone) ...[
             Expanded(
-            child: AnimatedList(
-                key: _key,
-                initialItemCount: AroundYou.requestList.length,
-                padding: const EdgeInsets.all(10),
-                itemBuilder: (context, index, animation) {
-                  return _buildItem(
-                      AroundYou.requestList[index], animation, index);
-                }),
-           )
-          ]else...[
-            const Padding(padding: EdgeInsets.all(10)), const AlertAroundYouPending()]
+              child: AnimatedList(
+                  key: _key,
+                  initialItemCount: AroundYou.requestList.length,
+                  padding: const EdgeInsets.all(10),
+                  itemBuilder: (context, index, animation) {
+                    return _buildItem(
+                        AroundYou.requestList[index], animation, index);
+                  }),
+            )
+          ] else ...[
+            const Padding(padding: EdgeInsets.all(10)),
+            const AlertAroundYouPending()
+          ]
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -147,10 +133,9 @@ class _AroundYouState extends State<AroundYou> {
             });
             MyApp.navigateToNextScreen(context, index);
           }
-          if(index==1){
-             accepted=await getLocation();
+          if (index == 1) {
+            accepted = await getLocation();
           }
-       
         },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -158,9 +143,7 @@ class _AroundYouState extends State<AroundYou> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            
-              icon: Icon(Icons.gps_fixed), 
-              label: 'Around You'),
+              icon: Icon(Icons.gps_fixed), label: 'Around You'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
         ],
       ),
@@ -200,11 +183,11 @@ class _AroundYouState extends State<AroundYou> {
               height: 50,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: AroundYou.requestList[index].getPriority() == 1
+                  color: AroundYou.requestList[index].getPriority() == "Low"
                       ? Colors.green
-                      : AroundYou.requestList[index].getPriority() == 2
+                      : AroundYou.requestList[index].getPriority() == "Medium"
                           ? Colors.yellow
-                          : AroundYou.requestList[index].getPriority() == 3
+                          : AroundYou.requestList[index].getPriority() == "High"
                               ? Colors.red
                               : Colors.black,
                   shape: BoxShape.circle),
@@ -212,112 +195,117 @@ class _AroundYouState extends State<AroundYou> {
                   width: 40,
                   height: 40,
                   child: Image.asset(
-                    getPath(AroundYou.requestList[index].getType()),
+                    getPath(
+                        AroundYou.requestList[index].getType().split(" ")[0]),
                   ))),
           leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset("images/distance.png", width: 40, height: 40),
-                Text(item.getDistance(user.latitude, user.longitude, AroundYou.requestList[index].getUser().latitude, AroundYou.requestList[index].getUser().longitude),),
+                Text(
+                  item.getDistance(
+                      u!.latitude,
+                      u!.longitude,
+                      AroundYou.requestList[index].getUser().latitude,
+                      AroundYou.requestList[index].getUser().longitude),
+                ),
               ]),
         ),
       ),
     );
   }
 
-  String getPath(REQUEST_TYPE requestType) {
-    String path = requestType == REQUEST_TYPE.house
+  String getPath(String requestType) {
+    var type = requestType.toLowerCase();
+    String path = type == "house"
         ? "images/house.png"
-        : requestType == REQUEST_TYPE.transportation
+        : type == "transportation"
             ? "images/car.png"
-            : requestType == REQUEST_TYPE.health
+            : type == "health"
                 ? "images/health.png"
-                : requestType == REQUEST_TYPE.general
+                : type == "general"
                     ? "images/hands.png"
-                    : requestType == REQUEST_TYPE.safety
+                    : type == "safety"
                         ? "images/safety.png"
                         : "images/distance.png";
     return path;
   }
 
   void _offerHelp(BuildContext context, Request item, int index) async {
-   
-      showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(32.0))),
-                title: Row(
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(32.0))),
+              title: Row(
+                children: <Widget>[
+                  SizedBox(
+                      width: 40, height: 40, child: item.helped.imageProfile),
+                  Padding(padding: EdgeInsets.only(left: deviceWidth * 0.025)),
+                  Text(item.getName())
+                ],
+              ),
+              content:
+                  Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Row(
                   children: <Widget>[
-                    SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: Image.asset(
-                          item.getImagePath(),
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(left: deviceWidth * 0.025)),
-                    Text(item.getName())
+                    Text(
+                      item.getDistance(
+                          u!.latitude,
+                          u!.longitude,
+                          AroundYou.requestList[index].getUser().latitude,
+                          AroundYou.requestList[index].getUser().longitude),
+                    ),
+                    Text(" | Request: ${item.getPriorityAsString()}")
                   ],
                 ),
-                content:
-                    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        //item.getDistance(41.90842302663548, 12.538669542923634,
-                        //    41.90853880240373, 12.544473843077867)
-                        item.getDistance(user.latitude, user.longitude, AroundYou.requestList[index].getUser().latitude, AroundYou.requestList[index].getUser().longitude),
-                      ),
-                      Text(" | Request: ${item.getPriorityAsString()}")
-                    ],
-                  ),
-                  Padding(
-                      padding: EdgeInsets.only(bottom: deviceHeight * 0.02)),
-                  Row(
-                    children: <Widget>[
-                      const Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(left: deviceWidth * 0.01)),
-                      Text(item.getUser().reviewMean)
-                    ],
-                  ),
-                  Padding(
-                      padding: EdgeInsets.only(bottom: deviceHeight * 0.025)),
-                  Row(children: const <Widget>[
-                    Text(
-                      "Description:",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                Padding(padding: EdgeInsets.only(bottom: deviceHeight * 0.02)),
+                Row(
+                  children: <Widget>[
+                    const Icon(
+                      Icons.star,
+                      color: Colors.yellow,
                     ),
-                  ]),
-                  Padding(
-                      padding: EdgeInsets.only(bottom: deviceHeight * 0.005)),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        item.getDescription(),
-                      )
-                    ],
+                    Padding(padding: EdgeInsets.only(left: deviceWidth * 0.01)),
+                    Text(item.getUser().reviewMean)
+                  ],
+                ),
+                Padding(padding: EdgeInsets.only(bottom: deviceHeight * 0.025)),
+                Row(children: const <Widget>[
+                  Text(
+                    "Description:",
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ]),
-                actions: [
-                  TextButton(
-                      onPressed: () => {Navigator.pop(context)},
-                      child: const Text("CANCEL")),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text("SEND HELP"),
-                  ),
-                ],
-                actionsAlignment: MainAxisAlignment.spaceEvenly,
-              ));
-    
+                Padding(padding: EdgeInsets.only(bottom: deviceHeight * 0.005)),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      item.getDescription(),
+                    )
+                  ],
+                ),
+              ]),
+              actions: [
+                TextButton(
+                    onPressed: () => {Navigator.pop(context)},
+                    child: const Text("CANCEL")),
+                TextButton(
+                  onPressed: () async {
+                    await u!.uploadHelpProposal(item.helped.phoneNumber);
+                    if (!mounted) return; // consiglio di stack
+                    Navigator.pop(context);
+                  },
+                  child: const Text("SEND HELP"),
+                ),
+              ],
+              actionsAlignment: MainAxisAlignment.spaceEvenly,
+            ));
   }
+}
 
-
-
-
+buildRequests() async {
+  List<Request> requests =
+      await u!.readHelpRequests(); // to update when we build the page
+  AroundYou.requestList = requests;
 }

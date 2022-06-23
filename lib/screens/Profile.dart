@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:first_prj/screens/AroundYou.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../models/User.dart';
-import 'package:first_prj/screens/Login.dart';
+import 'package:first_prj/screens/SignUpNumber.dart';
 
 class Profile extends StatefulWidget {
   final String title = "GPSaveMe";
@@ -25,11 +26,6 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          uploadProfilePic();
-        },
-      ),
       appBar: AppBar(
         title: Text(widget.title),
         automaticallyImplyLeading: false,
@@ -78,11 +74,12 @@ class _ProfileState extends State<Profile> {
                   margin: EdgeInsets.all(deviceWidth * 0.095),
                   child: Stack(
                     children: [
-                      SizedBox(
-                        width: 90,
-                        height: 90,
-                        child: u!.imageProfile,
-                      ),
+                            CircleAvatar(
+                           radius: 40,
+                           backgroundColor: Colors.transparent,
+                            child:  ClipRRect(borderRadius: BorderRadius.circular(40.0),child: u!.imageProfile,
+                            ),
+                          ),
                       // ClipOval(
                       //     child: Ink.image(
                       //   image: (SignUp.user.imageProfile),
@@ -102,13 +99,13 @@ class _ProfileState extends State<Profile> {
                                     BorderRadius.circular(deviceWidth * 0.9),
                                 border:
                                     Border.all(width: 4, color: Colors.white),
-                                color: Colors.green),
+                                color: const Color.fromRGBO(255, 183, 3, 1)),
                             child: InkWell(
                               onTap: () => _openImagePicker(),
                               child: const Icon(
                                 Icons.edit,
                                 color: Colors.white,
-                                size: 14,
+                                size: 8,
                               ),
                             ),
                           ),
@@ -261,10 +258,11 @@ class _ProfileState extends State<Profile> {
             setState(() {
               MyApp.selectedIndex = index;
             });
+            if (index == 1) {
+              await buildRequests();
+              bool accepted = await getLocation();
+            }
             MyApp.navigateToNextScreen(context, index);
-          }
-           if(index==1){
-             bool accepted=await getLocation();
           }
         },
         items: const <BottomNavigationBarItem>[
@@ -294,7 +292,7 @@ class _ProfileState extends State<Profile> {
       await toupload.writeAsBytes(byteData.buffer
           .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
       setState(() {
-        print("ciao");
+        //print("ciao");
         // punta a un percorso nel cloud storage
         final path = "users/${u!.phoneNumber}/images/profile.jpg";
         final ref = FirebaseStorage.instance.ref().child(path);
@@ -378,26 +376,5 @@ class _ProfileState extends State<Profile> {
                 ),
               ],
             )));
-  }
-}
-
-uploadProfilePic() async {
-  // recupera file dal file system com ByteData
-  final byteData = await rootBundle.load('images/marge.jpeg');
-
-  // se l'utente dà il permesso per l'accesso ai file
-  if (await Permission.storage.request().isGranted) {
-    // prendi l'indirizzo della cache
-    String tempPath = (await getTemporaryDirectory()).path;
-    // crea il file nella cache
-    File file = await File('$tempPath/profile.jpeg').create();
-    // trascrivi nel file i ByteData
-    final toupload = await file.writeAsBytes(byteData.buffer
-        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-    // punta a un percorso nel cloud storage
-    final path = "users/${u!.phoneNumber}/images/profile.jpg";
-    final ref = FirebaseStorage.instance.ref().child(path);
-    // carica il file
-    ref.putFile(toupload);
   }
 }
