@@ -189,7 +189,10 @@ class _AroundYouState extends State<AroundYou> {
                           ? Colors.yellow
                           : AroundYou.requestList[index].getPriority() == "High"
                               ? Colors.red
-                              : Colors.black,
+                              : AroundYou.requestList[index].getPriority() ==
+                                      "Danger"
+                                  ? Colors.red
+                                  : Colors.black,
                   shape: BoxShape.circle),
               child: SizedBox(
                   width: 40,
@@ -202,13 +205,18 @@ class _AroundYouState extends State<AroundYou> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset("images/distance.png", width: 40, height: 40),
-                Text(
-                  item.getDistance(
-                      u!.latitude,
-                      u!.longitude,
-                      AroundYou.requestList[index].getUser().latitude,
-                      AroundYou.requestList[index].getUser().longitude),
-                ),
+                FutureBuilder(
+                  builder: (context, AsyncSnapshot<String> text) {
+                    return Text(
+                      item.getDistance(
+                          u!.latitude,
+                          u!.longitude,
+                          AroundYou.requestList[index].getUser().latitude,
+                          AroundYou.requestList[index].getUser().longitude),
+                    );
+                  },
+                  future: buildRequests(),
+                )
               ]),
         ),
       ),
@@ -227,7 +235,9 @@ class _AroundYouState extends State<AroundYou> {
                     ? "images/hands.png"
                     : type == "safety"
                         ? "images/safety.png"
-                        : "images/distance.png";
+                        : type == "danger"
+                            ? "images/alert.png"
+                            : "images/distance.png";
     return path;
   }
 
@@ -305,8 +315,10 @@ class _AroundYouState extends State<AroundYou> {
   }
 }
 
-buildRequests() async {
+Future<String> buildRequests() async {
+  // await u!.updateLocation();
   List<Request> requests =
       await u!.readHelpRequests(); // to update when we build the page
   AroundYou.requestList = requests;
+  return "done";
 }

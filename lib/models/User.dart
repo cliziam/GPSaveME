@@ -280,8 +280,10 @@ class User {
         FirebaseStorage.instance.ref().child("users/$phone/images/profile.jpg");
     var url = await userimagePath.getDownloadURL();
     Image profilePic = Image.network(url);
-    return User(
+    User user = User(
         jsonFile["name"], jsonFile["surname"], phone, profilePic, true, 0, 0);
+    await user.getReviewRating();
+    return user;
   }
 
   static getDistance(User u1, User u2) {
