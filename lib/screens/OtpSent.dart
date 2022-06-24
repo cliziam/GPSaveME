@@ -121,7 +121,7 @@ class _OtpSentPageState extends State<OtpSent> {
                                           actions: [
                                             TextButton(
                                               onPressed: () =>
-                                                  Navigator.pop(context, 'Ok'),
+                                                  Navigator.push(context,MaterialPageRoute(builder: (context) =>  OtpSent()),).then((value) => setState(() {})), 
                                               child: const Text('Ok'),
                                             )
                                           ],
@@ -164,15 +164,18 @@ class _OtpSentPageState extends State<OtpSent> {
                         const SizedBox(
                           height: 18,
                         ),
-                        const Text(
-                          "Resend New Code",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromRGBO(33, 158, 188, 1),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                         TextButton(
+                          onPressed:()=> {Navigator.push(context,MaterialPageRoute(builder: (context) => OtpSent())).then((value) => setState(() {}))} ,
+                          child: const Text(
+                            "Resend New Code",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(33, 158, 188, 1),
+                            ),
+                            textAlign: TextAlign.center,
+                                                 ),
+                         ),
                       ],
                     ),
                   ),
