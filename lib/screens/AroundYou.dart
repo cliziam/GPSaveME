@@ -116,7 +116,7 @@ class _AroundYouState extends State<AroundYou> {
                   }),
             )
           ] else ...[
-            const Padding(padding: EdgeInsets.all(10)),
+          const Padding(padding: EdgeInsets.only(top: 5)),
             const AlertAroundYouPending()
           ]
         ],
@@ -301,13 +301,16 @@ class _AroundYouState extends State<AroundYou> {
                 TextButton(
                     onPressed: () => {Navigator.pop(context)},
                     child: const Text("CANCEL")),
-                TextButton(
+                TextButton( 
+                  child: const Text("SEND HELP"),
                   onPressed: () async {
+                    Status.waitingAcceptOrRefuse=true;
+
                     await u!.uploadHelpProposal(item.helped.phoneNumber);
                     if (!mounted) return; // consiglio di stack
-                    Navigator.pop(context);
+                    Navigator.push(context,MaterialPageRoute(builder: (context) => const AroundYou())).then((value) => setState(() {})); 
                   },
-                  child: const Text("SEND HELP"),
+                 
                 ),
               ],
               actionsAlignment: MainAxisAlignment.spaceEvenly,

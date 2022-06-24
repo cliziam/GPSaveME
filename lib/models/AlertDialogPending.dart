@@ -42,13 +42,15 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     // ignore: prefer_const_literals_to_create_immutables
                     children: [
-                      // ignore: prefer_const_constructors
+                      const Padding(padding:EdgeInsets.fromLTRB(32, 0, 0, 0)),
                       Text(reqType,
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18)),
+                     const Padding(padding:EdgeInsets.fromLTRB(15, 0, 0, 0)),
+
                       SizedBox(
                         width: deviceWidth * 0.1,
                         height: deviceWidth * 0.1,
@@ -66,9 +68,11 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                       ),
                     ],
                   ),
+                  
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        const Padding(padding:EdgeInsets.fromLTRB(32, 0, 0, 0)),
                         SizedBox(
                           width: deviceWidth * 0.1,
                           height: deviceWidth * 0.1,
@@ -76,14 +80,14 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                             "images/${reqSubType.toLowerCase()}.png",
                           ),
                         ),
+                        const Padding(padding:EdgeInsets.fromLTRB(15, 0, 0, 0)),
+
                         Text(reqText,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black38))
                       ]),
-                  const Text("Your request will be up unti: 11:30 AM",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       primary: const Color.fromRGBO(33, 158, 188, 1),

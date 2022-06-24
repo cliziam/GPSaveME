@@ -114,12 +114,47 @@ class _HomePageState extends State<HomePage> {
             HelpCard("images/house.png", "House & Gardening", false),
             HelpCard("images/hands.png", "General", false),
           ] else ...[
+            if(Status.waitingHelp)...[
             FutureBuilder(
               builder: (context, AsyncSnapshot<String> text) {
                 return const AlertDialogPending();
               },
               future: alertDialogPendingWrapper(),
             )
+            ]
+            else...[
+                  Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        elevation: 8,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width / 1.3,
+                          height: MediaQuery.of(context).size.height / 2,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            // ignore: prefer_const_literals_to_create_immutables
+                            children: [
+                              const Icon( Icons.warning_amber_rounded,
+                                  color: Colors.red, size: 100.0),
+                              // ignore: prefer_const_constructors
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Text(
+                                   "You can't ask for help if you sent help to someone",
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+
+            ]
+            
           ]
         ],
       ),
