@@ -5,16 +5,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/screens/AroundYou.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import '../models/User.dart';
 import 'package:first_prj/screens/SignUpNumber.dart';
 
 class Profile extends StatefulWidget {
   final String title = "GPSaveMe";
-  static Document document = Document(false, false, false);
 
   const Profile({Key? key}) : super(key: key);
   @override
@@ -74,12 +70,15 @@ class _ProfileState extends State<Profile> {
                   margin: EdgeInsets.all(deviceWidth * 0.095),
                   child: Stack(
                     children: [
-                            CircleAvatar(
-                           radius: 40,
-                           backgroundColor: Colors.transparent,
-                            child:  ClipRRect(borderRadius: BorderRadius.circular(40.0),child: u!.imageProfile,
-                            ),
-                          ),
+                      CircleAvatar(
+                        radius: deviceWidth * 0.15,
+                        backgroundColor: Colors.transparent,
+                        child: ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(deviceWidth * 0.15),
+                          child: u!.imageProfile,
+                        ),
+                      ),
                       // ClipOval(
                       //     child: Ink.image(
                       //   image: (SignUp.user.imageProfile),
@@ -154,7 +153,7 @@ class _ProfileState extends State<Profile> {
                 color: Colors.grey,
               ),
               const Padding(padding: EdgeInsets.only(left: 12)),
-              Profile.document.check
+              u!.profileCheck
                   ? Row(children: [
                       const Text("Profile Verified",
                           style: TextStyle(
@@ -183,11 +182,9 @@ class _ProfileState extends State<Profile> {
                 height: deviceWidth * 0.11,
                 child: ElevatedButton(
                   onPressed: () async {
-                    Profile.document.frontcheck
-                        ? null
-                        : _openDocumentPicker(true);
+                    u!.frontCheck ? null : _openDocumentPicker(true);
                   },
-                  style: Profile.document.frontcheck
+                  style: u!.frontCheck
                       ? ButtonStyle(
                           backgroundColor:
                               MaterialStateProperty.all(Colors.grey[300]),
@@ -204,7 +201,7 @@ class _ProfileState extends State<Profile> {
                     Padding(padding: EdgeInsets.only(left: deviceWidth * 0.38)),
                     Align(
                         alignment: Alignment.centerLeft,
-                        child: Profile.document.frontcheck
+                        child: u!.frontCheck
                             ? const Icon(Icons.access_time, color: Colors.black)
                             : const Icon(Icons.add, color: Colors.black))
                   ]),
@@ -219,11 +216,9 @@ class _ProfileState extends State<Profile> {
                 height: deviceWidth * 0.11,
                 child: ElevatedButton(
                   onPressed: () async {
-                    Profile.document.retrocheck
-                        ? null
-                        : _openDocumentPicker(false);
+                    u!.retroCheck ? null : _openDocumentPicker(false);
                   },
-                  style: Profile.document.retrocheck
+                  style: u!.retroCheck
                       ? ButtonStyle(
                           backgroundColor:
                               MaterialStateProperty.all(Colors.grey[300]),
@@ -240,7 +235,7 @@ class _ProfileState extends State<Profile> {
                     Padding(padding: EdgeInsets.only(left: deviceWidth * 0.38)),
                     Align(
                         alignment: Alignment.centerLeft,
-                        child: Profile.document.retrocheck
+                        child: u!.retroCheck
                             ? const Icon(Icons.access_time, color: Colors.black)
                             : const Icon(Icons.add, color: Colors.black)),
                   ]),
@@ -260,8 +255,9 @@ class _ProfileState extends State<Profile> {
             });
             if (index == 1) {
               await buildRequests();
-              bool accepted = await getLocation();
             }
+            if (!mounted) return;
+
             MyApp.navigateToNextScreen(context, index);
           }
         },
@@ -324,14 +320,14 @@ class _ProfileState extends State<Profile> {
           final ref = FirebaseStorage.instance.ref().child(path);
           // carica il file
           ref.putFile(toupload);
-          Profile.document.frontcheck = true;
+          u!.frontCheck = true;
         } else {
           // punta a un percorso nel cloud storage
           final path = "users/${u!.phoneNumber}/images/${name}doc.jpg";
           final ref = FirebaseStorage.instance.ref().child(path);
           // carica il file
           ref.putFile(toupload);
-          Profile.document.retrocheck = true;
+          u!.retroCheck = true;
         }
       });
     }

@@ -5,7 +5,7 @@ import 'package:first_prj/main.dart';
 class GiveReview extends StatefulWidget {
   final String title = "GPSaveMe";
   // ignore: non_constant_identifier_names
-  GiveReview({Key? key}) : super(key: key);
+  const GiveReview({Key? key}) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
   _GiveReview createState() => _GiveReview();
@@ -42,7 +42,7 @@ class _GiveReview extends State<GiveReview> {
       ),
       body: Column(
         children: [
-           Container(
+          Container(
             height: 60.0,
             decoration: const BoxDecoration(
               borderRadius:
@@ -66,62 +66,65 @@ class _GiveReview extends State<GiveReview> {
           Padding(padding: EdgeInsets.only(top: 50)),
           Card(
             elevation: 3,
-            margin: EdgeInsets.all(8.0), 
-            child: Column(
-            children: [
-            // ignore: prefer_const_literals_to_create_immutables
-            Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              
-             SizedBox(
-              width: 90,
-              height: 90,
+            margin: EdgeInsets.all(8.0),
+            child: Column(children: [
+              // ignore: prefer_const_literals_to_create_immutables
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  SizedBox(
+                    width: 90,
+                    height: 90,
+                  ),
+                  Text("Nome Cognome",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                      ))
+                ],
               ),
-              Text("Nome Cognome", style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 22,
-              ))
-            ],),
-            Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              for (var i= 0; i < 5; i++) 
-              IconButton(icon: Icon(Icons.star), iconSize: 40, 
-              color: stars[i] ? Color.fromARGB(255, 244, 197, 11): Colors.grey, 
-              onPressed: () => {
-                setState(() {
-                  stars[i] = !stars[i];
-                })
-              },
-              )
-             ]),
-             Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 5)),
-             TextField(
-              maxLines: 8,
-              decoration: InputDecoration(
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                labelText: 'Write your feedback here...',
-              ),
-              onChanged: (value) {
-                setState(() {
-                  review = value;
-                });
-            }),
-            Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 30)),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary:
-                review == "" ? Colors.grey : Colors.green,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-              ),
-              onPressed: () => {},
-              child: const Text('SEND REVIEW'),),
+              Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                for (var i = 0; i < 5; i++)
+                  IconButton(
+                    icon: Icon(Icons.star),
+                    iconSize: 40,
+                    color: stars[i]
+                        ? Color.fromARGB(255, 244, 197, 11)
+                        : Colors.grey,
+                    onPressed: () => {
+                      setState(() {
+                        stars[i] = !stars[i];
+                      })
+                    },
+                  )
+              ]),
+              Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 5)),
+              TextField(
+                  maxLines: 8,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    labelText: 'Write your feedback here...',
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      review = value;
+                    });
+                  }),
               Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 30)),
-          ]
-          ),
-          
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: review == "" ? Colors.grey : Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
+                onPressed: () => {},
+                child: const Text('SEND REVIEW'),
+              ),
+              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 30)),
+            ]),
           )
         ],
       ),
@@ -148,7 +151,6 @@ class _GiveReview extends State<GiveReview> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
         ],
       ),
-      
     );
   }
 }

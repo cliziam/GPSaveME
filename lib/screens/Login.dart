@@ -1,21 +1,14 @@
 // ignore_for_file: file_names
 import 'dart:convert';
-//import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-//import 'package:path_provider/path_provider.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import '../models/AlertDialogPending.dart';
 import '../models/Status.dart';
 import 'SignUpNumber.dart';
-//import 'Signup.dart';
 import 'OtpSent.dart';
-//import 'package:flutter_otp/flutter_otp.dart';
-//import 'package:permission_handler/permission_handler.dart';
 import 'package:first_prj/models/User.dart';
 
 // ignore: must_be_immutable
@@ -272,9 +265,21 @@ void instantiateUser(String phone) async {
   Image profilePic = Image.network(url);
   u = User(jsonFile["name"], jsonFile["surname"], phone, profilePic, false, 0.0,
       0.0);
-  if (jsonFile["pending_ask"] == true) {
-    Status.setRequestDone();
+  if (jsonFile["waitingHelp"] == true) {
+    Status.waitingHelp = true;
     alertDialogPendingWrapper();
+  }
+  if (jsonFile["helpAccepted"] == true) {
+    Status.helpAccepted = true;
+    //alertDialogPendingWrapper(); // manca la parte di front end rispettiva
+  }
+  if (jsonFile["waitingAcceptOrRefuse"] == true) {
+    Status.waitingAcceptOrRefuse = true;
+    //alertDialogPendingWrapper(); // manca la parte di front end rispettiva
+  }
+  if (jsonFile["proposalAccepted"] == true) {
+    Status.proposalAccepted = true;
+    //alertDialogPendingWrapper(); // manca la parte di front end rispettiva
   }
 }
 

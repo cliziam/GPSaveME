@@ -1,25 +1,15 @@
-import 'dart:typed_data';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:first_prj/screens/AroundYou.dart';
-import 'package:first_prj/screens/NFC.dart';
+import 'package:first_prj/screens/Profile.dart';
+import 'package:first_prj/screens/SignUpNumber.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/screens/HomePage.dart';
-//import 'package:first_prj/screens/HomePage2.dart';
-import 'package:first_prj/screens/Profile.dart';
 import 'package:location/location.dart';
 import 'package:first_prj/screens/Login.dart';
-// import 'package:first_prj/screens/Login.dart'; // da scommentare
 import 'dart:async' show Future;
-//import 'package:flutter/services.dart' show rootBundle;
-//import 'package:firebase_storage/firebase_storage.dart';
-//import 'package:path_provider/path_provider.dart';
-
-import 'models/User.dart';
 
 double deviceWidth = 0, deviceHeight = 0;
-User user = User('Marge', 'Simpson', '339862948',
-    Image.memory(Uint8List.fromList([])), false, 0, 0);
+
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
@@ -45,9 +35,9 @@ class MyApp extends StatelessWidget {
             .push(MaterialPageRoute(builder: (context) => const HomePage()));
         break;
       case 1:
-         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
           getLocation();
-          return AroundYou();
+          return const AroundYou();
         }));
         break;
       case 2:
@@ -62,7 +52,6 @@ Future<bool> getLocation() async {
   Location location = Location();
   bool serviceEnabled;
   PermissionStatus permissionGranted;
-
   serviceEnabled = await location.serviceEnabled();
   if (!serviceEnabled) {
     serviceEnabled = await location.requestService();
@@ -70,7 +59,6 @@ Future<bool> getLocation() async {
       return false;
     }
   }
-
   permissionGranted = await location.hasPermission();
   if (permissionGranted == PermissionStatus.denied) {
     permissionGranted = await location.requestPermission();
@@ -78,10 +66,7 @@ Future<bool> getLocation() async {
       return false;
     }
   }
-  LocationData locationData = await location.getLocation();
-  user.latitude = locationData.latitude!;
-  user.longitude = locationData.longitude!;
-  await user.updateLocation();
+  u!.updateLocation();
 
   return true;
 }

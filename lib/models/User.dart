@@ -3,17 +3,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-//import 'dart:io';
-//import 'dart:typed_data';
-//import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/models/Request.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:googleapis/bigquery/v2.dart';
 import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:math';
+
 class User {
   String name, surname, phoneNumber;
   bool profileCheck;
@@ -23,25 +19,25 @@ class User {
   double longitude;
   String pendingAsk = "";
   String pendingGive = "";
+  bool frontCheck = false;
+  bool retroCheck = false;
 
   User(this.name, this.surname, this.phoneNumber, this.imageProfile,
-      this.profileCheck, this.latitude, this.longitude) {
-    getReviewRating();
-  }
+      this.profileCheck, this.latitude, this.longitude);
 
   getReviewRating() async {
-    var jsonFile =await getCurrentData();
+    var jsonFile = await getCurrentData();
     num accumulator = 0;
     List reviews = jsonFile["review_list"];
-    if(reviews.isNotEmpty){
-    for (int i = 0; i < reviews.length; i++) {
-      accumulator += reviews[i][0];
-    }
-    reviewMean = (accumulator / reviews.length).toString();
+    if (reviews.isNotEmpty) {
+      for (int i = 0; i < reviews.length; i++) {
+        accumulator += reviews[i][0];
+      }
+      reviewMean = (accumulator / reviews.length).toString();
 
-    return reviewMean;
+      return reviewMean;
     }
-    reviewMean="0";
+    reviewMean = "0";
     return reviewMean;
   }
 
@@ -109,7 +105,7 @@ class User {
       String? description, String priority, bool shareNumber) async {
     await updateLocation();
     var jsonFile = await getCurrentData();
-    jsonFile["pending_ask"] = true;
+    jsonFile["waitingHelp"] = true;
     jsonFile["request_priority"] = priority;
     jsonFile["request_type"] = type;
     jsonFile["request_subtype"] = subType;
@@ -187,7 +183,7 @@ class User {
         var jsonAsString = String.fromCharCodes(list);
         final jsonFile = await json.decode(jsonAsString);
         var user = await getUser(cellPhone, jsonFile);
-        if (jsonFile["pending_ask"]) {
+        if (jsonFile["waitingHelp"]) {
           var request = Request(
               jsonFile["request_priority"], // needs string but is int in JSON
               jsonFile["request_type"],
@@ -204,7 +200,7 @@ class User {
 
   deleteRequest() async {
     var jsonFile = await getCurrentData();
-    jsonFile["pending_ask"] = false;
+    jsonFile["waitingHelp"] = false;
     jsonFile["request_priority"] = "";
     jsonFile["request_type"] = "";
     jsonFile["request_subtype"] = "";
@@ -314,11 +310,4 @@ class Review {
   String description;
 
   Review(this.voto, this.description);
-}
-
-class Document {
-  bool frontcheck;
-  bool retrocheck;
-  bool check;
-  Document(this.check, this.frontcheck, this.retrocheck);
 }

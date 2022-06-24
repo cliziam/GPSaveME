@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var refreshColor = Color.fromRGBO(255, 183, 3, 1);
+  var refreshColor = const Color.fromRGBO(255, 183, 3, 1);
   List<User> users = [];
 
   @override
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                 users = await u!.checkForHelp();
               }),
           const Padding(padding: EdgeInsets.only(top: 5)),
-          if (!Status.requestDone) ...[
+          if (Status.areAllFalse()) ...[
             HelpCard("images/car.png", "Transportation", false),
             HelpCard("images/health.png", "Health", false),
             HelpCard("images/house.png", "House & Gardening", false),
@@ -135,8 +135,10 @@ class _HomePageState extends State<HomePage> {
             });
             if (index == 1) {
               await buildRequests();
-              bool accepted = await getLocation();
+            } else if (index == 2) {
+              await u!.getReviewRating();
             }
+            // ignore: use_build_context_synchronously
             MyApp.navigateToNextScreen(context, index);
           }
         },
@@ -150,7 +152,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
         ],
       ),
-      floatingActionButton: Status.requestDone
+      floatingActionButton: !Status.areAllFalse()
           ? null
           : FloatingActionButton.extended(
               label: Row(
@@ -188,15 +190,28 @@ class _HomePageState extends State<HomePage> {
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                             ),
+                            child: const Text('YES'),
                             onPressed: () => {
-                              Status.setRequestDone(),
+                              AlertDialogPending.attributes = [
+                                "Danger",
+                                "Danger request",
+                                "",
+                                "Send help as fast as possible",
+                                true,
+                              ],
+                              u!.uploadHelpRequest(
+                                  "Danger request",
+                                  "",
+                                  "Send help as fast as possible",
+                                  "Danger",
+                                  true),
+                              Status.waitingHelp = true,
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const HomePage()),
                               ).then((value) => setState(() {}))
                             },
-                            child: const Text('YES'),
                           ),
                         ],
                       ),

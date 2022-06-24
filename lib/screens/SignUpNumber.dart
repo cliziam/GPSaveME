@@ -1,20 +1,13 @@
 // ignore_for_file: file_names
 import 'dart:convert';
 import 'dart:io';
-//import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-//import 'package:path_provider/path_provider.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'Signup.dart';
-//import 'OtpSent.dart';
-//import 'package:flutter_otp/flutter_otp.dart';
-//import 'package:permission_handler/permission_handler.dart';
 import 'package:first_prj/models/User.dart';
 
 User? u;
@@ -123,6 +116,7 @@ class _SignUpNumberPageState extends State<SignUpNumber> {
                       bool finished =
                           await createUser(widget.phoneNumber, context);
                       if (finished) {
+                        // ignore: use_build_context_synchronously
                         Navigator.push(
                             context,
                             MaterialPageRoute(

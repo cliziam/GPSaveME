@@ -1,7 +1,9 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import '../screens/HomePage.dart';
+import '../screens/SignUpNumber.dart';
+import 'AlertDialogPending.dart';
 import 'Status.dart';
 
 final Map<String, Iterable<dynamic>> dict = {
@@ -24,7 +26,7 @@ class HelpCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          (!Status.requestDone) ? requestHelp(context) : null;
+          requestHelp(context);
         },
         child: Card(
           elevation: 5,
@@ -79,7 +81,6 @@ class _RequestCardState extends State<RequestCard> {
 
   var reqSelected = "";
   var priSelected = "";
-
 
   // ignore: non_constant_identifier_names
   var listVariables_transportation = ["Puncture", "Fuel", "Other"];
@@ -206,7 +207,16 @@ class _RequestCardState extends State<RequestCard> {
                   !timeIsSelected
               ? null
               : {
-                  Status.setRequestDone(),
+                  AlertDialogPending.attributes = [
+                    priSelected,
+                    widget.title,
+                    reqSelected,
+                    informations,
+                    shareNumber
+                  ],
+                  u!.uploadHelpRequest(widget.title, reqSelected, informations,
+                      priSelected, shareNumber),
+                  Status.waitingHelp = true,
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const HomePage()),

@@ -22,7 +22,9 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
   var attributes = AlertDialogPending.attributes;
   var priority = AlertDialogPending.attributes[0];
   var reqType = AlertDialogPending.attributes[1];
-  var reqSubType = AlertDialogPending.attributes[2];
+  var reqSubType = AlertDialogPending.attributes[2] == ""
+      ? "alert"
+      : AlertDialogPending.attributes[2];
   var reqText = AlertDialogPending.attributes[3];
 
   @override
@@ -57,7 +59,9 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                                   ? "images/health.png"
                                   : reqType == "House & Gardening"
                                       ? "images/house.png"
-                                      : "images/hands.png",
+                                      : reqType == "General"
+                                          ? "images/hands.png"
+                                          : "images/safety.png",
                         ),
                       ),
                     ],
@@ -73,7 +77,7 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                           ),
                         ),
                         Text(reqText,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black38))
                       ]),
@@ -124,7 +128,7 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                                   onPressed: () async {
                                     await u!.deleteRequest();
                                     if (!mounted) return;
-                                    Status.setRequestDone();
+                                    Status.waitingHelp = false;
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -165,9 +169,11 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                       Row(
                         children: [
                           CircleAvatar(
-                           radius: 40,
-                           backgroundColor: Colors.transparent,
-                            child:  ClipRRect(borderRadius: BorderRadius.circular(40.0),child: helper.imageProfile,
+                            radius: 40,
+                            backgroundColor: Colors.transparent,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(40.0),
+                              child: helper.imageProfile,
                             ),
                           ),
                           const Padding(padding: EdgeInsets.only(left: 0.2)),
@@ -194,11 +200,12 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                                           color: Colors.black38)),
                                   const Padding(
                                       padding: EdgeInsets.only(right: 5)),
-                                   for (int i = 0; i < 5; i++)
+                                  for (int i = 0; i < 5; i++)
                                     Icon(Icons.star,
                                         size: 12,
                                         color: (i <
-                                               int.parse(helper.reviewMean).ceil())
+                                                int.parse(helper.reviewMean)
+                                                    .ceil())
                                             ? const Color.fromRGBO(
                                                 255, 183, 3, 1)
                                             : Colors.grey)

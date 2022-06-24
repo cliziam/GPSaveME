@@ -1,8 +1,4 @@
 // ignore_for_file: file_names
-//import 'dart:math';
-import 'dart:io';
-import 'dart:typed_data';
-import 'package:first_prj/models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:first_prj/models/Request.dart';
@@ -16,7 +12,7 @@ class AroundYou extends StatefulWidget {
 
   static List<Request> requestList = [];
 
-  AroundYou({Key? key}) : super(key: key);
+  const AroundYou({Key? key}) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
   _AroundYouState createState() => _AroundYouState();
@@ -25,7 +21,7 @@ class AroundYou extends StatefulWidget {
 class _AroundYouState extends State<AroundYou> {
   final GlobalKey<AnimatedListState> _key = GlobalKey();
   bool accepted = false;
-  var refreshColor = Color.fromRGBO(255, 183, 3, 1);
+  var refreshColor = const Color.fromRGBO(255, 183, 3, 1);
 
   @override
   Widget build(BuildContext context) {
@@ -75,36 +71,40 @@ class _AroundYouState extends State<AroundYou> {
           Padding(
               padding: EdgeInsets.fromLTRB(
                   0, deviceWidth * 0.02, 0, deviceWidth * 0.01)),
-          InkWell(
-              child: Container(
-                width: deviceWidth * 0.6,
-                height: deviceHeight * 0.07,
-                // ignore: sort_child_properties_last
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    const Text('Refresh',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                          color: Colors.white,
-                        )),
-                    Padding(padding: EdgeInsets.only(left: deviceWidth * 0.13)),
-                    const Icon(Icons.refresh),
-                    Padding(
-                        padding: EdgeInsets.only(right: deviceWidth * 0.03)),
-                  ],
+          if (Status.waitingHelp || Status.helpAccepted)
+            ...[]
+          else
+            InkWell(
+                child: Container(
+                  width: deviceWidth * 0.6,
+                  height: deviceHeight * 0.07,
+                  // ignore: sort_child_properties_last
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      const Text('Refresh',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                            color: Colors.white,
+                          )),
+                      Padding(
+                          padding: EdgeInsets.only(left: deviceWidth * 0.13)),
+                      const Icon(Icons.refresh),
+                      Padding(
+                          padding: EdgeInsets.only(right: deviceWidth * 0.03)),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: refreshColor),
                 ),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: refreshColor),
-              ),
-              onTap: () async {
-                await buildRequests();
-                setState(() {});
-              }),
-          if (!Status.requestDone) ...[
+                onTap: () async {
+                  await buildRequests();
+                  setState(() {});
+                }),
+          if (Status.areAllFalse()) ...[
             Expanded(
               child: AnimatedList(
                   key: _key,
@@ -133,8 +133,8 @@ class _AroundYouState extends State<AroundYou> {
             });
             MyApp.navigateToNextScreen(context, index);
           }
-          if (index == 1) {
-            accepted = await getLocation();
+          if (index == 2) {
+            await u!.getReviewRating();
           }
         },
         items: const <BottomNavigationBarItem>[
@@ -256,6 +256,7 @@ class _AroundYouState extends State<AroundYou> {
                           AroundYou.requestList[index].getUser().latitude,
                           AroundYou.requestList[index].getUser().longitude),
                     ),
+                    // ignore: deprecated_member_use_from_same_package
                     Text(" | Request: ${item.getPriorityAsString()}")
                   ],
                 ),

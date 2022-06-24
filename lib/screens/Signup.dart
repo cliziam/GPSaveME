@@ -1,18 +1,14 @@
 // ignore_for_file: file_names
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_prj/main.dart';
-//import 'package:first_prj/screens/Login.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-//import 'package:phone_form_field/phone_form_field.dart';
 import 'package:first_prj/screens/HomePage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:first_prj/screens/SignUpNumber.dart';
-import '../models/User.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -292,6 +288,7 @@ class _SignUpPageState extends State<SignUp> {
                         }
                       }
                       if (check && b) {
+                        // ignore: use_build_context_synchronously
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => const HomePage()));
                       } else {
@@ -416,16 +413,17 @@ uploadUserData() async {
     "longitude": "",
     "front_document": "",
     "retro_document": "",
-    "pending_ask": false,
-    "pending_give": false,
-    "helper": "0",
-    "helped": "",
+    "waitingHelp": false,
+    "helpAccepted": false,
+    "waitingAcceptOrRefuse": false,
+    "proposalAccepted": false,
     "verified": true,
     "request_type": "",
     "request_text": "",
     "request_subtype": "",
     "share_number": false,
     "request_priority": "",
+    "coins": 3
   };
   var jsonString = jsonEncode(jsonFile);
   var bytes = utf8.encode(jsonString);

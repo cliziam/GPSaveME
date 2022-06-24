@@ -4,9 +4,15 @@
 //import 'package:first_prj/main.dart';
 
 class Status {
-  static bool requestDone = false;
+  static bool waitingHelp = false;
+  static bool helpAccepted = false;
+  static bool waitingAcceptOrRefuse = false;
+  static bool proposalAccepted = false;
 
-  static void setRequestDone() {
-    requestDone = !requestDone;
+  static bool areAllFalse() {
+    return !waitingHelp &&
+        !helpAccepted &&
+        !waitingAcceptOrRefuse &&
+        !proposalAccepted;
   }
 }
