@@ -33,7 +33,7 @@ class User {
       for (int i = 0; i < reviews.length; i++) {
         accumulator += reviews[i][0];
       }
-      reviewMean = (accumulator / reviews.length).toString();
+      reviewMean = (accumulator / reviews.length).toString().substring(0, 3);
 
       return reviewMean;
     }

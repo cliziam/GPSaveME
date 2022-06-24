@@ -45,12 +45,11 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     // ignore: prefer_const_literals_to_create_immutables
                     children: [
-                      const Padding(padding:EdgeInsets.fromLTRB(32, 0, 0, 0)),
+                      const Padding(padding: EdgeInsets.fromLTRB(32, 0, 0, 0)),
                       Text(reqType,
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18)),
-                     const Padding(padding:EdgeInsets.fromLTRB(15, 0, 0, 0)),
-
+                      const Padding(padding: EdgeInsets.fromLTRB(15, 0, 0, 0)),
                       SizedBox(
                         width: deviceWidth * 0.1,
                         height: deviceWidth * 0.1,
@@ -68,26 +67,20 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                       ),
                     ],
                   ),
-                  
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Padding(padding:EdgeInsets.fromLTRB(32, 0, 0, 0)),
-                        SizedBox(
-                          width: deviceWidth * 0.1,
-                          height: deviceWidth * 0.1,
-                          child: Image.asset(
-                            "images/${reqSubType.toLowerCase()}.png",
-                          ),
-                        ),
-                        const Padding(padding:EdgeInsets.fromLTRB(15, 0, 0, 0)),
-
-                        Text(reqText,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black38))
-                      ]),
-                  
+                  Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                    const Padding(padding: EdgeInsets.fromLTRB(32, 0, 0, 0)),
+                    SizedBox(
+                      width: deviceWidth * 0.1,
+                      height: deviceWidth * 0.1,
+                      child: Image.asset(
+                        "images/${reqSubType.toLowerCase()}.png",
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.fromLTRB(15, 0, 0, 0)),
+                    Text(reqText,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black38))
+                  ]),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       primary: const Color.fromRGBO(33, 158, 188, 1),
@@ -208,8 +201,8 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                                     Icon(Icons.star,
                                         size: 12,
                                         color: (i <
-                                                int.parse(helper.reviewMean)
-                                                    .ceil())
+                                                double.parse(helper.reviewMean)
+                                                    .round())
                                             ? const Color.fromRGBO(
                                                 255, 183, 3, 1)
                                             : Colors.grey)

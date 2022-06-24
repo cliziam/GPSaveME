@@ -105,18 +105,25 @@ class _AroundYouState extends State<AroundYou> {
                   setState(() {});
                 }),
           if (Status.areAllFalse()) ...[
-            Expanded(
-              child: AnimatedList(
-                  key: _key,
-                  initialItemCount: AroundYou.requestList.length,
-                  padding: const EdgeInsets.all(10),
-                  itemBuilder: (context, index, animation) {
-                    return _buildItem(
-                        AroundYou.requestList[index], animation, index);
-                  }),
-            )
+            if (AroundYou.requestList.isEmpty) ...[
+              Padding(
+                padding: EdgeInsets.only(top: deviceHeight * 0.25),
+                child: Text("There are not requests around you yet"),
+              )
+            ] else ...[
+              Expanded(
+                child: AnimatedList(
+                    key: _key,
+                    initialItemCount: AroundYou.requestList.length,
+                    padding: const EdgeInsets.all(10),
+                    itemBuilder: (context, index, animation) {
+                      return _buildItem(
+                          AroundYou.requestList[index], animation, index);
+                    }),
+              )
+            ]
           ] else ...[
-          const Padding(padding: EdgeInsets.only(top: 5)),
+            const Padding(padding: EdgeInsets.only(top: 5)),
             const AlertAroundYouPending()
           ]
         ],
@@ -301,16 +308,19 @@ class _AroundYouState extends State<AroundYou> {
                 TextButton(
                     onPressed: () => {Navigator.pop(context)},
                     child: const Text("CANCEL")),
-                TextButton( 
+                TextButton(
                   child: const Text("SEND HELP"),
                   onPressed: () async {
-                    Status.waitingAcceptOrRefuse=true;
+                    Status.waitingAcceptOrRefuse = true;
 
                     await u!.uploadHelpProposal(item.helped.phoneNumber);
                     if (!mounted) return; // consiglio di stack
-                    Navigator.push(context,MaterialPageRoute(builder: (context) => const AroundYou())).then((value) => setState(() {})); 
+                    Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AroundYou()))
+                        .then((value) => setState(() {}));
                   },
-                 
                 ),
               ],
               actionsAlignment: MainAxisAlignment.spaceEvenly,
