@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:first_prj/screens/AroundYou.dart';
+import 'package:first_prj/screens/NFC.dart';
 import 'package:first_prj/screens/Profile.dart';
 import 'package:first_prj/screens/SignUpNumber.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:first_prj/screens/HomePage.dart';
 import 'package:location/location.dart';
 import 'package:first_prj/screens/Login.dart';
 import 'dart:async' show Future;
+import 'package:nfc_manager/nfc_manager.dart';
 
 double deviceWidth = 0, deviceHeight = 0;
 
@@ -41,8 +43,13 @@ class MyApp extends StatelessWidget {
         }));
         break;
       case 2:
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const Profile()));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          isNFCAvailable();
+          print("STO CHIAMANDO NFC");
+          getNFC();
+          print("Ho chiamato NFC");
+          return const NFC();
+        }));
         break;
     }
   }
@@ -70,6 +77,30 @@ Future<bool> getLocation() async {
 
   return true;
 }
+
+Future<bool> isNFCAvailable() async {
+  // Check availability
+  bool b = await NfcManager.instance.isAvailable();
+  print(b);
+  return b;
+}
+
+Future<bool> getNFC() async {
+  ValueNotifier<dynamic> result = ValueNotifier(null);
+  // Start Session
+  print("STO STARTANDO LA SESSIONE...");
+  NfcManager.instance.startSession(
+    onDiscovered: (NfcTag tag) async {
+      // Do something with an NfcTag instance.
+      result.value = tag.data;
+      print("PRINT PROVA");
+      print(result.value);
+    },
+  );
+
+  return false;
+}
+
 
 //Future<String> loadAsset() async {
 //  return await rootBundle.loadString('storage/prova.txt');
