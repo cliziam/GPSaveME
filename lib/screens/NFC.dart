@@ -66,8 +66,21 @@ class _NFC extends State<NFC> {
             ),
           ),
           Padding(padding: const EdgeInsets.all(5)),
-          SizedBox(
-            width: deviceWidth/1.2,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [ 
+            SizedBox(
+            height: deviceHeight * 0.05,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Icon(Icons.warning_amber_rounded, color: Colors.black38), Padding(padding: EdgeInsets.only(right: 2)),
+            Text("Please enable the NFC settings on your device",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black38),),]),
+          ),     SizedBox(
+            width: deviceWidth/1.1,
+            height: deviceHeight * 0.6,
             child: Card(
               elevation: 5,
               shape:
@@ -90,7 +103,8 @@ class _NFC extends State<NFC> {
                  
                    Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [            Padding(padding: EdgeInsets.only(right: deviceWidth/6,)),
+            children: [            
+              Padding(padding: EdgeInsets.only(right: deviceWidth/6,)),
 
             Text("Or instead", style: TextStyle(
                             color: Colors.black38,
@@ -108,8 +122,10 @@ class _NFC extends State<NFC> {
                                                              GenerateQR()))},
               child: const Text('CONFIRM WITH QR'),),],),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children:[ TextButton(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:[ 
+                  Padding(padding: EdgeInsets.only(right: deviceWidth/2 - 15)),
+                  TextButton(
                       onPressed: () {
                       },
                       child: const Text('Helper hasnt arrived?',
@@ -127,7 +143,8 @@ class _NFC extends State<NFC> {
             ),
           
           
-          ),
+          ),],),
+        
          
               ],
             ),

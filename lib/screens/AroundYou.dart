@@ -108,7 +108,8 @@ class _AroundYouState extends State<AroundYou> {
             if (AroundYou.requestList.isEmpty) ...[
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.25),
-                child: Text("There are not requests around you yet"),
+                child: const Text("There are not requests around you yet", 
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black38)),
               )
             ] else ...[
               Expanded(

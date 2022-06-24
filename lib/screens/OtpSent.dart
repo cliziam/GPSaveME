@@ -11,7 +11,7 @@ import 'dart:math';
 // ignore: must_be_immutable
 class OtpSent extends StatefulWidget {
   String otpTyped = "";
-  final String generatedOtp = (Random().nextInt(1000) + 9000).toString();
+  final String generatedOtp = (Random().nextInt(8999) + 1000).toString();
 
   OtpSent({Key? key}) : super(key: key);
   @override
