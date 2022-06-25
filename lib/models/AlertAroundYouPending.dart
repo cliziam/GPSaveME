@@ -20,6 +20,7 @@ class _AlertAroundYouPendingState extends State<AlertAroundYouPending> {
   @override
   Widget build(BuildContext context) {
     return Column(
+<<<<<<< HEAD
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -32,10 +33,25 @@ class _AlertAroundYouPendingState extends State<AlertAroundYouPending> {
                   borderRadius: BorderRadius.circular(10)),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
+=======
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [ 
+            SizedBox(
+            width: deviceWidth/1.1,
+            height: deviceHeight * 0.6,
+            child: Card(
+              elevation: 5,
+              shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(50, 0,50, 0),
+>>>>>>> 8d7efdb8462d84f87ab817f8f5e4f8ff5a619317
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
+<<<<<<< HEAD
                     const Icon(Icons.lock_clock,
                         color: Color.fromARGB(255, 158, 52, 45), size: 90),
                     const Text(
@@ -52,5 +68,19 @@ class _AlertAroundYouPendingState extends State<AlertAroundYouPending> {
         )
       ],
     );
+=======
+                    const Icon(Icons.warning_amber_rounded, color: Color.fromARGB(255, 158, 52, 45), size: 90),
+                    const Text("You can't help if you have a pending help request!", 
+                          textAlign: TextAlign.center, 
+                          style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black38,
+                          fontWeight: FontWeight.bold,)),
+                  ],             
+                ),
+              )
+            ),
+          )],);
+>>>>>>> 8d7efdb8462d84f87ab817f8f5e4f8ff5a619317
   }
 }

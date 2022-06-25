@@ -78,7 +78,8 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          const Padding(padding: EdgeInsets.only(top: 5)),
+          Padding(padding: EdgeInsets.only(top: Status.waitingHelp ? 5 : 20)),
+          if (Status.waitingHelp) 
           InkWell(
               child: Container(
                 width: deviceWidth * 0.6,

@@ -147,9 +147,13 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                 ])),
       ),
       // ignore: prefer_const_constructors
+<<<<<<< HEAD
       Padding(
           padding: EdgeInsets.fromLTRB(
               0, deviceHeight * 0.01, 0, deviceHeight * 0.03)),
+=======
+      Padding(padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.01, 0, deviceHeight * 0.03)),
+>>>>>>> 8d7efdb8462d84f87ab817f8f5e4f8ff5a619317
       Text("See who wants to help you",
           style: const TextStyle(
               fontWeight: FontWeight.bold, color: Colors.black38)),
