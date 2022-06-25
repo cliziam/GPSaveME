@@ -6,12 +6,12 @@ import 'package:first_prj/main.dart';
 import 'package:flutter/material.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import '../models/AlertDialogPending.dart';
-import '../models/Request.dart';
 import '../models/Status.dart';
 import 'SignUpNumber.dart';
 import 'OtpSent.dart';
 import 'package:first_prj/models/User.dart';
 
+// ignore: prefer_typing_uninitialized_variables
 var request;
 
 // ignore: must_be_immutable

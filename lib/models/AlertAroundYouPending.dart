@@ -1,12 +1,6 @@
-//import 'package:flutter/cupertino.dart';
 // ignore_for_file: file_names
 import 'package:first_prj/main.dart';
 import 'package:flutter/material.dart';
-
-import 'Status.dart';
-//import 'package:first_prj/main.dart';
-//import '../screens/HomePage.dart';
-//import 'Status.dart';
 
 class AlertAroundYouPending extends StatefulWidget {
   const AlertAroundYouPending({Key? key}) : super(key: key);

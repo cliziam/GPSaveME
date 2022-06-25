@@ -1,9 +1,9 @@
 // ignore_for_file: file_names, prefer_const_constructors, unrelated_type_equality_checks
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
-
 import 'GenerateQR.dart';
 
+// ignore: must_be_immutable
 class NFC extends StatefulWidget {
   final String title = "GPSaveMe";
   bool isTheHelper;

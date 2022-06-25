@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:first_prj/screens/AroundYou.dart';
-import 'package:first_prj/screens/NFC.dart';
 import 'package:first_prj/screens/Profile.dart';
 import 'package:first_prj/screens/SignUpNumber.dart';
 import 'package:flutter/material.dart';
@@ -76,20 +75,19 @@ Future<bool> getLocation() async {
 Future<bool> isNFCAvailable() async {
   // Check availability
   bool b = await NfcManager.instance.isAvailable();
-  print(b);
   return b;
 }
 
 Future<bool> getNFC() async {
   ValueNotifier<dynamic> result = ValueNotifier(null);
   // Start Session
-  print("STO STARTANDO LA SESSIONE...");
+  //print("STO STARTANDO LA SESSIONE...");
   NfcManager.instance.startSession(
     onDiscovered: (NfcTag tag) async {
       // Do something with an NfcTag instance.
       result.value = tag.data;
-      print("PRINT PROVA");
-      print(result.value);
+      //print("PRINT PROVA");
+      //print(result.value);
     },
   );
 

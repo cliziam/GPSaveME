@@ -1,14 +1,12 @@
-// ignore_for_file: file_names
-
 // ignore_for_file: file_names, prefer_const_constructors, unrelated_type_equality_checks
 import 'package:first_prj/screens/NFC.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import '../models/Request.dart';
-import 'dart:typed_data';
 import '../models/User.dart';
 import 'SignUpNumber.dart';
 
+// ignore: must_be_immutable
 class Riepilogo extends StatefulWidget {
   final String title = "GPSaveMe";
   Request helpedRequest;
@@ -127,6 +125,7 @@ class _Riepilogo extends State<Riepilogo> {
                       // ignore: prefer_interpolation_to_compose_strings
                       Text("Priority of the request: " +
                           widget.helpedRequest
+                              // ignore: deprecated_member_use_from_same_package
                               .getPriorityAsString()
                               .toLowerCase())
                     ],

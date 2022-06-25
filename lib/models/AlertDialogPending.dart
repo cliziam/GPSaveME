@@ -150,9 +150,8 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
       Padding(
           padding: EdgeInsets.fromLTRB(
               0, deviceHeight * 0.01, 0, deviceHeight * 0.03)),
-      Text("See who wants to help you",
-          style: const TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.black38)),
+      const Text("See who wants to help you",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black38)),
       CarouselSlider(
         items: [
           //1st Image of Slider

@@ -6,6 +6,7 @@ import 'package:first_prj/models/HelpCard.dart';
 import '../models/Status.dart';
 import '../models/AlertDialogPending.dart';
 import 'package:first_prj/screens/SignUpNumber.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:shake/shake.dart';
 
 import '../models/User.dart';
