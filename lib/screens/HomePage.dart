@@ -6,12 +6,12 @@ import 'package:first_prj/models/HelpCard.dart';
 import '../models/Status.dart';
 import '../models/AlertDialogPending.dart';
 import 'package:first_prj/screens/SignUpNumber.dart';
+import 'package:shake/shake.dart';
 
 import '../models/User.dart';
 
 class HomePage extends StatefulWidget {
   final String title = "GPSaveMe";
-
   const HomePage({Key? key}) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
@@ -21,6 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var refreshColor = const Color.fromRGBO(255, 183, 3, 1);
   List<User> users = [];
+  late ShakeDetector detector;
 
   @override
   Widget build(BuildContext context) {
@@ -79,35 +80,36 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Padding(padding: EdgeInsets.only(top: Status.waitingHelp ? 5 : 20)),
-          if (Status.waitingHelp) 
-          InkWell(
-              child: Container(
-                width: deviceWidth * 0.6,
-                height: deviceHeight * 0.07,
-                // ignore: sort_child_properties_last
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    const Text('Refresh',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                          color: Colors.white,
-                        )),
-                    Padding(padding: EdgeInsets.only(left: deviceWidth * 0.13)),
-                    const Icon(Icons.refresh),
-                    Padding(
-                        padding: EdgeInsets.only(right: deviceWidth * 0.03)),
-                  ],
+          if (Status.waitingHelp)
+            InkWell(
+                child: Container(
+                  width: deviceWidth * 0.6,
+                  height: deviceHeight * 0.07,
+                  // ignore: sort_child_properties_last
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      const Text('Refresh',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                            color: Colors.white,
+                          )),
+                      Padding(
+                          padding: EdgeInsets.only(left: deviceWidth * 0.13)),
+                      const Icon(Icons.refresh),
+                      Padding(
+                          padding: EdgeInsets.only(right: deviceWidth * 0.03)),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: refreshColor),
                 ),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: refreshColor),
-              ),
-              onTap: () async {
-                users = await u!.checkForHelp();
-              }),
+                onTap: () async {
+                  users = await u!.checkForHelp();
+                }),
           const Padding(padding: EdgeInsets.only(top: 5)),
           if (Status.areAllFalse()) ...[
             HelpCard("images/car.png", "Transportation", false),
@@ -256,6 +258,39 @@ class _HomePageState extends State<HomePage> {
               icon: const Icon(Icons.warning_rounded),
             ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    detector = ShakeDetector.autoStart(onPhoneShake: () {
+      AlertDialogPending.attributes = [
+        "Danger",
+        "Danger request",
+        "",
+        "Send help as fast as possible",
+        true,
+      ];
+      u!.uploadHelpRequest("Danger request", "",
+          "Send help as fast as possible", "Danger", true);
+      Status.waitingHelp = true;
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      ).then((value) => setState(() {}));
+      showDialog(
+          context: context,
+          builder: (_) => const AlertDialog(
+                title: Text('Shaking detected'),
+                content: Text('You have sent an emergency request!'),
+              ));
+    });
+  }
+
+  @override
+  void dispose() {
+    detector.stopListening();
+    super.dispose();
   }
 }
 
