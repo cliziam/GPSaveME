@@ -1,17 +1,21 @@
 // ignore_for_file: file_names
 
 // ignore_for_file: file_names, prefer_const_constructors, unrelated_type_equality_checks
-/*import 'package:flutter/material.dart';
+import 'package:first_prj/screens/NFC.dart';
+import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import '../models/Request.dart';
 import 'dart:typed_data';
 import '../models/User.dart';
+import 'SignUpNumber.dart';
 
 class Riepilogo extends StatefulWidget {
   final String title = "GPSaveMe";
+  Request helpedRequest;
+
   // ignore: non_constant_identifier_names
 
-  Riepilogo({Key? key}) : super(key: key);
+  Riepilogo(this.helpedRequest, {Key? key}) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
   _Riepilogo createState() => _Riepilogo();
@@ -20,20 +24,6 @@ class Riepilogo extends StatefulWidget {
 class _Riepilogo extends State<Riepilogo> {
   @override
   Widget build(BuildContext context) {
-    Request helpedRequest = Request(
-        0,
-        3,
-        REQUEST_TYPE.transportation,
-        'out of fuel',
-        User(
-            'Marge',
-            'Simpson',
-            '339862948',
-            Image.memory(Uint8List.fromList([])),
-            false,
-            41.908236221281534,
-            12.535103079414553),
-        "images/fuel.png");
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -83,25 +73,24 @@ class _Riepilogo extends State<Riepilogo> {
             ),
           ),
           Card(
-              margin: EdgeInsets.all(30),
+              margin: EdgeInsets.all(deviceHeight * 0.025),
               child: Column(
                 children: [
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: Image.asset(
-                              "",
-                            )),
+                          width: 90,
+                          height: 90,
+                          child: widget.helpedRequest.getUser().imageProfile,
+                        ),
                         Text(
-                          "${helpedRequest.getUser().name} ${helpedRequest.getUser().surname}",
+                          "${widget.helpedRequest.getUser().name} ${widget.helpedRequest.getUser().surname}",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
                         ),
                         Icon(Icons.verified,
-                            color: helpedRequest.getUser().profileCheck
+                            color: widget.helpedRequest.getUser().profileCheck
                                 ? Colors.green
                                 : Colors.grey),
                       ]),
@@ -110,7 +99,10 @@ class _Riepilogo extends State<Riepilogo> {
                   ),
                   Row(
                     children: [
-                      Text("{rating}"),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                      ),
+                      Text(widget.helpedRequest.getUser().reviewMean),
                       for (var i = 0; i < 5; i++)
                         Icon(Icons.star,
                             color: i <= 3 ? Colors.yellow : Colors.grey)
@@ -122,23 +114,31 @@ class _Riepilogo extends State<Riepilogo> {
                   Row(
                     // ignore: prefer_const_literals_to_create_immutables
                     children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                      ),
                       Text(
                           // ignore: prefer_interpolation_to_compose_strings
-                          "distanza|"),
+                          "${User.getDistance(u!, widget.helpedRequest.getUser())} | "),
                       // ignore: prefer_interpolation_to_compose_strings
                       Padding(
                         padding: EdgeInsets.only(right: 3),
                       ),
                       // ignore: prefer_interpolation_to_compose_strings
                       Text("Priority of the request: " +
-                          helpedRequest.getPriorityAsString().toLowerCase())
+                          widget.helpedRequest
+                              .getPriorityAsString()
+                              .toLowerCase())
                     ],
                   ),
                   Padding(
                     padding: EdgeInsets.all(10),
                   ),
                   Row(children: [
-                    Text(helpedRequest.description,
+                    Padding(
+                      padding: EdgeInsets.only(left: 10),
+                    ),
+                    Text(widget.helpedRequest.description,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black38))
                   ]),
@@ -146,13 +146,16 @@ class _Riepilogo extends State<Riepilogo> {
                     padding: EdgeInsets.all(10),
                   ),
                   Row(children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 10),
+                    ),
                     FloatingActionButton.extended(
                         label: Row(
                           children: <Widget>[
                             Padding(padding: EdgeInsets.only(right: 5)),
                             // ignore: prefer_interpolation_to_compose_strings
                             Text(
-                                "CALL ${helpedRequest.getUser().name.toUpperCase()}"),
+                                "CALL ${widget.helpedRequest.getUser().name.toUpperCase()}"),
                           ],
                         ),
                         backgroundColor: Color.fromARGB(255, 95, 222, 100),
@@ -160,35 +163,42 @@ class _Riepilogo extends State<Riepilogo> {
                         onPressed: () {})
                   ]),
                   SizedBox(
-                    width: 200,
-                    height: 250,
+                    width: deviceWidth * 0.4,
+                    height: deviceHeight * 0.1,
                   )
                 ],
               )),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: const Color.fromRGBO(33, 158, 188, 1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-                onPressed: () => Navigator.pop(context, 'Cancel'),
-                child: const Text('DISCARD'),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: const Color.fromRGBO(255, 183, 3, 1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-                onPressed: () => {},
-                child: const Text('ACCEPT'),
-              ),
-            ],
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //   children: [
+          //     ElevatedButton(
+          //       style: ElevatedButton.styleFrom(
+          //         primary: const Color.fromRGBO(33, 158, 188, 1),
+          //         shape: RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(20.0),
+          //         ),
+          //       ),
+          //       onPressed: () => Navigator.pop(context, 'Cancel'),
+          //       child: const Text('DISCARD'),
+          //     ),
+          //     ElevatedButton(
+          //       style: ElevatedButton.styleFrom(
+          //         primary: const Color.fromRGBO(255, 183, 3, 1),
+          //         shape: RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(20.0),
+          //         ),
+          //       ),
+          //       onPressed: () => {},
+          //       child: const Text('ACCEPT'),
+          //     ),
+          //   ],
+          // )
+          FloatingActionButton.extended(
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => NFC(true)));
+            },
+            label: Text("Confirm your help!"),
           )
         ],
       ),
@@ -217,4 +227,4 @@ class _Riepilogo extends State<Riepilogo> {
       ),
     );
   }
-}*/
+}

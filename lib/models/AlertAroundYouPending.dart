@@ -1,5 +1,6 @@
 //import 'package:flutter/cupertino.dart';
 // ignore_for_file: file_names
+import 'package:first_prj/main.dart';
 import 'package:flutter/material.dart';
 
 import 'Status.dart';
@@ -18,33 +19,38 @@ class AlertAroundYouPending extends StatefulWidget {
 class _AlertAroundYouPendingState extends State<AlertAroundYouPending> {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      elevation: 8,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width / 1.3,
-        height: MediaQuery.of(context).size.height / 2,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          // ignore: prefer_const_literals_to_create_immutables
-          children: [
-            Icon(Status.waitingAcceptOrRefuse? Icons.pending_outlined: Icons.warning_amber_rounded,
-                color:Status.waitingAcceptOrRefuse? Colors.green: Colors.red, size: 100.0),
-            // ignore: prefer_const_constructors
-            Column(
-              children: [
-                Text(
-                  Status.waitingHelp? "You can't help someone if you have a pending help request!": "Refresh the page to see if the user accepted your help",
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  textAlign: TextAlign.center,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: deviceWidth / 1.1,
+          height: deviceHeight * 0.6,
+          child: Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  // ignore: prefer_const_literals_to_create_immutables
+                  children: [
+                    const Icon(Icons.lock_clock,
+                        color: Color.fromARGB(255, 158, 52, 45), size: 90),
+                    const Text(
+                        "You have to wait for you're help proposal to be accepted or rejected.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black38,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ],
                 ),
-              ],
-            ),
-          ],
-        ),
-      ),
+              )),
+        )
+      ],
     );
   }
 }

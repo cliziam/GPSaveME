@@ -43,13 +43,8 @@ class MyApp extends StatelessWidget {
         }));
         break;
       case 2:
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          isNFCAvailable();
-          print("STO CHIAMANDO NFC");
-          getNFC();
-          print("Ho chiamato NFC");
-          return const NFC();
-        }));
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => const Profile()));
         break;
     }
   }

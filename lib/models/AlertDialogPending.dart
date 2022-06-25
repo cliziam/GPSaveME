@@ -7,6 +7,7 @@ import 'package:first_prj/main.dart';
 import 'package:first_prj/models/User.dart';
 import '../screens/HomePage.dart';
 import 'package:first_prj/screens/SignUpNumber.dart';
+import '../screens/NFC.dart';
 import 'Status.dart';
 
 class AlertDialogPending extends StatefulWidget {
@@ -146,6 +147,9 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                 ])),
       ),
       // ignore: prefer_const_constructors
+      Padding(
+          padding: EdgeInsets.fromLTRB(
+              0, deviceHeight * 0.01, 0, deviceHeight * 0.03)),
       Text("See who wants to help you",
           style: const TextStyle(
               fontWeight: FontWeight.bold, color: Colors.black38)),
@@ -235,7 +239,13 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                               ),
                             ),
                             onPressed: () {
+                              Status.helpAccepted = true;
                               u!.acceptRequest(helper.phoneNumber);
+                              if (!mounted) return;
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => NFC(false)));
                             },
                             child: const Text('ACCEPT'),
                           ),

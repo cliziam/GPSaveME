@@ -153,6 +153,25 @@ class User {
     await toupload.writeAsBytes(arr);
     // carica il file
     helpedRef.putFile(toupload);
+
+    //updating field in my own json file
+    var myData = await getCurrentData();
+    myData["waitingAcceptOrRefuse"] = true;
+    var myjsonString = jsonEncode(myData);
+    var mybytes = utf8.encode(myjsonString);
+    var mybyteData = base64.encode(mybytes);
+
+    var myarr = base64.decode(mybyteData);
+
+    String mytempPath = (await getTemporaryDirectory()).path;
+    // crea il file nella cache
+    File mytoupload = await File('$mytempPath/userdata.json').create();
+    await mytoupload.writeAsBytes(myarr);
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child("users/$phoneNumber/userdata.json");
+    // carica il file
+    ref.putFile(mytoupload);
     return true;
   }
 
@@ -248,6 +267,26 @@ class User {
     await toupload.writeAsBytes(arr);
     // carica il file
     helpedRef.putFile(toupload);
+
+    //updating field in my own json file
+    var myData = await getCurrentData();
+    myData["waitingHelp"] = false;
+    myData["helpAccepted"] = true;
+    var myjsonString = jsonEncode(myData);
+    var mybytes = utf8.encode(myjsonString);
+    var mybyteData = base64.encode(mybytes);
+
+    var myarr = base64.decode(mybyteData);
+
+    String mytempPath = (await getTemporaryDirectory()).path;
+    // crea il file nella cache
+    File mytoupload = await File('$mytempPath/userdata.json').create();
+    await mytoupload.writeAsBytes(myarr);
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child("users/$phoneNumber/userdata.json");
+    // carica il file
+    ref.putFile(mytoupload);
   }
 
   rejectRequest(String phone) async {
@@ -273,6 +312,70 @@ class User {
     await toupload.writeAsBytes(arr);
     // carica il file
     helpedRef.putFile(toupload);
+  }
+
+  checkProposalStatus() async {
+    var incomingRef =
+        FirebaseStorage.instance.ref().child("users/$phoneNumber/");
+    var messages = await incomingRef.listAll();
+    for (var path in messages.items) {
+      if (path.fullPath.contains("_")) {
+        var phone = path.fullPath.split(".")[0].split("_").last;
+        var proposalRef = FirebaseStorage.instance.ref().child(path.fullPath);
+        const oneMegabyte = 1024 * 1024;
+        final Uint8List? data = await proposalRef.getData(oneMegabyte);
+        var list = data!.toList();
+        var jsonAsString = String.fromCharCodes(list);
+        final jsonFile = await json.decode(jsonAsString);
+        if (jsonFile["accepted"]) {
+          var myData = await getCurrentData();
+          myData["waitingAcceptOrRefuse"] = false;
+          myData["proposalAccepted"] = true;
+          var myjsonString = jsonEncode(myData);
+          var mybytes = utf8.encode(myjsonString);
+          var mybyteData = base64.encode(mybytes);
+
+          var myarr = base64.decode(mybyteData);
+
+          String mytempPath = (await getTemporaryDirectory()).path;
+          // crea il file nella cache
+          File mytoupload = await File('$mytempPath/userdata.json').create();
+          await mytoupload.writeAsBytes(myarr);
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child("users/$phoneNumber/userdata.json");
+          // carica il file
+          ref.putFile(mytoupload);
+
+          // builda la richiesta per Riepilogo
+          Request request = await buildRequest(phone);
+
+          return [true, request];
+        } else if (jsonFile["rejected"]) {
+          return [false, false];
+        }
+      }
+    }
+  }
+
+  buildRequest(String phone) async {
+    var udataRef =
+        FirebaseStorage.instance.ref().child("users/$phone/userdata.json");
+    const oneMegabyte = 1024 * 1024;
+    final Uint8List? data = await udataRef.getData(oneMegabyte);
+    var list = data!.toList();
+    var jsonAsString = String.fromCharCodes(list);
+    final jsonFile = await json.decode(jsonAsString);
+    var user = await getUser(phone, jsonFile);
+
+    var request = Request(
+        jsonFile["request_priority"], // needs string but is int in JSON
+        jsonFile["request_type"],
+        jsonFile["request_subtype"],
+        jsonFile["request_text"],
+        user,
+        "images/${jsonFile["request_type"]}");
+    return request;
   }
 
   getUser(String phone, Map jsonFile) async {
@@ -303,8 +406,6 @@ class User {
   static double deg2rad(deg) {
     return deg * (pi / 180);
   }
-
-  checkProposalStatus() {}
 }
 
 class Review {

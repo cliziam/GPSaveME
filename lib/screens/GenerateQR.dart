@@ -10,8 +10,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 class GenerateQR extends StatefulWidget {
   final String title = "GPSaveMe";
   final qrKey = GlobalKey();
+  bool isTheHelper;
 
-  GenerateQR({Key? key}) : super(key: key);
+  GenerateQR(this.isTheHelper, {Key? key}) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
   _GenerateQR createState() => _GenerateQR();
@@ -78,34 +79,53 @@ class _GenerateQR extends State<GenerateQR> {
               child: //RepaintBoundary is necessary for saving QR to user's phone
                   Column(children: [
                 Padding(padding: const EdgeInsets.fromLTRB(10, 10, 10, 10)),
-                Center(
-                  child: RepaintBoundary(
-                    key: widget.qrKey,
-                    child: QrImage(
-                      data: u!
-                          .phoneNumber, //This is the part we give data to our QR
-                      //  embeddedImage: , You can add your custom image to the center of your QR
-                      //  semanticsLabel:'', You can add some info to display when your QR scanned
-                      size: 250,
-                      backgroundColor: Colors.white,
-                      version:
-                          QrVersions.auto, //You can also give other versions
+                if (widget.isTheHelper) ...[
+                  Center(
+                    child: RepaintBoundary(
+                      key: widget.qrKey,
+                      child: QrImage(
+                        data: u!
+                            .phoneNumber, //This is the part we give data to our QR
+                        //  embeddedImage: , You can add your custom image to the center of your QR
+                        //  semanticsLabel:'', You can add some info to display when your QR scanned
+                        size: 250,
+                        backgroundColor: Colors.white,
+                        version:
+                            QrVersions.auto, //You can also give other versions
+                      ),
                     ),
-                  ),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+                  )
+                ] else ...[
+                  Padding(
+                    padding: EdgeInsets.only(top: deviceHeight * 0.25),
+                  )
+                ],
+                if (widget.isTheHelper) ...[
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
+                    onPressed: () => {},
+                    child: const Text('Let the other person scan this!'),
                   ),
-                  onPressed: () => {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => ScanQrPage()))
-                  },
-                  child: const Text('Scan QR Code'),
-                ),
+                ] else ...[
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    onPressed: () => {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => ScanQrPage()))
+                    },
+                    child: const Text('Scan QR Code'),
+                  ),
+                ]
               ]),
             ),
           ),

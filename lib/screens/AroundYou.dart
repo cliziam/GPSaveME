@@ -1,10 +1,13 @@
 // ignore_for_file: file_names
+import 'package:first_prj/screens/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:first_prj/models/Request.dart';
 import '../models/AlertAroundYouPending.dart';
 import '../models/Status.dart';
 import 'package:first_prj/screens/SignUpNumber.dart';
+
+import 'Riepilogo.dart';
 
 // ignore: must_be_immutable
 class AroundYou extends StatefulWidget {
@@ -25,136 +28,174 @@ class _AroundYouState extends State<AroundYou> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        automaticallyImplyLeading: false,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Tooltip(
-                  message: "Remaining coins to ask for help!",
-                  triggerMode: TooltipTriggerMode.tap,
-                  child: Icon(Icons.diamond_sharp),
-                ),
-                Text(MyApp.coins.toString()),
-              ],
-            ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: <Widget>[
-          Container(
-            height: 60.0,
-            decoration: const BoxDecoration(
-              borderRadius:
-                  BorderRadius.vertical(bottom: Radius.circular(15.0)),
-              color: Color.fromRGBO(142, 202, 230, 1),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[
-                Text('Help requests around you',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
-                      color: Colors.white,
-                    )),
-              ],
-            ),
-          ),
-          Padding(
-              padding: EdgeInsets.fromLTRB(
-                  0, deviceWidth * 0.02, 0, deviceWidth * 0.01)),
-          if (Status.waitingHelp || Status.helpAccepted)
-            ...[]
-          else
-            InkWell(
-                child: Container(
-                  width: deviceWidth * 0.6,
-                  height: deviceHeight * 0.07,
-                  // ignore: sort_child_properties_last
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      const Text('Refresh',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                            color: Colors.white,
-                          )),
-                      Padding(
-                          padding: EdgeInsets.only(left: deviceWidth * 0.13)),
-                      const Icon(Icons.refresh),
-                      Padding(
-                          padding: EdgeInsets.only(right: deviceWidth * 0.03)),
-                    ],
+    if (!Status.proposalAccepted) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+          automaticallyImplyLeading: false,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Tooltip(
+                    message: "Remaining coins to ask for help!",
+                    triggerMode: TooltipTriggerMode.tap,
+                    child: Icon(Icons.diamond_sharp),
                   ),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: refreshColor),
-                ),
-                onTap: () async {
-                  await buildRequests();
-                  setState(() {});
-                }),
-          if (Status.areAllFalse()) ...[
-            if (AroundYou.requestList.isEmpty) ...[
-              Padding(
-                padding: EdgeInsets.only(top: deviceHeight * 0.25),
-                child: Text("There are not requests around you yet"),
-              )
+                  Text(MyApp.coins.toString()),
+                ],
+              ),
+            ),
+          ],
+        ),
+        body: Column(
+          children: <Widget>[
+            Container(
+              height: 60.0,
+              decoration: const BoxDecoration(
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(15.0)),
+                color: Color.fromRGBO(142, 202, 230, 1),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const <Widget>[
+                  Text('Help requests around you',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                        color: Colors.white,
+                      )),
+                ],
+              ),
+            ),
+            Padding(
+                padding: EdgeInsets.fromLTRB(
+                    0, deviceWidth * 0.02, 0, deviceWidth * 0.01)),
+            if (Status.waitingHelp || Status.helpAccepted)
+              ...[]
+            else
+              InkWell(
+                  child: Container(
+                    width: deviceWidth * 0.6,
+                    height: deviceHeight * 0.07,
+                    // ignore: sort_child_properties_last
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        const Text('Refresh',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                              color: Colors.white,
+                            )),
+                        Padding(
+                            padding: EdgeInsets.only(left: deviceWidth * 0.13)),
+                        const Icon(Icons.refresh),
+                        Padding(
+                            padding:
+                                EdgeInsets.only(right: deviceWidth * 0.03)),
+                      ],
+                    ),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: refreshColor),
+                  ),
+                  onTap: () async {
+                    if (Status.areAllFalse()) {
+                      await buildRequests();
+                    } else if (Status.waitingAcceptOrRefuse) {
+                      var result = await u!.checkProposalStatus();
+                      bool status = result[0];
+                      if (status) {
+                        // allora la proposta di aiuto è stata accettata
+                        if (!mounted) return;
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Riepilogo(result[1])));
+                      } else {
+                        Status.waitingAcceptOrRefuse = false;
+                        if (!mounted) return;
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AroundYou()));
+                      }
+                    }
+                    setState(() {});
+                  }),
+            if (Status.areAllFalse()) ...[
+              if (AroundYou.requestList.isEmpty) ...[
+                Padding(
+                  padding: EdgeInsets.only(top: deviceHeight * 0.25),
+                  child: const Text("There are not requests around you yet",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black38)),
+                )
+              ] else ...[
+                Expanded(
+                  child: AnimatedList(
+                      key: _key,
+                      initialItemCount: AroundYou.requestList.length,
+                      padding: const EdgeInsets.all(10),
+                      itemBuilder: (context, index, animation) {
+                        return _buildItem(
+                            AroundYou.requestList[index], animation, index);
+                      }),
+                )
+              ]
+            ] else if (Status.waitingAcceptOrRefuse) ...[
+              const Padding(padding: EdgeInsets.only(top: 5)),
+              const AlertAroundYouPending()
             ] else ...[
-              Expanded(
-                child: AnimatedList(
-                    key: _key,
-                    initialItemCount: AroundYou.requestList.length,
-                    padding: const EdgeInsets.all(10),
-                    itemBuilder: (context, index, animation) {
-                      return _buildItem(
-                          AroundYou.requestList[index], animation, index);
-                    }),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: deviceHeight * 0.3),
+                  ),
+                  const Text(
+                      "You can't send help if you have a pending request.")
+                ],
               )
             ]
-          ] else ...[
-            const Padding(padding: EdgeInsets.only(top: 5)),
-            const AlertAroundYouPending()
-          ]
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color.fromRGBO(255, 183, 3, 1),
-        selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),
-        unselectedItemColor: Colors.white,
-        currentIndex: MyApp.selectedIndex,
-        onTap: (index) async {
-          if (MyApp.selectedIndex != index) {
-            setState(() {
-              MyApp.selectedIndex = index;
-            });
-            MyApp.navigateToNextScreen(context, index);
-          }
-          if (index == 2) {
-            await u!.getReviewRating();
-          }
-        },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.gps_fixed), label: 'Around You'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
-        ],
-      ),
-    );
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: const Color.fromRGBO(255, 183, 3, 1),
+          selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),
+          unselectedItemColor: Colors.white,
+          currentIndex: MyApp.selectedIndex,
+          onTap: (index) async {
+            if (MyApp.selectedIndex != index) {
+              setState(() {
+                MyApp.selectedIndex = index;
+              });
+              MyApp.navigateToNextScreen(context, index);
+            }
+            if (index == 2) {
+              await u!.getReviewRating();
+            }
+          },
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.gps_fixed), label: 'Around You'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
+          ],
+        ),
+      );
+    } else {
+      return Riepilogo(request);
+    }
   }
 
   Widget _buildItem(Request item, Animation<double> animation, int index) {
@@ -312,7 +353,6 @@ class _AroundYouState extends State<AroundYou> {
                   child: const Text("SEND HELP"),
                   onPressed: () async {
                     Status.waitingAcceptOrRefuse = true;
-
                     await u!.uploadHelpProposal(item.helped.phoneNumber);
                     if (!mounted) return; // consiglio di stack
                     Navigator.push(

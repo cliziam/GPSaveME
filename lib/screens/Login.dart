@@ -6,10 +6,13 @@ import 'package:first_prj/main.dart';
 import 'package:flutter/material.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import '../models/AlertDialogPending.dart';
+import '../models/Request.dart';
 import '../models/Status.dart';
 import 'SignUpNumber.dart';
 import 'OtpSent.dart';
 import 'package:first_prj/models/User.dart';
+
+var request;
 
 // ignore: must_be_immutable
 class Login extends StatefulWidget {
@@ -265,6 +268,7 @@ void instantiateUser(String phone) async {
   Image profilePic = Image.network(url);
   u = User(jsonFile["name"], jsonFile["surname"], phone, profilePic, false, 0.0,
       0.0);
+
   if (jsonFile["waitingHelp"] == true) {
     Status.waitingHelp = true;
     alertDialogPendingWrapper();
@@ -279,6 +283,8 @@ void instantiateUser(String phone) async {
   }
   if (jsonFile["proposalAccepted"] == true) {
     Status.proposalAccepted = true;
+    var app = await u!.checkProposalStatus();
+    request = app[1];
     //alertDialogPendingWrapper(); // manca la parte di front end rispettiva
   }
 }

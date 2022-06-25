@@ -9,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:first_prj/screens/SignUpNumber.dart';
 
+import '../models/Status.dart';
+
 class Profile extends StatefulWidget {
   final String title = "GPSaveMe";
 
@@ -254,7 +256,7 @@ class _ProfileState extends State<Profile> {
               MyApp.selectedIndex = index;
             });
             if (index == 1) {
-              await buildRequests();
+              if (Status.areAllFalse()) buildRequests();
             }
             if (!mounted) return;
 
