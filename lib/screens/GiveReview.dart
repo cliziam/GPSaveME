@@ -63,7 +63,7 @@ class _GiveReview extends State<GiveReview> {
               ],
             ),
           ),
-          Padding(padding: EdgeInsets.only(top: 50)),
+          Padding(padding: EdgeInsets.only(top: deviceHeight * 0.035)),
           Card(
             elevation: 3,
             margin: EdgeInsets.all(8.0),
@@ -83,12 +83,12 @@ class _GiveReview extends State<GiveReview> {
                       ))
                 ],
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+              Padding(padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.005, 0, deviceHeight * 0.005)),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 for (var i = 0; i < 5; i++)
                   IconButton(
                     icon: Icon(Icons.star),
-                    iconSize: 40,
+                    iconSize: deviceHeight * 0.045,
                     color: stars[i]
                         ? Color.fromARGB(255, 244, 197, 11)
                         : Colors.grey,
@@ -99,7 +99,7 @@ class _GiveReview extends State<GiveReview> {
                     },
                   )
               ]),
-              Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 5)),
+              Padding(padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.005, 0, deviceHeight * 0.002)),
               TextField(
                   maxLines: 8,
                   decoration: InputDecoration(
@@ -112,7 +112,7 @@ class _GiveReview extends State<GiveReview> {
                       review = value;
                     });
                   }),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 30)),
+              Padding(padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.025, 0, deviceHeight * 0.025)),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   primary: review == "" ? Colors.grey : Colors.green,
@@ -123,7 +123,7 @@ class _GiveReview extends State<GiveReview> {
                 onPressed: () => {},
                 child: const Text('SEND REVIEW'),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 30)),
+              Padding(padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.025, 0, deviceHeight * 0.025)),
             ]),
           )
         ],

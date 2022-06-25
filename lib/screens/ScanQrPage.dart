@@ -4,6 +4,8 @@ import 'package:first_prj/screens/GiveReview.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
+import '../models/Status.dart';
+
 class ScanQrPage extends StatefulWidget {
   const ScanQrPage({Key? key}) : super(key: key);
 
@@ -47,6 +49,11 @@ class _ScanQrPageState extends State<ScanQrPage> {
 
   void readQr() async {
     if (result != null) {
+       Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const GiveReview()),
+      ).then((value) => setState(() {}));
+      Status.qrScanned = true;
       controller!.pauseCamera();
       controller!.dispose();
     }

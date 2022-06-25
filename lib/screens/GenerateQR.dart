@@ -1,10 +1,12 @@
 // ignore_for_file: file_names, prefer_const_constructors, unrelated_type_equality_checks
 
+import 'package:first_prj/screens/GiveReview.dart';
 import 'package:first_prj/screens/ScanQrPage.dart';
 import 'package:first_prj/screens/SignUpNumber.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import '../models/Status.dart';
 
 // ignore: must_be_immutable
 class GenerateQR extends StatefulWidget {
@@ -45,7 +47,7 @@ class _GenerateQR extends State<GenerateQR> {
           ),
         ],
       ),
-      body: Column(
+      body: Status.qrScanned ? GiveReview() : Column(
         children: [
           Container(
             height: 60.0,

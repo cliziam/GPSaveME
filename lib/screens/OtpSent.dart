@@ -1,4 +1,5 @@
 // ignore_for_file: file_names
+import 'package:first_prj/screens/GiveReview.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/screens/HomePage.dart';
 import '../models/AlertDialogPending.dart';
@@ -108,7 +109,7 @@ class _OtpSentPageState extends State<OtpSent> {
                               if (!mounted) return;
                               if (widget.otpTyped == widget.generatedOtp) {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const HomePage()));
+                                    builder: (context) => const GiveReview()));
                               } else {
                                 //print(widget.otpTyped);
                                 //print(widget.generatedOtp);
