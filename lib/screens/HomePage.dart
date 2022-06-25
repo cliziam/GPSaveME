@@ -263,8 +263,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    if (Status.areAllFalse()) {
     super.initState();
     detector = ShakeDetector.autoStart(onPhoneShake: () {
+      if (!Status.areAllFalse()) {
+        return;
+      } 
       AlertDialogPending.attributes = [
         "Danger",
         "Danger request",
@@ -285,7 +289,9 @@ class _HomePageState extends State<HomePage> {
                 title: Text('Shaking detected'),
                 content: Text('You have sent an emergency request!'),
               ));
+      detector.stopListening();
     });
+    }
   }
 
   @override

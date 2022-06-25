@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 import 'dart:io';
+import 'package:first_prj/screens/GiveReview.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -47,7 +48,6 @@ class _ScanQrPageState extends State<ScanQrPage> {
   void readQr() async {
     if (result != null) {
       controller!.pauseCamera();
-      // print(result!.code);
       controller!.dispose();
     }
   }
