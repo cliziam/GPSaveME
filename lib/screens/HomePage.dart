@@ -264,28 +264,30 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    detector = ShakeDetector.autoStart(onPhoneShake: () {
-      AlertDialogPending.attributes = [
-        "Danger",
-        "Danger request",
-        "",
-        "Send help as fast as possible",
-        true,
-      ];
-      u!.uploadHelpRequest("Danger request", "",
-          "Send help as fast as possible", "Danger", true);
-      Status.waitingHelp = true;
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      ).then((value) => setState(() {}));
-      showDialog(
-          context: context,
-          builder: (_) => const AlertDialog(
-                title: Text('Shaking detected'),
-                content: Text('You have sent an emergency request!'),
-              ));
-    });
+    if (Status.areAllFalse()) {
+      detector = ShakeDetector.autoStart(onPhoneShake: () {
+        AlertDialogPending.attributes = [
+          "Danger",
+          "Danger request",
+          "",
+          "Send help as fast as possible",
+          true,
+        ];
+        u!.uploadHelpRequest("Danger request", "",
+            "Send help as fast as possible", "Danger", true);
+        Status.waitingHelp = true;
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        ).then((value) => setState(() {}));
+        showDialog(
+            context: context,
+            builder: (_) => const AlertDialog(
+                  title: Text('Shaking detected'),
+                  content: Text('You have sent an emergency request!'),
+                ));
+      });
+    }
   }
 
   @override
