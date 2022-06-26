@@ -1,10 +1,13 @@
-// ignore_for_file: file_names, prefer_const_constructors, unrelated_type_equality_checks
+// ignore: duplicate_ignore
+// ignore: file_names
+// ignore_for_file: file_names
 import 'package:first_prj/screens/NFC.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 import '../models/Request.dart';
 import '../models/User.dart';
 import 'SignUpNumber.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // ignore: must_be_immutable
 class Riepilogo extends StatefulWidget {
@@ -20,6 +23,25 @@ class Riepilogo extends StatefulWidget {
 }
 
 class _Riepilogo extends State<Riepilogo> {
+  GoogleMapController? mapController; //contrller for Google map
+  Set<Marker> markers = Set(); 
+  LatLng showLocation = LatLng(27.7089427, 85.3086209);  
+  @override
+  void initState() {
+      markers.add(Marker( //add marker on google map
+          markerId: MarkerId(showLocation.toString()),
+          position: showLocation, //position of marker
+          // ignore: prefer_const_constructors
+          infoWindow: InfoWindow( //popup info 
+            title: 'My Custom Title ',
+            snippet: "My Custom Subtitle",
+          ),
+          icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+      ));
+
+      //you can add more markers here
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,85 +95,119 @@ class _Riepilogo extends State<Riepilogo> {
           Card(
               margin: EdgeInsets.all(deviceHeight * 0.025),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Padding(padding: EdgeInsets.all(deviceHeight * 0.015),),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          width: 90,
-                          height: 90,
-                          child: widget.helpedRequest.getUser().imageProfile,
-                        ),
-                        Text(
-                          "${widget.helpedRequest.getUser().name} ${widget.helpedRequest.getUser().surname}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        Icon(Icons.verified,
-                            color: widget.helpedRequest.getUser().profileCheck
-                                ? Colors.green
-                                : Colors.grey),
-                      ]),
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 10),
-                      ),
-                      Text(widget.helpedRequest.getUser().reviewMean),
-                      for (var i = 0; i < 5; i++)
-                        Icon(Icons.star,
-                            color: i <= 3 ? Colors.yellow : Colors.grey)
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(10),
+                         CircleAvatar(
+                            radius: 48,
+                            backgroundColor: Colors.transparent,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: widget.helpedRequest.getUser().imageProfile,
+                            ),
+                          ),
+                        Column(
+                        
+                          children: [
+                          Row(
+                          
+                            children: [
+                            Text(
+                              "${widget.helpedRequest.getUser().name} ${widget.helpedRequest.getUser().surname}",
+                              // ignore: prefer_const_constructors
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            Padding(padding: EdgeInsets.only(right: 4),),
+                            Icon(Icons.verified,
+                            size: 20,
+                                color: widget.helpedRequest.getUser().profileCheck
+                                    ? Colors.green
+                                    : Colors.grey),
+                            ],),
+                             Padding(padding: EdgeInsets.all(deviceHeight * 0.002),),
+                             Row(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 10),
+                                ),
+                                Text(widget.helpedRequest.getUser().reviewMean, 
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black38)),
+                                const Padding(
+                                  padding: EdgeInsets.only(right: 8),
+                                ),      
+                                for (var i = 0; i < 5; i++)
+                                  Icon(Icons.star,
+                                  size: 15,
+                                      color: i < int.parse(widget.helpedRequest.getUser().reviewMean) ? 
+                                      Colors.yellow : Colors.grey)
+                              ],
+                            ),
+                          ]),
+                    ]),
+                  const Padding(
+                    padding: EdgeInsets.all(15),
                   ),
                   Row(
                     // ignore: prefer_const_literals_to_create_immutables
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(left: 10),
+                        padding: EdgeInsets.only(left: deviceWidth * 0.050),
                       ),
                       Text(
+                         style: const TextStyle(
+                                  fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black38),
                           // ignore: prefer_interpolation_to_compose_strings
                           "${User.getDistance(u!, widget.helpedRequest.getUser())} | "),
                       // ignore: prefer_interpolation_to_compose_strings
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.only(right: 3),
                       ),
                       // ignore: prefer_interpolation_to_compose_strings
                       Text("Priority of the request: " +
                           widget.helpedRequest
-                              // ignore: deprecated_member_use_from_same_package
                               .getPriorityAsString()
-                              .toLowerCase())
+                              .toLowerCase(),
+                               style: const TextStyle(
+                                  fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black38))
                     ],
                   ),
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.all(10),
                   ),
                   Row(children: [
                     Padding(
-                      padding: EdgeInsets.only(left: 10),
+                      padding: EdgeInsets.only(left: deviceWidth * 0.050),
                     ),
                     Text(widget.helpedRequest.description,
-                        style: TextStyle(
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontStyle: FontStyle.italic,
                             fontWeight: FontWeight.bold, color: Colors.black38))
                   ]),
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.all(10),
                   ),
                   Row(children: [
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.only(left: 10),
                     ),
                     FloatingActionButton.extended(
                         label: Row(
                           children: <Widget>[
-                            Padding(padding: EdgeInsets.only(right: 5)),
+                           const Padding(padding: EdgeInsets.only(right: 5)),
                             // ignore: prefer_interpolation_to_compose_strings
                             Text(
                                 "CALL ${widget.helpedRequest.getUser().name.toUpperCase()}"),
@@ -161,43 +217,39 @@ class _Riepilogo extends State<Riepilogo> {
                         icon: const Icon(Icons.local_phone),
                         onPressed: () {})
                   ]),
+                  Padding(padding: EdgeInsets.all(deviceHeight * 0.005),),
                   SizedBox(
-                    width: deviceWidth * 0.4,
-                    height: deviceHeight * 0.1,
-                  )
-                ],
+                    width: deviceWidth * 0.225,
+                    height: deviceHeight * 0.275,
+                    child: GoogleMap( //Map widget from google_maps_flutter package
+                      zoomGesturesEnabled: true, //enable Zoom in, out on map
+                      initialCameraPosition: CameraPosition( //innital position in map
+                        // ignore: prefer_const_constructors
+                        target: LatLng(27.7089427, 85.3086209), //initial position
+                        zoom: 10.0, //initial zoom level
+                      ),
+                      markers: markers, //markers to show on map
+                      mapType: MapType.normal, //map type
+                      onMapCreated: (controller) { //method called when map is created
+                        setState(() {
+                          mapController = controller; 
+                        });
+                      },
+            
+                ),
+                  ),
+                
+                  
+        ]
               )),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //   children: [
-          //     ElevatedButton(
-          //       style: ElevatedButton.styleFrom(
-          //         primary: const Color.fromRGBO(33, 158, 188, 1),
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(20.0),
-          //         ),
-          //       ),
-          //       onPressed: () => Navigator.pop(context, 'Cancel'),
-          //       child: const Text('DISCARD'),
-          //     ),
-          //     ElevatedButton(
-          //       style: ElevatedButton.styleFrom(
-          //         primary: const Color.fromRGBO(255, 183, 3, 1),
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(20.0),
-          //         ),
-          //       ),
-          //       onPressed: () => {},
-          //       child: const Text('ACCEPT'),
-          //     ),
-          //   ],
-          // )
           FloatingActionButton.extended(
             onPressed: () {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => NFC(true)));
             },
-            label: Text("Confirm your help!"),
+            label: const Text("Confirm your help"),
+            // ignore: prefer_const_constructors
+            backgroundColor: Color.fromRGBO(33, 158, 188, 1),
           )
         ],
       ),

@@ -4,10 +4,12 @@
 //import 'package:first_prj/main.dart';
 
 class Status {
+  static bool qrScanned = false;
   static bool waitingHelp = false;
   static bool helpAccepted = false;
   static bool waitingAcceptOrRefuse = false;
   static bool proposalAccepted = false;
+  
 
   static bool areAllFalse() {
     return !waitingHelp &&
