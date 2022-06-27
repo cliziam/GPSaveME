@@ -30,6 +30,7 @@ class _GenerateQR extends State<GenerateQR> {
                 bool b = await u!.checkQRCode();
                 if (b) {
                   GiveReview.user = await u!.getUserForReview();
+                  await u!.changeCoins(widget.isTheHelper);
                   if (!mounted) return;
                   Navigator.push(
                     context,

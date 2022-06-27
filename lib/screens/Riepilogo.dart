@@ -159,7 +159,7 @@ class _Riepilogo extends State<Riepilogo> {
                                   Icon(Icons.star,
                                       size: 15,
                                       color: i <
-                                              int.parse(widget.helpedRequest
+                                              double.parse(widget.helpedRequest
                                                   .getUser()
                                                   .reviewMean)
                                           ? Colors.yellow

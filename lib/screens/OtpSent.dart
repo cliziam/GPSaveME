@@ -105,6 +105,7 @@ class _OtpSentPageState extends State<OtpSent> {
                             onPressed: () async {
                               AlertDialogPending.helpers =
                                   await u!.checkForHelp();
+                              await u!.getReviewRating();
                               if (!mounted) return;
                               if (widget.otpTyped == widget.generatedOtp) {
                                 Navigator.of(context).push(MaterialPageRoute(

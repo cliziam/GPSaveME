@@ -96,7 +96,7 @@ class User {
     jsonFile["latitude"] = latitude;
     jsonFile["longitude"] = longitude;
 
-    await uploadJson(jsonFile, "users/$phoneNumber/userdata.json");
+    await uploadJson(jsonFile, "users/$phoneNumber/userdata.json", "userdata");
     return true;
   }
 
@@ -108,11 +108,12 @@ class User {
       "phone_number": phoneNumber,
       "QRCode": false
     };
-    await uploadJson(jsonFile, "users/$phone/writetouser_$phoneNumber.json");
+    await uploadJson(jsonFile, "users/$phone/writetouser_$phoneNumber.json",
+        "writetouser_$phoneNumber");
     //updating field in my own json file
     var myData = await getCurrentData();
     myData["waitingAcceptOrRefuse"] = true;
-    await uploadJson(myData, "users/$phoneNumber/userdata.json");
+    await uploadJson(myData, "users/$phoneNumber/userdata.json", "userdata");
     return true;
   }
 
@@ -162,7 +163,7 @@ class User {
     jsonFile["share_number"] = false;
     jsonFile["proposal_accepted"] = false;
 
-    await uploadJson(jsonFile, "users/$phoneNumber/userdata.json");
+    await uploadJson(jsonFile, "users/$phoneNumber/userdata.json", "userdata");
 
     // inform the others that you don't want help anymore
     final helpsPath =
@@ -180,7 +181,8 @@ class User {
           "rejected": true,
           "QRCode": false
         };
-        await uploadJson(toSend, "users/$phone/writetouser_$phoneNumber.json");
+        await uploadJson(toSend, "users/$phone/writetouser_$phoneNumber.json",
+            "writetouser_$phoneNumber");
       }
     }
     await deleteProposalFiles();
@@ -209,13 +211,14 @@ class User {
       "rejected": false
     };
 
-    await uploadJson(jsonFile, "users/$phone/writetouser_$phoneNumber.json");
+    await uploadJson(jsonFile, "users/$phone/writetouser_$phoneNumber.json",
+        "writetouser_$phoneNumber");
 
     //updating field in my own json file
     var myData = await getCurrentData();
     myData["waitingHelp"] = false;
     myData["helpAccepted"] = true;
-    await uploadJson(myData, "users/$phoneNumber/userdata.json");
+    await uploadJson(myData, "users/$phoneNumber/userdata.json", "userdata");
     //deleteProposalFiles();
   }
 
@@ -228,7 +231,8 @@ class User {
       "accepted": false,
       "rejected": true
     };
-    await uploadJson(jsonFile, "users/$phone/writetouser_$phoneNumber.json");
+    await uploadJson(jsonFile, "users/$phone/writetouser_$phoneNumber.json",
+        "writetouser_$phoneNumber");
   }
 
   checkProposalStatus() async {
@@ -243,13 +247,19 @@ class User {
           var myData = await getCurrentData();
           myData["waitingAcceptOrRefuse"] = false;
           myData["proposalAccepted"] = true;
-          await uploadJson(myData, "users/$phoneNumber/userdata.json");
+          await uploadJson(
+              myData, "users/$phoneNumber/userdata.json", "userdata");
 
           // builda la richiesta per Riepilogo
           Request request = await buildRequest(phone);
 
           return [true, request];
         } else if (jsonFile["rejected"]) {
+          var myData = await getCurrentData();
+          myData["waitingAcceptOrRefuse"] = false;
+          await uploadJson(
+              myData, "users/$phoneNumber/userdata.json", "userdata");
+          await deleteProposalFiles();
           return [false, false];
         }
       }
@@ -318,7 +328,9 @@ class User {
           "QRCode": true
         };
         await uploadJson(
-            helperJson, "users/$phone/writetouser_$phoneNumber.json");
+            helperJson,
+            "users/$phone/writetouser_$phoneNumber.json",
+            "writetouser_$phoneNumber");
       }
     }
     return true;
@@ -366,17 +378,17 @@ class User {
   giveReview(String text, int stars, String phone) async {
     var jsonFile = await downloadJson("users/$phone/userdata.json");
     jsonFile["review_list"].add([stars, text]);
-    await uploadJson(jsonFile, "users/$phone/userdata.json");
+    await uploadJson(jsonFile, "users/$phone/userdata.json", "userdata");
   }
 
-  uploadJson(Map jsonFile, String path) async {
+  uploadJson(Map jsonFile, String path, String filename) async {
     var jsonString = jsonEncode(jsonFile);
     var bytes = utf8.encode(jsonString);
     var byteData = base64.encode(bytes);
     var arr = base64.decode(byteData);
     String tempPath = (await getTemporaryDirectory()).path;
     // crea il file nella cache
-    File toupload = await File('$tempPath/file.json').create();
+    File toupload = await File('$tempPath/$filename.json').create();
     await toupload.writeAsBytes(arr);
     final ref = FirebaseStorage.instance.ref().child(path);
     // carica il file
@@ -391,6 +403,26 @@ class User {
     var jsonAsString = String.fromCharCodes(list);
     final jsonFile = await json.decode(jsonAsString);
     return jsonFile;
+  }
+
+  restoreJson() async {
+    var jsonFile = await getCurrentData();
+    jsonFile["waitingHelp"] = false;
+    jsonFile["helpAccepted"] = false;
+    jsonFile["waitingAcceptOrRefuse"] = false;
+    jsonFile["proposalAccepted"] = false;
+    jsonFile["request_type"] = "";
+    jsonFile["request_text"] = "";
+    jsonFile["request_subtype"] = "";
+    jsonFile["share_number"] = false;
+    jsonFile["request_priority"] = "";
+    await uploadJson(jsonFile, "users/$phoneNumber/userdata.json", "userdata");
+  }
+
+  changeCoins(bool increment) async {
+    var jsonFile = await getCurrentData();
+    increment ? jsonFile["coins"] += 1 : jsonFile["coins"] -= 1;
+    await uploadJson(jsonFile, "users/$phoneNumber/userdata.json", "userdata");
   }
 }
 

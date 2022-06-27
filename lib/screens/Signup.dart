@@ -439,5 +439,6 @@ uploadUserData() async {
       .child("users/${u!.phoneNumber}/userdata.json");
   // carica il file
   ref.putFile(toupload);
+  await u!.getReviewRating();
   return true;
 }

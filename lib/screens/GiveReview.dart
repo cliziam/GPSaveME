@@ -142,9 +142,11 @@ class _GiveReview extends State<GiveReview> {
                   await u!
                       .giveReview(review, res, GiveReview.user!.phoneNumber);
                   Status.setAllFalse();
+                  await u!.deleteProposalFiles();
+                  await u!.restoreJson();
                   if (!mounted) return;
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => HomePage()));
+                  MyApp.selectedIndex = 0;
+                  MyApp.navigateToNextScreen(context, 0);
                   //u!.deleteRequest();
                 },
                 child: const Text('SEND REVIEW'),

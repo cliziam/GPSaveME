@@ -239,14 +239,14 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               Status.helpAccepted = true;
-                              u!.acceptRequest(helper.phoneNumber);
+                              await u!.acceptRequest(helper.phoneNumber);
                               for (var element in AlertDialogPending.helpers) {
                                 if (element.phoneNumber != helper.phoneNumber) {
-                                  //u!.rejectRequest(element.phoneNumber);
-                                  //print("ENTRATO");
-                                  //print(element.phoneNumber);
+                                  await u!.rejectRequest(element.phoneNumber);
+                                  print("ENTRATO");
+                                  print(element.phoneNumber);
                                 }
                               }
                               if (!mounted) return;
