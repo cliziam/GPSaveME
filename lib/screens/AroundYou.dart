@@ -118,14 +118,15 @@ class _AroundYouState extends State<AroundYou> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Riepilogo(result[1])));
-                      } else {
+                      } else if (result[0] == result[1]) {
+                        // both false, rejected
                         Status.waitingAcceptOrRefuse = false;
                         if (!mounted) return;
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const AroundYou()));
-                      }
+                      } else {}
                     }
                     setState(() {});
                   }),

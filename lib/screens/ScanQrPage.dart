@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import '../models/Status.dart';
+import 'SignUpNumber.dart';
 
 class ScanQrPage extends StatefulWidget {
   const ScanQrPage({Key? key}) : super(key: key);
@@ -49,9 +50,14 @@ class _ScanQrPageState extends State<ScanQrPage> {
 
   void readQr() async {
     if (result != null) {
-       Navigator.push(
+      await u!.notifyQRCode();
+      GiveReview.user = await u!.getUserForReview();
+      if (!mounted) return;
+      Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const GiveReview()),
+        MaterialPageRoute(builder: (context) {
+          return const GiveReview();
+        }),
       ).then((value) => setState(() {}));
       Status.qrScanned = true;
       controller!.pauseCamera();

@@ -1,9 +1,15 @@
 // ignore_for_file: file_names, prefer_const_constructors, unrelated_type_equality_checks
+import 'package:first_prj/screens/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
 
+import '../models/Status.dart';
+import '../models/User.dart';
+import 'SignUpNumber.dart';
+
 class GiveReview extends StatefulWidget {
   final String title = "GPSaveMe";
+  static User? user;
   // ignore: non_constant_identifier_names
   const GiveReview({Key? key}) : super(key: key);
   @override
@@ -71,19 +77,21 @@ class _GiveReview extends State<GiveReview> {
               // ignore: prefer_const_literals_to_create_immutables
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   SizedBox(
-                    width: 90,
-                    height: 90,
-                  ),
-                  Text("Nome Cognome",
+                      width: 90,
+                      height: 90,
+                      child: GiveReview.user!.imageProfile),
+                  Text("${GiveReview.user!.name} ${GiveReview.user!.surname}",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 22,
                       ))
                 ],
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.005, 0, deviceHeight * 0.005)),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      0, deviceHeight * 0.005, 0, deviceHeight * 0.005)),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 for (var i = 0; i < 5; i++)
                   IconButton(
@@ -94,12 +102,17 @@ class _GiveReview extends State<GiveReview> {
                         : Colors.grey,
                     onPressed: () => {
                       setState(() {
-                        stars[i] = !stars[i];
+                        stars = [false, false, false, false, false];
+                        for (int j = 0; j <= i; j++) {
+                          stars[j] = !stars[j];
+                        }
                       })
                     },
                   )
               ]),
-              Padding(padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.005, 0, deviceHeight * 0.002)),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      0, deviceHeight * 0.005, 0, deviceHeight * 0.002)),
               TextField(
                   maxLines: 8,
                   decoration: InputDecoration(
@@ -112,7 +125,9 @@ class _GiveReview extends State<GiveReview> {
                       review = value;
                     });
                   }),
-              Padding(padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.025, 0, deviceHeight * 0.025)),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      0, deviceHeight * 0.025, 0, deviceHeight * 0.025)),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   primary: review == "" ? Colors.grey : Colors.green,
@@ -120,10 +135,23 @@ class _GiveReview extends State<GiveReview> {
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
-                onPressed: () => {},
+                onPressed: () async {
+                  int res = stars
+                      .map((element) => element ? 1 : 0)
+                      .reduce((value, element) => value + element);
+                  await u!
+                      .giveReview(review, res, GiveReview.user!.phoneNumber);
+                  Status.setAllFalse();
+                  if (!mounted) return;
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => HomePage()));
+                  //u!.deleteRequest();
+                },
                 child: const Text('SEND REVIEW'),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.025, 0, deviceHeight * 0.025)),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      0, deviceHeight * 0.025, 0, deviceHeight * 0.025)),
             ]),
           )
         ],

@@ -24,24 +24,27 @@ class Riepilogo extends StatefulWidget {
 
 class _Riepilogo extends State<Riepilogo> {
   GoogleMapController? mapController; //contrller for Google map
-  Set<Marker> markers = Set(); 
-  LatLng showLocation = LatLng(27.7089427, 85.3086209);  
+  Set<Marker> markers = {};
+  LatLng showLocation = const LatLng(27.7089427, 85.3086209);
   @override
   void initState() {
-      markers.add(Marker( //add marker on google map
-          markerId: MarkerId(showLocation.toString()),
-          position: showLocation, //position of marker
-          // ignore: prefer_const_constructors
-          infoWindow: InfoWindow( //popup info 
-            title: 'My Custom Title ',
-            snippet: "My Custom Subtitle",
-          ),
-          icon: BitmapDescriptor.defaultMarker, //Icon for Marker
-      ));
+    markers.add(Marker(
+      //add marker on google map
+      markerId: MarkerId(showLocation.toString()),
+      position: showLocation, //position of marker
+      // ignore: prefer_const_constructors
+      infoWindow: InfoWindow(
+        //popup info
+        title: 'My Custom Title ',
+        snippet: "My Custom Subtitle",
+      ),
+      icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+    ));
 
-      //you can add more markers here
+    //you can add more markers here
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,153 +98,172 @@ class _Riepilogo extends State<Riepilogo> {
           Card(
               margin: EdgeInsets.all(deviceHeight * 0.025),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(padding: EdgeInsets.all(deviceHeight * 0.015),),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                         CircleAvatar(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(deviceHeight * 0.015),
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
                             radius: 48,
                             backgroundColor: Colors.transparent,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
-                              child: widget.helpedRequest.getUser().imageProfile,
+                              child:
+                                  widget.helpedRequest.getUser().imageProfile,
                             ),
                           ),
-                        Column(
-                        
-                          children: [
-                          Row(
-                          
-                            children: [
-                            Text(
-                              "${widget.helpedRequest.getUser().name} ${widget.helpedRequest.getUser().surname}",
-                              // ignore: prefer_const_constructors
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
+                          Column(children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "${widget.helpedRequest.getUser().name} ${widget.helpedRequest.getUser().surname}",
+                                  // ignore: prefer_const_constructors
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(right: 4),
+                                ),
+                                Icon(Icons.verified,
+                                    size: 20,
+                                    color: widget.helpedRequest
+                                            .getUser()
+                                            .profileCheck
+                                        ? Colors.green
+                                        : Colors.grey),
+                              ],
                             ),
-                            Padding(padding: EdgeInsets.only(right: 4),),
-                            Icon(Icons.verified,
-                            size: 20,
-                                color: widget.helpedRequest.getUser().profileCheck
-                                    ? Colors.green
-                                    : Colors.grey),
-                            ],),
-                             Padding(padding: EdgeInsets.all(deviceHeight * 0.002),),
-                             Row(
+                            Padding(
+                              padding: EdgeInsets.all(deviceHeight * 0.002),
+                            ),
+                            Row(
                               children: [
                                 const Padding(
                                   padding: EdgeInsets.only(left: 10),
                                 ),
-                                Text(widget.helpedRequest.getUser().reviewMean, 
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black38)),
+                                Text(widget.helpedRequest.getUser().reviewMean,
+                                    style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black38)),
                                 const Padding(
                                   padding: EdgeInsets.only(right: 8),
-                                ),      
+                                ),
                                 for (var i = 0; i < 5; i++)
                                   Icon(Icons.star,
-                                  size: 15,
-                                      color: i < int.parse(widget.helpedRequest.getUser().reviewMean) ? 
-                                      Colors.yellow : Colors.grey)
+                                      size: 15,
+                                      color: i <
+                                              int.parse(widget.helpedRequest
+                                                  .getUser()
+                                                  .reviewMean)
+                                          ? Colors.yellow
+                                          : Colors.grey)
                               ],
                             ),
                           ]),
-                    ]),
-                  const Padding(
-                    padding: EdgeInsets.all(15),
-                  ),
-                  Row(
-                    // ignore: prefer_const_literals_to_create_immutables
-                    children: [
+                        ]),
+                    const Padding(
+                      padding: EdgeInsets.all(15),
+                    ),
+                    Row(
+                      // ignore: prefer_const_literals_to_create_immutables
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: deviceWidth * 0.050),
+                        ),
+                        Text(
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black38),
+                            // ignore: prefer_interpolation_to_compose_strings
+                            "${User.getDistance(u!, widget.helpedRequest.getUser())} | "),
+                        // ignore: prefer_interpolation_to_compose_strings
+                        const Padding(
+                          padding: EdgeInsets.only(right: 3),
+                        ),
+                        // ignore: prefer_interpolation_to_compose_strings
+                        Text(
+                            // ignore: prefer_interpolation_to_compose_strings
+                            "Priority of the request: " +
+                                widget.helpedRequest
+                                    // ignore: deprecated_member_use_from_same_package
+                                    .getPriorityAsString()
+                                    .toLowerCase(),
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black38))
+                      ],
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(10),
+                    ),
+                    Row(children: [
                       Padding(
                         padding: EdgeInsets.only(left: deviceWidth * 0.050),
                       ),
-                      Text(
-                         style: const TextStyle(
-                                  fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black38),
-                          // ignore: prefer_interpolation_to_compose_strings
-                          "${User.getDistance(u!, widget.helpedRequest.getUser())} | "),
-                      // ignore: prefer_interpolation_to_compose_strings
-                      const Padding(
-                        padding: EdgeInsets.only(right: 3),
-                      ),
-                      // ignore: prefer_interpolation_to_compose_strings
-                      Text("Priority of the request: " +
-                          widget.helpedRequest
-                              .getPriorityAsString()
-                              .toLowerCase(),
-                               style: const TextStyle(
-                                  fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black38))
-                    ],
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(10),
-                  ),
-                  Row(children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: deviceWidth * 0.050),
-                    ),
-                    Text(widget.helpedRequest.description,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.bold, color: Colors.black38))
-                  ]),
-                  const Padding(
-                    padding: EdgeInsets.all(10),
-                  ),
-                  Row(children: [
+                      Text(widget.helpedRequest.description,
+                          style: const TextStyle(
+                              fontSize: 17,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black38))
+                    ]),
                     const Padding(
-                      padding: EdgeInsets.only(left: 10),
+                      padding: EdgeInsets.all(10),
                     ),
-                    FloatingActionButton.extended(
-                        label: Row(
-                          children: <Widget>[
-                           const Padding(padding: EdgeInsets.only(right: 5)),
-                            // ignore: prefer_interpolation_to_compose_strings
-                            Text(
-                                "CALL ${widget.helpedRequest.getUser().name.toUpperCase()}"),
-                          ],
-                        ),
-                        backgroundColor: Color.fromARGB(255, 95, 222, 100),
-                        icon: const Icon(Icons.local_phone),
-                        onPressed: () {})
-                  ]),
-                  Padding(padding: EdgeInsets.all(deviceHeight * 0.005),),
-                  SizedBox(
-                    width: deviceWidth * 0.225,
-                    height: deviceHeight * 0.275,
-                    child: GoogleMap( //Map widget from google_maps_flutter package
-                      zoomGesturesEnabled: true, //enable Zoom in, out on map
-                      initialCameraPosition: CameraPosition( //innital position in map
-                        // ignore: prefer_const_constructors
-                        target: LatLng(27.7089427, 85.3086209), //initial position
-                        zoom: 10.0, //initial zoom level
+                    Row(children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10),
                       ),
-                      markers: markers, //markers to show on map
-                      mapType: MapType.normal, //map type
-                      onMapCreated: (controller) { //method called when map is created
-                        setState(() {
-                          mapController = controller; 
-                        });
-                      },
-            
-                ),
-                  ),
-                
-                  
-        ]
-              )),
+                      FloatingActionButton.extended(
+                          label: Row(
+                            children: <Widget>[
+                              const Padding(padding: EdgeInsets.only(right: 5)),
+                              // ignore: prefer_interpolation_to_compose_strings
+                              Text(
+                                  "CALL ${widget.helpedRequest.getUser().name.toUpperCase()}"),
+                            ],
+                          ),
+                          backgroundColor:
+                              const Color.fromARGB(255, 95, 222, 100),
+                          icon: const Icon(Icons.local_phone),
+                          onPressed: () {})
+                    ]),
+                    Padding(
+                      padding: EdgeInsets.all(deviceHeight * 0.005),
+                    ),
+                    // SizedBox(
+                    //   width: deviceWidth * 0.225,
+                    //   height: deviceHeight * 0.275,
+                    //   child: GoogleMap(
+                    //     //Map widget from google_maps_flutter package
+                    //     zoomGesturesEnabled: true, //enable Zoom in, out on map
+                    //     initialCameraPosition: CameraPosition(
+                    //       //innital position in map
+                    //       // ignore: prefer_const_constructors
+                    //       target:
+                    //           LatLng(27.7089427, 85.3086209), //initial position
+                    //       zoom: 10.0, //initial zoom level
+                    //     ),
+                    //     markers: markers, //markers to show on map
+                    //     mapType: MapType.normal, //map type
+                    //     onMapCreated: (controller) {
+                    //       //method called when map is created
+                    //       setState(() {
+                    //         mapController = controller;
+                    //       });
+                    //     },
+                    //   ),
+                    // ),
+                  ])),
           FloatingActionButton.extended(
             onPressed: () {
               Navigator.push(

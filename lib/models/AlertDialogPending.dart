@@ -124,6 +124,7 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                                     ),
                                   ),
                                   onPressed: () async {
+                                    AlertDialogPending.helpers = [];
                                     await u!.deleteRequest();
                                     if (!mounted) return;
                                     Status.waitingHelp = false;
@@ -227,6 +228,7 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                             ),
                             onPressed: () {
                               u!.rejectRequest(helper.phoneNumber);
+                              AlertDialogPending.helpers.remove(helper);
                             },
                             child: const Text('REJECT'),
                           ),
@@ -240,6 +242,13 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                             onPressed: () {
                               Status.helpAccepted = true;
                               u!.acceptRequest(helper.phoneNumber);
+                              for (var element in AlertDialogPending.helpers) {
+                                if (element.phoneNumber != helper.phoneNumber) {
+                                  //u!.rejectRequest(element.phoneNumber);
+                                  //print("ENTRATO");
+                                  //print(element.phoneNumber);
+                                }
+                              }
                               if (!mounted) return;
                               Navigator.push(
                                   context,

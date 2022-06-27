@@ -132,11 +132,11 @@ class _ProfileState extends State<Profile> {
                   Padding(padding: EdgeInsets.all(deviceWidth * 0.003)),
                   Row(
                     children: <Widget>[
-                      Text(u!.reviewMean, 
-                      style: TextStyle(
-                        fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black38)),
+                      Text(u!.reviewMean,
+                          style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black38)),
                       IconButton(
                         icon: const Icon(Icons.star,
                             color: Color.fromRGBO(255, 183, 3, 1)),
@@ -294,7 +294,6 @@ class _ProfileState extends State<Profile> {
       await toupload.writeAsBytes(byteData.buffer
           .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
       setState(() {
-        //print("ciao");
         // punta a un percorso nel cloud storage
         final path = "users/${u!.phoneNumber}/images/profile.jpg";
         final ref = FirebaseStorage.instance.ref().child(path);
@@ -368,14 +367,13 @@ class _ProfileState extends State<Profile> {
                 Positioned(
                   top: -70,
                   child: CircleAvatar(
-                      radius: deviceWidth * 0.15,
-                      backgroundColor: const Color.fromRGBO(255, 178, 3, 1),
-                      child:ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(deviceWidth * 0.35),
-                          child: u!.imageProfile,
-                        ),),
-                     
+                    radius: deviceWidth * 0.15,
+                    backgroundColor: const Color.fromRGBO(255, 178, 3, 1),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(deviceWidth * 0.35),
+                      child: u!.imageProfile,
+                    ),
+                  ),
                 ),
               ],
             )));

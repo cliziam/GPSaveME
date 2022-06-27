@@ -1,5 +1,4 @@
 // ignore_for_file: file_names
-import 'package:first_prj/screens/GiveReview.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/screens/HomePage.dart';
 import '../models/AlertDialogPending.dart';
@@ -109,7 +108,7 @@ class _OtpSentPageState extends State<OtpSent> {
                               if (!mounted) return;
                               if (widget.otpTyped == widget.generatedOtp) {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const GiveReview()));
+                                    builder: (context) => const HomePage()));
                               } else {
                                 //print(widget.otpTyped);
                                 //print(widget.generatedOtp);
@@ -121,8 +120,13 @@ class _OtpSentPageState extends State<OtpSent> {
                                               "The inserted OTP is not valid"),
                                           actions: [
                                             TextButton(
-                                              onPressed: () =>
-                                                  Navigator.push(context,MaterialPageRoute(builder: (context) =>  OtpSent()),).then((value) => setState(() {})), 
+                                              onPressed: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        OtpSent()),
+                                              ).then(
+                                                  (value) => setState(() {})),
                                               child: const Text('Ok'),
                                             )
                                           ],
@@ -165,8 +169,14 @@ class _OtpSentPageState extends State<OtpSent> {
                         const SizedBox(
                           height: 18,
                         ),
-                         TextButton(
-                          onPressed:()=> {Navigator.push(context,MaterialPageRoute(builder: (context) => OtpSent())).then((value) => setState(() {}))} ,
+                        TextButton(
+                          onPressed: () => {
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => OtpSent()))
+                                .then((value) => setState(() {}))
+                          },
                           child: const Text(
                             "Resend New Code",
                             style: TextStyle(
@@ -175,8 +185,8 @@ class _OtpSentPageState extends State<OtpSent> {
                               color: Color.fromRGBO(33, 158, 188, 1),
                             ),
                             textAlign: TextAlign.center,
-                                                 ),
-                         ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

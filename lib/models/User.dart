@@ -21,7 +21,7 @@ class User {
   String pendingGive = "";
   bool frontCheck = false;
   bool retroCheck = false;
-
+  User? theOtherOne;
   User(this.name, this.surname, this.phoneNumber, this.imageProfile,
       this.profileCheck, this.latitude, this.longitude);
 
@@ -63,15 +63,7 @@ class User {
   }
 
   getCurrentData() async {
-    final userlistPath = FirebaseStorage.instance
-        .ref()
-        .child("users/$phoneNumber/userdata.json");
-    const oneMegabyte = 1024 * 1024;
-    final Uint8List? data = await userlistPath.getData(oneMegabyte);
-    var list = data!.toList();
-    var jsonAsString = String.fromCharCodes(list);
-    final jsonFile = await json.decode(jsonAsString);
-    return jsonFile;
+    return await downloadJson("users/$phoneNumber/userdata.json");
   }
 
   checkForHelp() async {
@@ -81,19 +73,9 @@ class User {
     var helps = await helpsPath.listAll();
     for (var path in helps.items) {
       if (path.fullPath.contains("_")) {
-        var proposalRef = FirebaseStorage.instance.ref().child(path.fullPath);
-        const oneMegabyte = 1024 * 1024;
-        final Uint8List? data = await proposalRef.getData(oneMegabyte);
-        var list = data!.toList();
-        var jsonAsString = String.fromCharCodes(list);
-        final jsonFile = await json.decode(jsonAsString);
+        var jsonFile = await downloadJson(path.fullPath);
         var phone = jsonFile["phone_number"];
-        var userDataRef =
-            FirebaseStorage.instance.ref().child("users/$phone/userdata.json");
-        final Uint8List? userdata = await userDataRef.getData(oneMegabyte);
-        var userlist = userdata!.toList();
-        var userjsonAsString = String.fromCharCodes(userlist);
-        final userjsonFile = await json.decode(userjsonAsString);
+        final userjsonFile = await downloadJson("users/$phone/userdata.json");
         var user = await getUser(phone, userjsonFile);
         users.add(user);
       }
@@ -114,64 +96,23 @@ class User {
     jsonFile["latitude"] = latitude;
     jsonFile["longitude"] = longitude;
 
-    var jsonString = jsonEncode(jsonFile);
-    var bytes = utf8.encode(jsonString);
-    var byteData = base64.encode(bytes);
-
-    var arr = base64.decode(byteData);
-
-    String tempPath = (await getTemporaryDirectory()).path;
-    // crea il file nella cache
-    File toupload = await File('$tempPath/userdata.json').create();
-    await toupload.writeAsBytes(arr);
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child("users/$phoneNumber/userdata.json");
-    // carica il file
-    ref.putFile(toupload);
+    await uploadJson(jsonFile, "users/$phoneNumber/userdata.json");
     return true;
   }
 
   uploadHelpProposal(String phone) async {
     await updateLocation();
-    var helpedRef = FirebaseStorage.instance.ref().child(
-        "users/$phone/writetouser_$phoneNumber.json"); //phone number used to uniquely identify the file
     var jsonFile = {
       "latitude": latitude,
       "longitude": longitude,
-      "phone_number": phoneNumber
+      "phone_number": phoneNumber,
+      "QRCode": false
     };
-    var jsonString = jsonEncode(jsonFile);
-    var bytes = utf8.encode(jsonString);
-    var byteData = base64.encode(bytes);
-
-    var arr = base64.decode(byteData);
-
-    String tempPath = (await getTemporaryDirectory()).path;
-    // crea il file nella cache
-    File toupload = await File('$tempPath/writetotuser.json').create();
-    await toupload.writeAsBytes(arr);
-    // carica il file
-    helpedRef.putFile(toupload);
-
+    await uploadJson(jsonFile, "users/$phone/writetouser_$phoneNumber.json");
     //updating field in my own json file
     var myData = await getCurrentData();
     myData["waitingAcceptOrRefuse"] = true;
-    var myjsonString = jsonEncode(myData);
-    var mybytes = utf8.encode(myjsonString);
-    var mybyteData = base64.encode(mybytes);
-
-    var myarr = base64.decode(mybyteData);
-
-    String mytempPath = (await getTemporaryDirectory()).path;
-    // crea il file nella cache
-    File mytoupload = await File('$mytempPath/userdata.json').create();
-    await mytoupload.writeAsBytes(myarr);
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child("users/$phoneNumber/userdata.json");
-    // carica il file
-    ref.putFile(mytoupload);
+    await uploadJson(myData, "users/$phoneNumber/userdata.json");
     return true;
   }
 
@@ -193,14 +134,7 @@ class User {
     for (var path in usersDirs.prefixes) {
       var cellPhone = path.fullPath.split("/")[1];
       if (cellPhone != phoneNumber) {
-        var udataRef = FirebaseStorage.instance
-            .ref()
-            .child("users/$cellPhone/userdata.json");
-        const oneMegabyte = 1024 * 1024;
-        final Uint8List? data = await udataRef.getData(oneMegabyte);
-        var list = data!.toList();
-        var jsonAsString = String.fromCharCodes(list);
-        final jsonFile = await json.decode(jsonAsString);
+        var jsonFile = await downloadJson("users/$cellPhone/userdata.json");
         var user = await getUser(cellPhone, jsonFile);
         if (jsonFile["waitingHelp"]) {
           var request = Request(
@@ -220,34 +154,53 @@ class User {
   deleteRequest() async {
     var jsonFile = await getCurrentData();
     jsonFile["waitingHelp"] = false;
+    jsonFile["helpAccepted"] = false;
     jsonFile["request_priority"] = "";
     jsonFile["request_type"] = "";
     jsonFile["request_subtype"] = "";
     jsonFile["request_text"] = "";
     jsonFile["share_number"] = false;
+    jsonFile["proposal_accepted"] = false;
 
-    var jsonString = jsonEncode(jsonFile);
-    var bytes = utf8.encode(jsonString);
-    var byteData = base64.encode(bytes);
+    await uploadJson(jsonFile, "users/$phoneNumber/userdata.json");
 
-    var arr = base64.decode(byteData);
-
-    String tempPath = (await getTemporaryDirectory()).path;
-    // crea il file nella cache
-    File toupload = await File('$tempPath/userdata.json').create();
-    await toupload.writeAsBytes(arr);
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child("users/$phoneNumber/userdata.json");
-    // carica il file
-    ref.putFile(toupload);
+    // inform the others that you don't want help anymore
+    final helpsPath =
+        FirebaseStorage.instance.ref().child("users/$phoneNumber/");
+    var helps = await helpsPath.listAll();
+    for (var path in helps.items) {
+      if (path.fullPath.contains("_")) {
+        var helpjsonFile = await downloadJson(path.fullPath);
+        var phone = helpjsonFile["phone_number"];
+        var toSend = {
+          "latitude": latitude,
+          "longitude": longitude,
+          "phone_number": phoneNumber,
+          "accepted": false,
+          "rejected": true,
+          "QRCode": false
+        };
+        await uploadJson(toSend, "users/$phone/writetouser_$phoneNumber.json");
+      }
+    }
+    await deleteProposalFiles();
     return true;
+  }
+
+  deleteProposalFiles() async {
+    final helpsPath =
+        FirebaseStorage.instance.ref().child("users/$phoneNumber/");
+    var helps = await helpsPath.listAll();
+    for (var path in helps.items) {
+      if (path.fullPath.contains("_")) {
+        var proposalRef = FirebaseStorage.instance.ref().child(path.fullPath);
+        proposalRef.delete();
+      }
+    }
   }
 
   acceptRequest(String phone) async {
     await updateLocation();
-    var helpedRef = FirebaseStorage.instance.ref().child(
-        "users/$phone/writetouser_$phoneNumber.json"); //phone number used to uniquely identify the file
     var jsonFile = {
       "latitude": latitude,
       "longitude": longitude,
@@ -255,44 +208,19 @@ class User {
       "accepted": true,
       "rejected": false
     };
-    var jsonString = jsonEncode(jsonFile);
-    var bytes = utf8.encode(jsonString);
-    var byteData = base64.encode(bytes);
 
-    var arr = base64.decode(byteData);
-
-    String tempPath = (await getTemporaryDirectory()).path;
-    // crea il file nella cache
-    File toupload = await File('$tempPath/writetotuser.json').create();
-    await toupload.writeAsBytes(arr);
-    // carica il file
-    helpedRef.putFile(toupload);
+    await uploadJson(jsonFile, "users/$phone/writetouser_$phoneNumber.json");
 
     //updating field in my own json file
     var myData = await getCurrentData();
     myData["waitingHelp"] = false;
     myData["helpAccepted"] = true;
-    var myjsonString = jsonEncode(myData);
-    var mybytes = utf8.encode(myjsonString);
-    var mybyteData = base64.encode(mybytes);
-
-    var myarr = base64.decode(mybyteData);
-
-    String mytempPath = (await getTemporaryDirectory()).path;
-    // crea il file nella cache
-    File mytoupload = await File('$mytempPath/userdata.json').create();
-    await mytoupload.writeAsBytes(myarr);
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child("users/$phoneNumber/userdata.json");
-    // carica il file
-    ref.putFile(mytoupload);
+    await uploadJson(myData, "users/$phoneNumber/userdata.json");
+    //deleteProposalFiles();
   }
 
   rejectRequest(String phone) async {
     await updateLocation();
-    var helpedRef = FirebaseStorage.instance.ref().child(
-        "users/$phone/writetouser_$phoneNumber.json"); //phone number used to uniquely identify the file
     var jsonFile = {
       "latitude": latitude,
       "longitude": longitude,
@@ -300,18 +228,7 @@ class User {
       "accepted": false,
       "rejected": true
     };
-    var jsonString = jsonEncode(jsonFile);
-    var bytes = utf8.encode(jsonString);
-    var byteData = base64.encode(bytes);
-
-    var arr = base64.decode(byteData);
-
-    String tempPath = (await getTemporaryDirectory()).path;
-    // crea il file nella cache
-    File toupload = await File('$tempPath/writetotuser.json').create();
-    await toupload.writeAsBytes(arr);
-    // carica il file
-    helpedRef.putFile(toupload);
+    await uploadJson(jsonFile, "users/$phone/writetouser_$phoneNumber.json");
   }
 
   checkProposalStatus() async {
@@ -321,31 +238,12 @@ class User {
     for (var path in messages.items) {
       if (path.fullPath.contains("_")) {
         var phone = path.fullPath.split(".")[0].split("_").last;
-        var proposalRef = FirebaseStorage.instance.ref().child(path.fullPath);
-        const oneMegabyte = 1024 * 1024;
-        final Uint8List? data = await proposalRef.getData(oneMegabyte);
-        var list = data!.toList();
-        var jsonAsString = String.fromCharCodes(list);
-        final jsonFile = await json.decode(jsonAsString);
+        var jsonFile = await downloadJson(path.fullPath);
         if (jsonFile["accepted"]) {
           var myData = await getCurrentData();
           myData["waitingAcceptOrRefuse"] = false;
           myData["proposalAccepted"] = true;
-          var myjsonString = jsonEncode(myData);
-          var mybytes = utf8.encode(myjsonString);
-          var mybyteData = base64.encode(mybytes);
-
-          var myarr = base64.decode(mybyteData);
-
-          String mytempPath = (await getTemporaryDirectory()).path;
-          // crea il file nella cache
-          File mytoupload = await File('$mytempPath/userdata.json').create();
-          await mytoupload.writeAsBytes(myarr);
-          final ref = FirebaseStorage.instance
-              .ref()
-              .child("users/$phoneNumber/userdata.json");
-          // carica il file
-          ref.putFile(mytoupload);
+          await uploadJson(myData, "users/$phoneNumber/userdata.json");
 
           // builda la richiesta per Riepilogo
           Request request = await buildRequest(phone);
@@ -356,17 +254,13 @@ class User {
         }
       }
     }
+    return [false, true];
   }
 
   buildRequest(String phone) async {
-    var udataRef =
-        FirebaseStorage.instance.ref().child("users/$phone/userdata.json");
-    const oneMegabyte = 1024 * 1024;
-    final Uint8List? data = await udataRef.getData(oneMegabyte);
-    var list = data!.toList();
-    var jsonAsString = String.fromCharCodes(list);
-    final jsonFile = await json.decode(jsonAsString);
+    var jsonFile = await downloadJson("users/$phone/userdata.json");
     var user = await getUser(phone, jsonFile);
+    theOtherOne = user;
 
     var request = Request(
         jsonFile["request_priority"], // needs string but is int in JSON
@@ -405,6 +299,98 @@ class User {
 
   static double deg2rad(deg) {
     return deg * (pi / 180);
+  }
+
+  Future<bool> notifyQRCode() async {
+    final helpsPath =
+        FirebaseStorage.instance.ref().child("users/$phoneNumber/");
+    var helps = await helpsPath.listAll();
+    for (var path in helps.items) {
+      if (path.fullPath.contains("_")) {
+        var jsonFile = await downloadJson(path.fullPath);
+        var phone = jsonFile["phone_number"];
+        var helperJson = {
+          "latitude": latitude,
+          "longitude": longitude,
+          "phone_number": phoneNumber,
+          "accepted": true,
+          "rejected": false,
+          "QRCode": true
+        };
+        await uploadJson(
+            helperJson, "users/$phone/writetouser_$phoneNumber.json");
+      }
+    }
+    return true;
+  }
+
+  Future<bool> checkQRCode() async {
+    final helpsPath =
+        FirebaseStorage.instance.ref().child("users/$phoneNumber/");
+    var helps = await helpsPath.listAll();
+    bool qr = false;
+    for (var path in helps.items) {
+      if (path.fullPath.contains("_")) {
+        var jsonFile = await downloadJson(path.fullPath);
+        if (jsonFile.containsKey("QRCode")) {
+          qr = jsonFile["QRCode"];
+        }
+      }
+    }
+    return qr;
+  }
+
+  Future<User> getUserForReview() async {
+    final helpsPath =
+        FirebaseStorage.instance.ref().child("users/$phoneNumber/");
+    var helps = await helpsPath.listAll();
+    for (var path in helps.items) {
+      if (path.fullPath.contains("_")) {
+        var jsonFile = await downloadJson(path.fullPath);
+        var phone = jsonFile["phone_number"];
+        final userimagePath = FirebaseStorage.instance
+            .ref()
+            .child("users/$phone/images/profile.jpg");
+        var url = await userimagePath.getDownloadURL();
+        Image profilePic = Image.network(url);
+        var userJsonFile = await downloadJson("users/$phone/userdata.json");
+        User user = User(userJsonFile["name"], userJsonFile["surname"], phone,
+            profilePic, true, 0, 0);
+        await user.getReviewRating();
+        return user;
+      }
+    }
+    return this;
+  }
+
+  giveReview(String text, int stars, String phone) async {
+    var jsonFile = await downloadJson("users/$phone/userdata.json");
+    jsonFile["review_list"].add([stars, text]);
+    await uploadJson(jsonFile, "users/$phone/userdata.json");
+  }
+
+  uploadJson(Map jsonFile, String path) async {
+    var jsonString = jsonEncode(jsonFile);
+    var bytes = utf8.encode(jsonString);
+    var byteData = base64.encode(bytes);
+    var arr = base64.decode(byteData);
+    String tempPath = (await getTemporaryDirectory()).path;
+    // crea il file nella cache
+    File toupload = await File('$tempPath/file.json').create();
+    await toupload.writeAsBytes(arr);
+    final ref = FirebaseStorage.instance.ref().child(path);
+    // carica il file
+    ref.putFile(toupload);
+  }
+
+  downloadJson(String path) async {
+    var udataRef = FirebaseStorage.instance.ref().child(path);
+    const oneMegabyte = 1024 * 1024;
+    final Uint8List? data = await udataRef.getData(oneMegabyte);
+    var list = data!.toList();
+    var jsonAsString = String.fromCharCodes(list);
+    final jsonFile = await json.decode(jsonAsString);
+    return jsonFile;
   }
 }
 
