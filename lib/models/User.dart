@@ -60,6 +60,21 @@ class User {
     var position = await location.getLocation();
     latitude = position.latitude!;
     longitude = position.longitude!;
+    await uploadLocation();
+  }
+
+  uploadLocation() async {
+    var jsonFile = await getCurrentData();
+    jsonFile["latitude"] = latitude;
+    jsonFile["longitude"] = longitude;
+    await uploadJson(jsonFile, "users/$phoneNumber/userdata.json", "userdata");
+  }
+
+  getLocation() async {
+    var jsonFile = await getCurrentData();
+    latitude = jsonFile["latitude"];
+    longitude = jsonFile["longitude"];
+    print("$latitude $longitude");
   }
 
   getCurrentData() async {
@@ -161,7 +176,7 @@ class User {
     jsonFile["request_subtype"] = "";
     jsonFile["request_text"] = "";
     jsonFile["share_number"] = false;
-    jsonFile["proposal_accepted"] = false;
+    jsonFile["proposalAccepted"] = false;
 
     await uploadJson(jsonFile, "users/$phoneNumber/userdata.json", "userdata");
 
@@ -271,6 +286,7 @@ class User {
     var jsonFile = await downloadJson("users/$phone/userdata.json");
     var user = await getUser(phone, jsonFile);
     theOtherOne = user;
+    await user.getLocation();
 
     var request = Request(
         jsonFile["request_priority"], // needs string but is int in JSON
@@ -294,12 +310,18 @@ class User {
   }
 
   static getDistance(User u1, User u2) {
+    print("ciao eheh ${u1.latitude} ${u1.longitude}");
+    print("ciao eheh2 ${u2.latitude} ${u2.longitude}");
+    var userlat = u1.latitude;
+    var userlon = u1.longitude;
+    var reqlat = u2.latitude;
+    var reqlon = u2.longitude;
     var R = 6371; // Radius of the earth in km
-    var dLat = deg2rad(u2.latitude - u1.latitude); // deg2rad below
-    var dLon = deg2rad(u2.longitude - u1.longitude);
+    var dLat = deg2rad(reqlat - userlat); // deg2rad below
+    var dLon = deg2rad(reqlon - userlon);
     var a = sin(dLat / 2) * sin(dLat / 2) +
-        cos(deg2rad(u1.latitude)) *
-            cos(deg2rad(u2.latitude)) *
+        cos(deg2rad(userlat)) *
+            cos(deg2rad(reqlat)) *
             sin(dLon / 2) *
             sin(dLon / 2);
     var c = 2 * atan2(sqrt(a), sqrt(1 - a));

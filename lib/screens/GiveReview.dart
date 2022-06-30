@@ -73,15 +73,24 @@ class _GiveReview extends State<GiveReview> {
           Card(
             elevation: 3,
             margin: EdgeInsets.all(8.0),
-            child: Column(children: [
+
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
               // ignore: prefer_const_literals_to_create_immutables
+              Padding(padding: EdgeInsets.only(bottom: deviceHeight* 0.02),),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(
-                      width: 90,
-                      height: 90,
-                      child: GiveReview.user!.imageProfile),
+                  CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.transparent,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(40.0),
+                        child: GiveReview.user!.imageProfile,
+                      ),
+                    ),
                   Text("${GiveReview.user!.name} ${GiveReview.user!.surname}",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -96,7 +105,7 @@ class _GiveReview extends State<GiveReview> {
                 for (var i = 0; i < 5; i++)
                   IconButton(
                     icon: Icon(Icons.star),
-                    iconSize: deviceHeight * 0.045,
+                    iconSize: deviceHeight * 0.042,
                     color: stars[i]
                         ? Color.fromARGB(255, 244, 197, 11)
                         : Colors.grey,
@@ -110,21 +119,20 @@ class _GiveReview extends State<GiveReview> {
                     },
                   )
               ]),
-              Padding(
-                  padding: EdgeInsets.fromLTRB(
-                      0, deviceHeight * 0.005, 0, deviceHeight * 0.002)),
-              TextField(
-                  maxLines: 8,
+             
+              Padding(padding: EdgeInsets.all(deviceWidth*0.03), child:TextField(
+                  maxLines: 6,
+                
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30)),
+                        borderRadius: BorderRadius.circular(20)),
                     labelText: 'Write your feedback here...',
                   ),
                   onChanged: (value) {
                     setState(() {
                       review = value;
                     });
-                  }),
+                  })),
               Padding(
                   padding: EdgeInsets.fromLTRB(
                       0, deviceHeight * 0.025, 0, deviceHeight * 0.025)),
@@ -136,6 +144,41 @@ class _GiveReview extends State<GiveReview> {
                   ),
                 ),
                 onPressed: () async {
+                   showDialog( 
+                    context: context,
+                    barrierDismissible: false, // user must tap button!
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        
+                        title: const Text('Yay! 🎉'),
+                        content: SingleChildScrollView(
+                          child: ListBody(
+                            children: const <Widget>[
+                              Text('You successfully gave your review!'),
+                              Text(""),
+                              Text('You\'re now able to go back to the homepage.\nThank you for your collaboration!'),
+                            ],
+                          ),
+                        ),
+                        actions: <Widget>[
+                           ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                                    
+                            child: const Text('Back Home'),
+                            onPressed: () {
+                                          
+                            MyApp.selectedIndex = 0;
+                            MyApp.navigateToNextScreen(context, 0);
+                            },
+                          ),
+                        ],
+                      );
+                  },);
                   int res = stars
                       .map((element) => element ? 1 : 0)
                       .reduce((value, element) => value + element);
@@ -145,8 +188,7 @@ class _GiveReview extends State<GiveReview> {
                   await u!.deleteProposalFiles();
                   await u!.restoreJson();
                   if (!mounted) return;
-                  MyApp.selectedIndex = 0;
-                  MyApp.navigateToNextScreen(context, 0);
+                 
                   //u!.deleteRequest();
                 },
                 child: const Text('SEND REVIEW'),

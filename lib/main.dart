@@ -7,7 +7,6 @@ import 'package:first_prj/screens/HomePage.dart';
 import 'package:location/location.dart';
 import 'package:first_prj/screens/Login.dart';
 import 'dart:async' show Future;
-import 'package:nfc_manager/nfc_manager.dart';
 
 double deviceWidth = 0, deviceHeight = 0;
 
@@ -71,30 +70,3 @@ Future<bool> getLocation() async {
 
   return true;
 }
-
-Future<bool> isNFCAvailable() async {
-  // Check availability
-  bool b = await NfcManager.instance.isAvailable();
-  return b;
-}
-
-Future<bool> getNFC() async {
-  ValueNotifier<dynamic> result = ValueNotifier(null);
-  // Start Session
-  //print("STO STARTANDO LA SESSIONE...");
-  NfcManager.instance.startSession(
-    onDiscovered: (NfcTag tag) async {
-      // Do something with an NfcTag instance.
-      result.value = tag.data;
-      //print("PRINT PROVA");
-      //print(result.value);
-    },
-  );
-
-  return false;
-}
-
-
-//Future<String> loadAsset() async {
-//  return await rootBundle.loadString('storage/prova.txt');
-//}

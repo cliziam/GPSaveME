@@ -182,9 +182,9 @@ class _ProfileState extends State<Profile> {
           Container(
             constraints: BoxConstraints(maxWidth: deviceWidth * 1),
             padding: EdgeInsets.all(deviceWidth * 0.03),
-            alignment: Alignment.center,
+            alignment: Alignment.centerLeft,
             child: SizedBox(
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width - deviceWidth * 0.125,
                 height: deviceWidth * 0.11,
                 child: ElevatedButton(
                   onPressed: () async {
@@ -198,27 +198,28 @@ class _ProfileState extends State<Profile> {
                           splashFactory: NoSplash.splashFactory)
                       : ElevatedButton.styleFrom(
                           primary: const Color.fromRGBO(255, 183, 3, 1)),
-                  child: Row(children: [
-                    const Text("Upload front document",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: Colors.black)),
-                    Padding(padding: EdgeInsets.only(left: deviceWidth * 0.38)),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: u!.frontCheck
-                            ? const Icon(Icons.access_time, color: Colors.black)
-                            : const Icon(Icons.add, color: Colors.black))
-                  ]),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text("Upload front document",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.black)),
+                      //   Padding(padding: EdgeInsets.only(left: deviceWidth * 0.38)),
+                      u!.frontCheck
+                          ? const Icon(Icons.access_time, color: Colors.black)
+                          : const Icon(Icons.add, color: Colors.black)
+                    ],
+                  ),
                 )),
           ),
           Container(
             constraints: BoxConstraints(maxWidth: deviceWidth * 1),
             padding: EdgeInsets.all(deviceWidth * 0.03),
-            alignment: Alignment.center,
+            alignment: Alignment.centerLeft,
             child: SizedBox(
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width - deviceWidth * 0.125,
                 height: deviceWidth * 0.11,
                 child: ElevatedButton(
                   onPressed: () async {
@@ -232,19 +233,19 @@ class _ProfileState extends State<Profile> {
                           splashFactory: NoSplash.splashFactory)
                       : ElevatedButton.styleFrom(
                           primary: const Color.fromRGBO(255, 183, 3, 1)),
-                  child: Row(children: [
-                    const Text("Upload retro document",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: Colors.black)),
-                    Padding(padding: EdgeInsets.only(left: deviceWidth * 0.38)),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: u!.retroCheck
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Upload retro document",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Colors.black)),
+                        // Padding(padding: EdgeInsets.only(left: deviceWidth * 0.38)),
+                        u!.retroCheck
                             ? const Icon(Icons.access_time, color: Colors.black)
-                            : const Icon(Icons.add, color: Colors.black)),
-                  ]),
+                            : const Icon(Icons.add, color: Colors.black)
+                      ]),
                 )),
           )
         ],
@@ -260,7 +261,12 @@ class _ProfileState extends State<Profile> {
               MyApp.selectedIndex = index;
             });
             if (index == 1) {
-              if (Status.areAllFalse()) buildRequests();
+              if (Status.areAllFalse()) {
+                await u!.updateLocation();
+                await buildRequests();
+              } else if (Status.proposalAccepted) {
+                await u!.updateLocation();
+              }
             }
             if (!mounted) return;
 

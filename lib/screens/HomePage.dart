@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, unnecessary_new
 import 'package:first_prj/screens/AroundYou.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
@@ -9,7 +9,7 @@ import 'package:first_prj/screens/SignUpNumber.dart';
 import 'package:first_prj/screens/NFC.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:shake/shake.dart';
-
+import 'dart:async';
 import '../models/User.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,6 +24,8 @@ class _HomePageState extends State<HomePage> {
   var refreshColor = const Color.fromRGBO(255, 183, 3, 1);
   List<User> users = [];
   late ShakeDetector detector;
+  late Timer _timer;
+  int _start = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -84,37 +86,29 @@ class _HomePageState extends State<HomePage> {
             ),
             Padding(padding: EdgeInsets.only(top: Status.waitingHelp ? 5 : 20)),
             if (Status.waitingHelp)
-              InkWell(
-                  child: Container(
-                    width: deviceWidth * 0.6,
-                    height: deviceHeight * 0.07,
-                    // ignore: sort_child_properties_last
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        const Text('Refresh',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20,
-                              color: Colors.white,
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(left: deviceWidth * 0.13)),
-                        const Icon(Icons.refresh),
-                        Padding(
-                            padding:
-                                EdgeInsets.only(right: deviceWidth * 0.03)),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: refreshColor),
+              FloatingActionButton.extended(
+                  label: Row(
+                    // ignore: prefer_const_literals_to_create_immutables
+                    children: <Widget>[
+                      const Padding(padding: EdgeInsets.only(right: 5)),
+                      // ignore: prefer_interpolation_to_compose_strings
+                      const Text("Refresh"),
+                    ],
                   ),
-                  onTap: () async {
+                  backgroundColor: refreshColor,
+                  icon: const Icon(Icons.refresh_rounded),
+                  onPressed: () async {
                     users = await u!.checkForHelp();
+                    for (var us in users) {
+                      await us.getLocation();
+                      AlertDialogPending.helpers.add(us);
+                    }
+                    await u!.updateLocation();
+                    setState(() {
+                      MyApp.navigateToNextScreen(context, 0);
+                    });
                   }),
-            const Padding(padding: EdgeInsets.only(top: 5)),
+            const Padding(padding: EdgeInsets.only(top: 8)),
             if (Status.areAllFalse()) ...[
               HelpCard("images/car.png", "Transportation", false),
               HelpCard("images/health.png", "Health", false),
@@ -135,29 +129,34 @@ class _HomePageState extends State<HomePage> {
                   ),
                   elevation: 8,
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 1.3,
-                    height: MediaQuery.of(context).size.height / 2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      // ignore: prefer_const_literals_to_create_immutables
-                      children: [
-                        const Icon(Icons.warning_amber_rounded,
-                            color: Colors.red, size: 100.0),
-                        // ignore: prefer_const_constructors
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              "You can't ask for help if you sent help to someone",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                              textAlign: TextAlign.center,
+                      width: deviceWidth / 1.1,
+                      height: deviceHeight * 0.6,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          // ignore: prefer_const_literals_to_create_immutables
+                          children: [
+                            const Icon(Icons.warning_amber_rounded,
+                                color: Color.fromARGB(255, 158, 52, 45),
+                                size: 90.0),
+                            // ignore: prefer_const_constructors
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Text(
+                                  "You can't ask for help if you sent help to someone. \n\nWait for the other user to accept or reject your help request to continue.",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Colors.black38),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
+                      )),
                 )
               ]
             ]
@@ -174,7 +173,12 @@ class _HomePageState extends State<HomePage> {
                 MyApp.selectedIndex = index;
               });
               if (index == 1) {
-                if (Status.areAllFalse()) await buildRequests();
+                if (Status.areAllFalse()) {
+                  await u!.updateLocation();
+                  await buildRequests();
+                } else if (Status.proposalAccepted) {
+                  await u!.updateLocation();
+                }
               } else if (index == 2) {
                 await u!.getReviewRating();
               }
@@ -267,6 +271,22 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) => setState(
+        () {
+          if (_start < 1) {
+            timer.cancel();
+          } else {
+            _start = _start - 1;
+          }
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     if (Status.areAllFalse()) {
@@ -275,27 +295,77 @@ class _HomePageState extends State<HomePage> {
         if (!Status.areAllFalse()) {
           return;
         }
-        AlertDialogPending.attributes = [
-          "Danger",
-          "Danger request",
-          "",
-          "Send help as fast as possible",
-          true,
-        ];
-        u!.uploadHelpRequest("Danger request", "",
-            "Send help as fast as possible", "Danger", true);
-        Status.waitingHelp = true;
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        ).then((value) => setState(() {}));
+        var control = true;
         showDialog(
             context: context,
-            builder: (_) => const AlertDialog(
-                  title: Text('Shaking detected'),
-                  content: Text('You have sent an emergency request!'),
-                ));
-        detector.stopListening();
+            builder: (context) {
+              // ignore: prefer_const_constructors
+              Future.delayed(Duration(seconds: 10), () {
+                Navigator.of(context).pop(true);
+              });
+              return AlertDialog(
+                  title: const Text('DANGER REQUEST'),
+                  content: const Text(
+                      'Are you sure you want to send a danger request?'),
+                  actions: <Widget>[
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: const Color.fromRGBO(33, 158, 188, 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                            onPressed: () => {
+                              control = false,
+                              Navigator.pop(context, 'Cancel')
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: _start == 2
+                                  ? const Color.fromRGBO(255, 183, 3, 1)
+                                  : Colors.grey,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                            onPressed: () => {},
+                            child: Text('YES (wait $_start seconds)'),
+                          )
+                        ])
+                  ]);
+            });
+        startTimer();
+        Future.delayed(const Duration(milliseconds: 10000), () {
+          if (control) {
+            AlertDialogPending.attributes = [
+              "Danger",
+              "Danger request",
+              "",
+              "Send help as fast as possible",
+              true,
+            ];
+            u!.uploadHelpRequest("Danger request", "",
+                "Send help as fast as possible", "Danger", true);
+            Status.waitingHelp = true;
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            ).then((value) => setState(() {}));
+            showDialog(
+                context: context,
+                builder: (_) => const AlertDialog(
+                      title: Text('Shaking detected'),
+                      content: Text('You have sent an emergency request!'),
+                    ));
+            detector.stopListening();
+          }
+        });
+        _start = 10;
       });
     }
   }
@@ -303,6 +373,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     detector.stopListening();
+    _timer.cancel();
     super.dispose();
   }
 }

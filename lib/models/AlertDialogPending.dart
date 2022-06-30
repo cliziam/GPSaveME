@@ -78,9 +78,12 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                       ),
                     ),
                     const Padding(padding: EdgeInsets.fromLTRB(15, 0, 0, 0)),
-                    Text(reqText,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black38))
+                    Flexible(
+                        child: Text(reqText,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black38),
+                            overflow: TextOverflow.fade))
                   ]),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -149,10 +152,12 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
       ),
       // ignore: prefer_const_constructors
       Padding(
-          padding: EdgeInsets.fromLTRB(
-              0, deviceHeight * 0.01, 0, deviceHeight * 0.03)),
-      const Text("See who wants to help you",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black38)),
+        padding:
+            EdgeInsets.fromLTRB(0, deviceHeight * 0.03, 0, deviceHeight * 0.02),
+        child: const Text("See who wants to help you",
+            style:
+                TextStyle(fontWeight: FontWeight.bold, color: Colors.black38)),
+      ),
       CarouselSlider(
         items: [
           //1st Image of Slider
@@ -161,40 +166,44 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
-              elevation: 5,
+              elevation: 8,
               child: SizedBox(
                   width: MediaQuery.of(context).size.width / 1.1,
                   height: MediaQuery.of(context).size.height / 5,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           CircleAvatar(
-                            radius: 40,
+                            radius: 42,
                             backgroundColor: Colors.transparent,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(40.0),
                               child: helper.imageProfile,
                             ),
                           ),
-                          const Padding(padding: EdgeInsets.only(left: 0.2)),
                           Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text("${helper.name} ${helper.surname}",
                                   style:
                                       // ignore: prefer_const_constructors
                                       TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 15)),
-                              Text(User.getDistance(u!, helper),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black38)),
+                                          fontSize: 17)),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
+                                  Text(User.getDistance(u!, helper),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black38)),
+                                  Text(" | "),
                                   Text(helper.reviewMean,
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -229,6 +238,7 @@ class _AlertDialogPendingState extends State<AlertDialogPending> {
                             onPressed: () {
                               u!.rejectRequest(helper.phoneNumber);
                               AlertDialogPending.helpers.remove(helper);
+                              MyApp.navigateToNextScreen(context, 0);
                             },
                             child: const Text('REJECT'),
                           ),

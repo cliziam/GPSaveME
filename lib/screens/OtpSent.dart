@@ -5,6 +5,7 @@ import '../models/AlertDialogPending.dart';
 import 'SignUpNumber.dart';
 import 'package:first_prj/main.dart';
 import 'dart:math';
+import 'package:first_prj/main.dart';
 
 //import 'package:flutter_sms/flutter_sms.dart';
 
@@ -76,8 +77,8 @@ class _OtpSentPageState extends State<OtpSent> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(
-                    height: 28,
+                  SizedBox(
+                    height: deviceHeight * 0.05,
                   ),
                   Container(
                     padding: const EdgeInsets.all(20),
@@ -96,8 +97,8 @@ class _OtpSentPageState extends State<OtpSent> {
                             _textFieldOTP(first: false, last: true),
                           ],
                         ),
-                        const SizedBox(
-                          height: 22,
+                        SizedBox(
+                          height: deviceHeight * 0.045,
                         ),
                         SizedBox(
                           width: double.infinity,
@@ -105,6 +106,10 @@ class _OtpSentPageState extends State<OtpSent> {
                             onPressed: () async {
                               AlertDialogPending.helpers =
                                   await u!.checkForHelp();
+                              for (var us in AlertDialogPending.helpers) {
+                                await us.getLocation();
+                              }
+                              await u!.updateLocation();
                               await u!.getReviewRating();
                               if (!mounted) return;
                               if (widget.otpTyped == widget.generatedOtp) {
@@ -155,8 +160,8 @@ class _OtpSentPageState extends State<OtpSent> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 18,
+                        SizedBox(
+                          height: deviceHeight * 0.04,
                         ),
                         const Text(
                           "Didn't you receive any code?",
@@ -167,8 +172,8 @@ class _OtpSentPageState extends State<OtpSent> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(
-                          height: 18,
+                        SizedBox(
+                          height: deviceHeight * 0.04,
                         ),
                         TextButton(
                           onPressed: () => {
@@ -223,7 +228,8 @@ class _OtpSentPageState extends State<OtpSent> {
   Widget _textFieldOTP({required bool first, last}) {
     // ignore: sized_box_for_whitespace
     return Container(
-      height: 85,
+      width: deviceWidth * 0.18,
+      height: deviceHeight * 0.085,
       child: AspectRatio(
         aspectRatio: 1.0,
         child: TextField(

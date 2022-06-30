@@ -25,9 +25,11 @@ class Riepilogo extends StatefulWidget {
 class _Riepilogo extends State<Riepilogo> {
   GoogleMapController? mapController; //contrller for Google map
   Set<Marker> markers = {};
-  LatLng showLocation = const LatLng(27.7089427, 85.3086209);
   @override
   void initState() {
+    LatLng showLocation = LatLng(widget.helpedRequest.getUser().latitude,
+        widget.helpedRequest.getUser().latitude);
+
     markers.add(Marker(
       //add marker on google map
       markerId: MarkerId(showLocation.toString()),
@@ -71,7 +73,8 @@ class _Riepilogo extends State<Riepilogo> {
           ),
         ],
       ),
-      body: Column(
+      body: SingleChildScrollView(
+          child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
@@ -127,8 +130,9 @@ class _Riepilogo extends State<Riepilogo> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.only(right: 4),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      right: deviceWidth * 0.02),
                                 ),
                                 Icon(Icons.verified,
                                     size: 20,
@@ -191,7 +195,7 @@ class _Riepilogo extends State<Riepilogo> {
                         // ignore: prefer_interpolation_to_compose_strings
                         Text(
                             // ignore: prefer_interpolation_to_compose_strings
-                            "Priority of the request: " +
+                            "Priority: " +
                                 widget.helpedRequest
                                     // ignore: deprecated_member_use_from_same_package
                                     .getPriorityAsString()
@@ -202,22 +206,24 @@ class _Riepilogo extends State<Riepilogo> {
                                 color: Colors.black38))
                       ],
                     ),
-                    const Padding(
-                      padding: EdgeInsets.all(10),
+                    Padding(
+                      padding: EdgeInsets.all(deviceHeight * 0.008),
                     ),
                     Row(children: [
                       Padding(
                         padding: EdgeInsets.only(left: deviceWidth * 0.050),
                       ),
-                      Text(widget.helpedRequest.description,
-                          style: const TextStyle(
-                              fontSize: 17,
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black38))
+                      Flexible(
+                          child: Text(widget.helpedRequest.description,
+                              style: const TextStyle(
+                                  fontSize: 17,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black38),
+                              overflow: TextOverflow.fade))
                     ]),
-                    const Padding(
-                      padding: EdgeInsets.all(10),
+                    Padding(
+                      padding: EdgeInsets.all(deviceHeight * 0.01),
                     ),
                     Row(children: [
                       const Padding(
@@ -238,31 +244,36 @@ class _Riepilogo extends State<Riepilogo> {
                           onPressed: () {})
                     ]),
                     Padding(
-                      padding: EdgeInsets.all(deviceHeight * 0.005),
+                      padding: EdgeInsets.all(deviceHeight * 0.008),
                     ),
-                    // SizedBox(
-                    //   width: deviceWidth * 0.225,
-                    //   height: deviceHeight * 0.275,
-                    //   child: GoogleMap(
-                    //     //Map widget from google_maps_flutter package
-                    //     zoomGesturesEnabled: true, //enable Zoom in, out on map
-                    //     initialCameraPosition: CameraPosition(
-                    //       //innital position in map
-                    //       // ignore: prefer_const_constructors
-                    //       target:
-                    //           LatLng(27.7089427, 85.3086209), //initial position
-                    //       zoom: 10.0, //initial zoom level
-                    //     ),
-                    //     markers: markers, //markers to show on map
-                    //     mapType: MapType.normal, //map type
-                    //     onMapCreated: (controller) {
-                    //       //method called when map is created
-                    //       setState(() {
-                    //         mapController = controller;
-                    //       });
-                    //     },
-                    //   ),
-                    // ),
+                    SizedBox(
+                      height: deviceHeight * 0.255,
+                      child: GoogleMap(
+                        //Map widget from google_maps_flutter package
+                        zoomGesturesEnabled: true, //enable Zoom in, out on map
+                        // ignore: prefer_const_constructors
+                        initialCameraPosition: CameraPosition(
+                          //innital position in map
+                          // ignore: prefer_const_constructors
+                          target:
+                              // ignore: prefer_const_constructors
+                              LatLng(
+                                  widget.helpedRequest.getUser().latitude,
+                                  widget.helpedRequest
+                                      .getUser()
+                                      .longitude), //initial position
+                          zoom: 10.0, //initial zoom level
+                        ),
+                        markers: markers, //markers to show on map
+                        mapType: MapType.normal, //map type
+                        onMapCreated: (controller) {
+                          //       //method called when map is created
+                          setState(() {
+                            mapController = controller;
+                          });
+                        },
+                      ),
+                    ),
                   ])),
           FloatingActionButton.extended(
             onPressed: () {
@@ -274,7 +285,7 @@ class _Riepilogo extends State<Riepilogo> {
             backgroundColor: Color.fromRGBO(33, 158, 188, 1),
           )
         ],
-      ),
+      )),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromRGBO(255, 183, 3, 1),
         selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),

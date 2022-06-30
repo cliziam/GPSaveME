@@ -408,8 +408,8 @@ uploadUserData() async {
     "surname": u!.surname,
     "image_profile": "users/${u!.phoneNumber}/images/profile.jpg",
     "review_list": [],
-    "latitude": "",
-    "longitude": "",
+    "latitude": 0,
+    "longitude": 0,
     "front_document": "",
     "retro_document": "",
     "waitingHelp": false,
@@ -438,7 +438,7 @@ uploadUserData() async {
       .ref()
       .child("users/${u!.phoneNumber}/userdata.json");
   // carica il file
-  ref.putFile(toupload);
+  await ref.putFile(toupload);
   await u!.getReviewRating();
   return true;
 }

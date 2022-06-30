@@ -92,10 +92,10 @@ class _GenerateQR extends State<GenerateQR> {
                 ),
                 Padding(padding: const EdgeInsets.fromLTRB(10, 10, 10, 10)),
                 SizedBox(
-                  width: deviceWidth / 1.2,
-                  height: deviceHeight / 1.7,
+                  width: deviceWidth / 1.1,
+                  height: deviceHeight / 1.6,
                   child: Card(
-                    elevation: 5,
+                    elevation: 3,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                     child: //RepaintBoundary is necessary for saving QR to user's phone

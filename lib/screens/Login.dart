@@ -290,6 +290,8 @@ void instantiateUser(String phone) async {
 }
 
 Future<String>? alertDialogPendingWrapper() async {
+  await getLocation();
+  await u!.updateLocation();
   var reqAttributes = await u!.getHelpRequest();
   AlertDialogPending.attributes = reqAttributes;
   return "done";
