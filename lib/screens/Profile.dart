@@ -258,7 +258,7 @@ class _ProfileState extends State<Profile> {
                 await u!.updateLocation();
                 await buildRequests();
               } else if (Status.proposalAccepted) {
-                await u!.updateLocation();
+                await u!.getLocation();
               }
             }
             if (!mounted) return;
@@ -338,7 +338,6 @@ class _ProfileState extends State<Profile> {
   }
 
   void _showReviews(Image imageProfile, dynamic reviews) {
-    print(reviews);
     showDialog(
         context: context,
         builder: (_) => Dialog(
@@ -370,7 +369,8 @@ class _ProfileState extends State<Profile> {
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.left),
-                   for (var review in reviews)  
+                   for (int i = 0; i < 1; i++)  
+                        // ignore: sized_box_for_whitespace
                         Container(
                           
                           height: deviceHeight * 0.08,
@@ -382,12 +382,12 @@ class _ProfileState extends State<Profile> {
                       children: [
                         
                           Padding(
-                            padding: EdgeInsets.fromLTRB(8,2,0,2),
+                            padding: const EdgeInsets.fromLTRB(8,2,0,2),
                             child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                            
-                          Text(review[1].length > 10 ? review[1].substring(0, 20) + "..." : review[1], overflow: TextOverflow.ellipsis,
+                          Text(reviews[i][1].length > 20 ? reviews[i][1].substring(0, 20) + "..." : reviews[i][1], overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
                           ),
                           ],),
@@ -396,7 +396,7 @@ class _ProfileState extends State<Profile> {
                       Row(
                       children: [
                           for (int i = 0; i < 5; i++) Icon(Icons.star,
-                      color: (i < review[0]) ?  Color.fromRGBO(255, 183, 3, 1) : Colors.grey)
+                      color: (i < reviews[i][0]) ?  const Color.fromRGBO(255, 183, 3, 1) : Colors.grey)
                       ],),],
                       ),),
                         ),

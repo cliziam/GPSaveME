@@ -181,6 +181,7 @@ class _NFC extends State<NFC> {
                       await getNFC(context);
                       GiveReview.user = await u!.getUserForReview();
                       await u!.changeCoins(widget.isTheHelper);
+                      MyApp.coins = await u!.getCoins();
                       if (!mounted) return;
                       Navigator.push(
                         context,

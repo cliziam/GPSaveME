@@ -112,6 +112,7 @@ class _OtpSentPageState extends State<OtpSent> {
                               }
                               if (Status.waitingHelp) await u!.updateLocation();
                               await u!.getReviewRating();
+                              MyApp.coins =  await u!.getCoins();
                               if (!mounted) return;
                               if (widget.otpTyped == widget.generatedOtp) {
                                 Navigator.of(context).push(MaterialPageRoute(

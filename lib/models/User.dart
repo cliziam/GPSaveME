@@ -454,6 +454,11 @@ class User {
     increment ? jsonFile["coins"] += 1 : jsonFile["coins"] -= 1;
     await uploadJson(jsonFile, "users/$phoneNumber/userdata.json", "userdata");
   }
+
+  getCoins() async {
+    var jsonFile = await getCurrentData();
+    return jsonFile["coins"];
+  }
 }
 
 class Review {

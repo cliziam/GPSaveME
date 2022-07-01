@@ -15,6 +15,7 @@ import '../models/User.dart';
 
 class HomePage extends StatefulWidget {
   final String title = "GPSaveMe";
+  static bool shaked = false;
   const HomePage({Key? key}) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
@@ -67,9 +68,9 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const <Widget>[
+                children: <Widget>[
                   Text(
-                    'Tap below or shake to ask for help ',
+                    Status.areAllFalse() ? 'Tap below or shake to ask for help ' : "Your request recap",
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 18,
@@ -177,7 +178,7 @@ class _HomePageState extends State<HomePage> {
                   await u!.updateLocation();
                   await buildRequests();
                 } else if (Status.proposalAccepted) {
-                  await u!.updateLocation();
+                  await u!.getLocation();
                 }
               } else if (index == 2) {
                 await u!.getReviewRating();
@@ -235,7 +236,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               child: const Text('YES'),
-                              onPressed: () => {
+                              onPressed: () async => {
                                 AlertDialogPending.attributes = [
                                   "Danger",
                                   "Danger request",
@@ -289,7 +290,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    if (Status.areAllFalse()) {
+    if (Status.areAllFalse() && !HomePage.shaked) {
       super.initState();
       detector = ShakeDetector.autoStart(onPhoneShake: () {
         if (!Status.areAllFalse()) {
@@ -297,6 +298,7 @@ class _HomePageState extends State<HomePage> {
         }
         var control = true;
         HapticFeedback.vibrate();
+        HomePage.shaked = true;
         showDialog(
             context: context,
             builder: (context) {
@@ -321,6 +323,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             onPressed: () => {
                               control = false,
+                              HomePage.shaked = false,
                               Navigator.pop(context, 'Cancel')
                             },
                             child: const Text('Cancel'),

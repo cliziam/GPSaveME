@@ -2,6 +2,7 @@
     package="com.example.first_prj">
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 <queries>
     <intent>
         <action android:name="android.intent.action.SENDTO" />
@@ -40,6 +41,7 @@
             android:value="2" />
     <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="AIzaSyAiuyNncB8qOUlfVoIGB2YyGfUwS6whgcg"/>
+               
     </application>
     
 </manifest>
