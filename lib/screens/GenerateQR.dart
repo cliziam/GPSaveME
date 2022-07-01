@@ -24,6 +24,24 @@ class _GenerateQR extends State<GenerateQR> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: widget.isTheHelper
+          ? FloatingActionButton(
+              onPressed: (() async {
+                bool b = await u!.checkQRCode();
+                if (b) {
+                  GiveReview.user = await u!.getUserForReview();
+                  await u!.changeCoins(widget.isTheHelper);
+                  if (!mounted) return;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const GiveReview();
+                    }),
+                  ).then((value) => setState(() {}));
+                }
+              }),
+              child: Icon(Icons.refresh))
+          : null,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -47,92 +65,95 @@ class _GenerateQR extends State<GenerateQR> {
           ),
         ],
       ),
-      body: Status.qrScanned ? GiveReview() : Column(
-        children: [
-          Container(
-            height: 60.0,
-            decoration: const BoxDecoration(
-              borderRadius:
-                  BorderRadius.vertical(bottom: Radius.circular(15.0)),
-              color: Color.fromRGBO(142, 202, 230, 1),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[
-                Text(
-                  'Scan QR Code!',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                    color: Colors.white,
+      body: Status.qrScanned
+          ? GiveReview()
+          : Column(
+              children: [
+                Container(
+                  height: 60.0,
+                  decoration: const BoxDecoration(
+                    borderRadius:
+                        BorderRadius.vertical(bottom: Radius.circular(15.0)),
+                    color: Color.fromRGBO(142, 202, 230, 1),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const <Widget>[
+                      Text(
+                        'Scan QR Code!',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(padding: const EdgeInsets.fromLTRB(10, 10, 10, 10)),
+                SizedBox(
+                  width: deviceWidth / 1.1,
+                  height: deviceHeight / 1.6,
+                  child: Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: //RepaintBoundary is necessary for saving QR to user's phone
+                        Column(children: [
+                      Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10)),
+                      if (widget.isTheHelper) ...[
+                        Center(
+                          child: RepaintBoundary(
+                            key: widget.qrKey,
+                            child: QrImage(
+                              data: u!
+                                  .phoneNumber, //This is the part we give data to our QR
+                              //  embeddedImage: , You can add your custom image to the center of your QR
+                              //  semanticsLabel:'', You can add some info to display when your QR scanned
+                              size: 250,
+                              backgroundColor: Colors.white,
+                              version: QrVersions
+                                  .auto, //You can also give other versions
+                            ),
+                          ),
+                        )
+                      ] else ...[
+                        Padding(
+                          padding: EdgeInsets.only(top: deviceHeight * 0.25),
+                        )
+                      ],
+                      if (widget.isTheHelper) ...[
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.orange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          onPressed: () => {},
+                          child: const Text('Let the other person scan this!'),
+                        ),
+                      ] else ...[
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.orange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          onPressed: () => {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ScanQrPage()))
+                          },
+                          child: const Text('Scan QR Code'),
+                        ),
+                      ]
+                    ]),
                   ),
                 ),
               ],
             ),
-          ),
-          Padding(padding: const EdgeInsets.fromLTRB(10, 10, 10, 10)),
-          SizedBox(
-            width: deviceWidth / 1.2,
-            height: deviceHeight / 1.7,
-            child: Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              child: //RepaintBoundary is necessary for saving QR to user's phone
-                  Column(children: [
-                Padding(padding: const EdgeInsets.fromLTRB(10, 10, 10, 10)),
-                if (widget.isTheHelper) ...[
-                  Center(
-                    child: RepaintBoundary(
-                      key: widget.qrKey,
-                      child: QrImage(
-                        data: u!
-                            .phoneNumber, //This is the part we give data to our QR
-                        //  embeddedImage: , You can add your custom image to the center of your QR
-                        //  semanticsLabel:'', You can add some info to display when your QR scanned
-                        size: 250,
-                        backgroundColor: Colors.white,
-                        version:
-                            QrVersions.auto, //You can also give other versions
-                      ),
-                    ),
-                  )
-                ] else ...[
-                  Padding(
-                    padding: EdgeInsets.only(top: deviceHeight * 0.25),
-                  )
-                ],
-                if (widget.isTheHelper) ...[
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.orange,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    onPressed: () => {},
-                    child: const Text('Let the other person scan this!'),
-                  ),
-                ] else ...[
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.orange,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    onPressed: () => {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => ScanQrPage()))
-                    },
-                    child: const Text('Scan QR Code'),
-                  ),
-                ]
-              ]),
-            ),
-          ),
-        ],
-      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromRGBO(255, 183, 3, 1),
         selectedItemColor: const Color.fromRGBO(33, 158, 188, 1),

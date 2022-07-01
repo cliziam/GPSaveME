@@ -1,11 +1,12 @@
 // ignore_for_file: file_names
-import 'package:first_prj/screens/GiveReview.dart';
 import 'package:flutter/material.dart';
 import 'package:first_prj/screens/HomePage.dart';
 import '../models/AlertDialogPending.dart';
+import '../models/Status.dart';
 import 'SignUpNumber.dart';
 import 'package:first_prj/main.dart';
 import 'dart:math';
+import 'package:first_prj/main.dart';
 
 //import 'package:flutter_sms/flutter_sms.dart';
 
@@ -77,8 +78,8 @@ class _OtpSentPageState extends State<OtpSent> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(
-                    height: 28,
+                  SizedBox(
+                    height: deviceHeight * 0.05,
                   ),
                   Container(
                     padding: const EdgeInsets.all(20),
@@ -97,8 +98,8 @@ class _OtpSentPageState extends State<OtpSent> {
                             _textFieldOTP(first: false, last: true),
                           ],
                         ),
-                        const SizedBox(
-                          height: 22,
+                        SizedBox(
+                          height: deviceHeight * 0.045,
                         ),
                         SizedBox(
                           width: double.infinity,
@@ -106,10 +107,15 @@ class _OtpSentPageState extends State<OtpSent> {
                             onPressed: () async {
                               AlertDialogPending.helpers =
                                   await u!.checkForHelp();
+                              for (var us in AlertDialogPending.helpers) {
+                                await us.getLocation();
+                              }
+                              if (Status.waitingHelp) await u!.updateLocation();
+                              await u!.getReviewRating();
                               if (!mounted) return;
                               if (widget.otpTyped == widget.generatedOtp) {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const GiveReview()));
+                                    builder: (context) => const HomePage()));
                               } else {
                                 //print(widget.otpTyped);
                                 //print(widget.generatedOtp);
@@ -121,8 +127,13 @@ class _OtpSentPageState extends State<OtpSent> {
                                               "The inserted OTP is not valid"),
                                           actions: [
                                             TextButton(
-                                              onPressed: () =>
-                                                  Navigator.push(context,MaterialPageRoute(builder: (context) =>  OtpSent()),).then((value) => setState(() {})), 
+                                              onPressed: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        OtpSent()),
+                                              ).then(
+                                                  (value) => setState(() {})),
                                               child: const Text('Ok'),
                                             )
                                           ],
@@ -150,8 +161,8 @@ class _OtpSentPageState extends State<OtpSent> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 18,
+                        SizedBox(
+                          height: deviceHeight * 0.04,
                         ),
                         const Text(
                           "Didn't you receive any code?",
@@ -162,11 +173,17 @@ class _OtpSentPageState extends State<OtpSent> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(
-                          height: 18,
+                        SizedBox(
+                          height: deviceHeight * 0.04,
                         ),
-                         TextButton(
-                          onPressed:()=> {Navigator.push(context,MaterialPageRoute(builder: (context) => OtpSent())).then((value) => setState(() {}))} ,
+                        TextButton(
+                          onPressed: () => {
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => OtpSent()))
+                                .then((value) => setState(() {}))
+                          },
                           child: const Text(
                             "Resend New Code",
                             style: TextStyle(
@@ -175,8 +192,8 @@ class _OtpSentPageState extends State<OtpSent> {
                               color: Color.fromRGBO(33, 158, 188, 1),
                             ),
                             textAlign: TextAlign.center,
-                                                 ),
-                         ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -212,7 +229,8 @@ class _OtpSentPageState extends State<OtpSent> {
   Widget _textFieldOTP({required bool first, last}) {
     // ignore: sized_box_for_whitespace
     return Container(
-      height: 85,
+      width: deviceWidth * 0.18,
+      height: deviceHeight * 0.085,
       child: AspectRatio(
         aspectRatio: 1.0,
         child: TextField(

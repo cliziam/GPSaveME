@@ -81,14 +81,6 @@ class _ProfileState extends State<Profile> {
                           child: u!.imageProfile,
                         ),
                       ),
-                      // ClipOval(
-                      //     child: Ink.image(
-                      //   image: (SignUp.user.imageProfile),
-                      //   fit: BoxFit.cover,
-                      //   width: 90,
-                      //   height: 90,
-                      //   //child: InkWell(onTap: ),
-                      // )),
                       Positioned(
                         bottom: 0,
                         right: 4,
@@ -132,16 +124,17 @@ class _ProfileState extends State<Profile> {
                   Padding(padding: EdgeInsets.all(deviceWidth * 0.003)),
                   Row(
                     children: <Widget>[
-                      Text(u!.reviewMean, 
-                      style: TextStyle(
-                        fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black38)),
+                      Text(u!.reviewMean,
+                          style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black38)),
                       IconButton(
                         icon: const Icon(Icons.star,
                             color: Color.fromRGBO(255, 183, 3, 1)),
-                        onPressed: () {
-                          _showReviews(u!.imageProfile);
+                        onPressed: () async {
+                          var reviews = await u!.getReviews();
+                          _showReviews(u!.imageProfile, reviews);
                         },
                       )
                     ],
@@ -182,9 +175,9 @@ class _ProfileState extends State<Profile> {
           Container(
             constraints: BoxConstraints(maxWidth: deviceWidth * 1),
             padding: EdgeInsets.all(deviceWidth * 0.03),
-            alignment: Alignment.center,
+            alignment: Alignment.centerLeft,
             child: SizedBox(
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width - deviceWidth * 0.125,
                 height: deviceWidth * 0.11,
                 child: ElevatedButton(
                   onPressed: () async {
@@ -198,27 +191,28 @@ class _ProfileState extends State<Profile> {
                           splashFactory: NoSplash.splashFactory)
                       : ElevatedButton.styleFrom(
                           primary: const Color.fromRGBO(255, 183, 3, 1)),
-                  child: Row(children: [
-                    const Text("Upload front document",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: Colors.black)),
-                    Padding(padding: EdgeInsets.only(left: deviceWidth * 0.38)),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: u!.frontCheck
-                            ? const Icon(Icons.access_time, color: Colors.black)
-                            : const Icon(Icons.add, color: Colors.black))
-                  ]),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text("Upload front document",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.black)),
+                      //   Padding(padding: EdgeInsets.only(left: deviceWidth * 0.38)),
+                      u!.frontCheck
+                          ? const Icon(Icons.access_time, color: Colors.black)
+                          : const Icon(Icons.add, color: Colors.black)
+                    ],
+                  ),
                 )),
           ),
           Container(
             constraints: BoxConstraints(maxWidth: deviceWidth * 1),
             padding: EdgeInsets.all(deviceWidth * 0.03),
-            alignment: Alignment.center,
+            alignment: Alignment.centerLeft,
             child: SizedBox(
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width - deviceWidth * 0.125,
                 height: deviceWidth * 0.11,
                 child: ElevatedButton(
                   onPressed: () async {
@@ -232,19 +226,19 @@ class _ProfileState extends State<Profile> {
                           splashFactory: NoSplash.splashFactory)
                       : ElevatedButton.styleFrom(
                           primary: const Color.fromRGBO(255, 183, 3, 1)),
-                  child: Row(children: [
-                    const Text("Upload retro document",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: Colors.black)),
-                    Padding(padding: EdgeInsets.only(left: deviceWidth * 0.38)),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: u!.retroCheck
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Upload retro document",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Colors.black)),
+                        // Padding(padding: EdgeInsets.only(left: deviceWidth * 0.38)),
+                        u!.retroCheck
                             ? const Icon(Icons.access_time, color: Colors.black)
-                            : const Icon(Icons.add, color: Colors.black)),
-                  ]),
+                            : const Icon(Icons.add, color: Colors.black)
+                      ]),
                 )),
           )
         ],
@@ -260,7 +254,12 @@ class _ProfileState extends State<Profile> {
               MyApp.selectedIndex = index;
             });
             if (index == 1) {
-              if (Status.areAllFalse()) buildRequests();
+              if (Status.areAllFalse()) {
+                await u!.updateLocation();
+                await buildRequests();
+              } else if (Status.proposalAccepted) {
+                await u!.updateLocation();
+              }
             }
             if (!mounted) return;
 
@@ -294,7 +293,6 @@ class _ProfileState extends State<Profile> {
       await toupload.writeAsBytes(byteData.buffer
           .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
       setState(() {
-        //print("ciao");
         // punta a un percorso nel cloud storage
         final path = "users/${u!.phoneNumber}/images/profile.jpg";
         final ref = FirebaseStorage.instance.ref().child(path);
@@ -339,7 +337,8 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  void _showReviews(Image imageProfile) {
+  void _showReviews(Image imageProfile, dynamic reviews) {
+    print(reviews);
     showDialog(
         context: context,
         builder: (_) => Dialog(
@@ -356,28 +355,66 @@ class _ProfileState extends State<Profile> {
                         image: DecorationImage(
                             image: AssetImage("images/sfondoreview.png"),
                             fit: BoxFit.fill)),
-                    padding: const EdgeInsets.fromLTRB(0, 35, 12, 320),
+                    padding: const EdgeInsets.fromLTRB(0, 45, 12, 320),
                     alignment: Alignment.center,
-                    child: const Text("Reviews",
+                    child: SizedBox(
+                      width: deviceWidth * 0.9,
+                      height: deviceHeight * 0.4,
+                      child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const Text("Reviews",
                         style: TextStyle(
                           fontSize: 24,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
-                        textAlign: TextAlign.left)),
+                        textAlign: TextAlign.left),
+                   for (var review in reviews)  
+                        Container(
+                          
+                          height: deviceHeight * 0.08,
+                          child: Card( 
+                            shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(8,2,0,2),
+                            child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                           
+                          Text(review[1].length > 10 ? review[1].substring(0, 20) + "..." : review[1], overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                          ),
+                          ],),
+
+                          ),
+                      Row(
+                      children: [
+                          for (int i = 0; i < 5; i++) Icon(Icons.star,
+                      color: (i < review[0]) ?  Color.fromRGBO(255, 183, 3, 1) : Colors.grey)
+                      ],),],
+                      ),),
+                        ),
+                ], ),),
+                ),
                 Positioned(
                   top: -70,
                   child: CircleAvatar(
-                      radius: deviceWidth * 0.15,
-                      backgroundColor: const Color.fromRGBO(255, 178, 3, 1),
-                      child:ClipRRect(
+                        radius: deviceWidth * 0.15,
+                        backgroundColor: Colors.transparent,
+                        child: ClipRRect(
                           borderRadius:
-                              BorderRadius.circular(deviceWidth * 0.35),
+                              BorderRadius.circular(deviceWidth * 0.15),
                           child: u!.imageProfile,
                         ),),
-                     
                 ),
+
               ],
             )));
-  }
+  }  
 }

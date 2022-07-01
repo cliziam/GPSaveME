@@ -1,7 +1,11 @@
 // ignore_for_file: file_names, prefer_const_constructors, unrelated_type_equality_checks
 import 'package:flutter/material.dart';
 import 'package:first_prj/main.dart';
+import '../models/NFCMethods.dart';
+import '../models/Status.dart';
 import 'GenerateQR.dart';
+import 'GiveReview.dart';
+import 'SignUpNumber.dart';
 
 // ignore: must_be_immutable
 class NFC extends StatefulWidget {
@@ -18,6 +22,11 @@ class NFC extends StatefulWidget {
 class _NFC extends State<NFC> {
   @override
   Widget build(BuildContext context) {
+    // if (widget.isTheHelper) {
+    //   getNFC(context);
+    // } else {
+    //   ndefWrite(context);
+    // }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -85,84 +94,113 @@ class _NFC extends State<NFC> {
                       ),
                     ]),
               ),
-              SizedBox(
-                width: deviceWidth / 1.1,
-                height: deviceHeight * 0.6,
-                child: Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Padding(padding: EdgeInsets.all(5)),
-                        Image.asset("images/nfc.png", width: deviceWidth / 2),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                              "Put your phones next to eachother to confirm you've met!",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.black38,
-                                fontWeight: FontWeight.bold,
-                              )),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+              InkWell(
+                  child: SizedBox(
+                    width: deviceWidth / 1.1,
+                    height: deviceHeight * 0.6,
+                    child: Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
+                            Padding(padding: EdgeInsets.all(5)),
+                            Image.asset("images/nfc.png",
+                                width: deviceWidth / 2),
                             Padding(
-                                padding: EdgeInsets.only(
-                              right: deviceWidth / 6,
-                            )),
-                            Text("Or instead",
-                                style: TextStyle(
-                                  color: Colors.black38,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(
-                              right: 6,
-                            )),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.orange,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                              onPressed: () => {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        GenerateQR(widget.isTheHelper)))
-                              },
-                              child: const Text('CONFIRM WITH QR'),
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                  "Put your phones next to eachother to confirm you've met!",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black38,
+                                    fontWeight: FontWeight.bold,
+                                  )),
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                  right: deviceWidth / 6,
+                                )),
+                                Text("Or instead",
+                                    style: TextStyle(
+                                      color: Colors.black38,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                  right: 6,
+                                )),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.orange,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  onPressed: () => {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                GenerateQR(widget.isTheHelper)))
+                                  },
+                                  child: const Text('CONFIRM WITH QR'),
+                                ),
+                              ],
+                            ),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          right: deviceWidth / 2 - 15)),
+                                  if (widget.isTheHelper) ...[
+                                    Text(""),
+                                  ] else ...[
+                                    TextButton(
+                                        onPressed: () {},
+                                        child: const Text(
+                                            'Helper hasnt arrived?',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color.fromRGBO(
+                                                    33, 158, 188, 1)))),
+                                  ]
+                                ])
                           ],
-                        ),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      right: deviceWidth / 2 - 15)),
-                              if (widget.isTheHelper) ...[
-                                Text(""),
-                              ] else ...[
-                                TextButton(
-                                    onPressed: () {},
-                                    child: const Text('Helper hasnt arrived?',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color.fromRGBO(
-                                                33, 158, 188, 1)))),
-                              ]
-                            ])
-                      ],
-                    )),
-              ),
+                        )),
+                  ),
+                  onTap: () async {
+                    if (widget.isTheHelper) {
+                      await getNFC(context);
+                      GiveReview.user = await u!.getUserForReview();
+                      await u!.changeCoins(widget.isTheHelper);
+                      if (!mounted) return;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return const GiveReview();
+                        }),
+                      ).then((value) => setState(() {}));
+                    } else {
+                      await ndefWrite(context);
+                      GiveReview.user = await u!.getUserForReview();
+                      await u!.changeCoins(widget.isTheHelper);
+                      if (!mounted) return;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return const GiveReview();
+                        }),
+                      ).then((value) => setState(() {}));
+                    }
+                  }),
             ],
           ),
         ],

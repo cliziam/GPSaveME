@@ -230,7 +230,7 @@ createUser(String phone, BuildContext context) async {
     await toupload.writeAsBytes(arr);
     final ref = FirebaseStorage.instance.ref().child("userlist.json");
     // carica il file
-    ref.putFile(toupload);
+    await ref.putFile(toupload);
     Image blank = await User.getBlankImage();
     u = User("", "", "", blank, false, 0.0, 0.0);
     u!.phoneNumber = phone;

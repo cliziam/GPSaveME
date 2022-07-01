@@ -95,6 +95,8 @@ class _RequestCardState extends State<RequestCard> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      insetPadding:
+          EdgeInsets.only(right: deviceWidth * 0.03, left: deviceWidth * 0.03),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       title: Text(widget.title),
       content: SingleChildScrollView(

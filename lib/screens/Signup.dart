@@ -340,7 +340,6 @@ class _SignUpPageState extends State<SignUp> {
       await toupload.writeAsBytes(byteData.buffer
           .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
       setState(() {
-        //print("ciao");
         // punta a un percorso nel cloud storage
         final path = "users/${u!.phoneNumber}/images/profile.jpg";
         final ref = FirebaseStorage.instance.ref().child(path);
@@ -409,8 +408,8 @@ uploadUserData() async {
     "surname": u!.surname,
     "image_profile": "users/${u!.phoneNumber}/images/profile.jpg",
     "review_list": [],
-    "latitude": "",
-    "longitude": "",
+    "latitude": 0,
+    "longitude": 0,
     "front_document": "",
     "retro_document": "",
     "waitingHelp": false,
@@ -439,6 +438,7 @@ uploadUserData() async {
       .ref()
       .child("users/${u!.phoneNumber}/userdata.json");
   // carica il file
-  ref.putFile(toupload);
+  await ref.putFile(toupload);
+  await u!.getReviewRating();
   return true;
 }

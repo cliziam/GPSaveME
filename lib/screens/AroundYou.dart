@@ -78,54 +78,43 @@ class _AroundYouState extends State<AroundYou> {
             if (Status.waitingHelp || Status.helpAccepted)
               ...[]
             else
-              InkWell(
-                  child: Container(
-                    width: deviceWidth * 0.6,
-                    height: deviceHeight * 0.07,
-                    // ignore: sort_child_properties_last
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        const Text('Refresh',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20,
-                              color: Colors.white,
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(left: deviceWidth * 0.13)),
-                        const Icon(Icons.refresh),
-                        Padding(
-                            padding:
-                                EdgeInsets.only(right: deviceWidth * 0.03)),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: refreshColor),
+              FloatingActionButton.extended(
+                  label: Row(
+                    // ignore: prefer_const_literals_to_create_immutables
+                    children: <Widget>[
+                      const Padding(padding: EdgeInsets.only(right: 5)),
+                      // ignore: prefer_interpolation_to_compose_strings
+                      const Text("Refresh"),
+                    ],
                   ),
-                  onTap: () async {
+                  backgroundColor: refreshColor,
+                  icon: const Icon(Icons.refresh_rounded),
+                  onPressed: () async {
                     if (Status.areAllFalse()) {
                       await buildRequests();
+                      if (!mounted) return;
+                      MyApp.navigateToNextScreen(context, 1);
                     } else if (Status.waitingAcceptOrRefuse) {
                       var result = await u!.checkProposalStatus();
                       bool status = result[0];
                       if (status) {
                         // allora la proposta di aiuto è stata accettata
+                        await result[1].getUser().getLocation();
+                        await u!.updateLocation();
                         if (!mounted) return;
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Riepilogo(result[1])));
-                      } else {
+                      } else if (result[0] == result[1]) {
+                        // both false, rejected
                         Status.waitingAcceptOrRefuse = false;
                         if (!mounted) return;
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const AroundYou()));
-                      }
+                      } else {}
                     }
                     setState(() {});
                   }),
@@ -160,7 +149,10 @@ class _AroundYouState extends State<AroundYou> {
                     padding: EdgeInsets.only(top: deviceHeight * 0.3),
                   ),
                   const Text(
-                      "You can't send help if you have a pending request.")
+                    "You can't send help if you have a pending request.",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black38),
+                  )
                 ],
               )
             ]
@@ -215,7 +207,8 @@ class _AroundYouState extends State<AroundYou> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(AroundYou.requestList[index].getName(),
-                    style: const TextStyle(fontSize: 16)),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold)),
                 Row(
                   children: <Widget>[
                     Text(AroundYou.requestList[index].getUser().reviewMean),
@@ -339,9 +332,12 @@ class _AroundYouState extends State<AroundYou> {
                 Padding(padding: EdgeInsets.only(bottom: deviceHeight * 0.005)),
                 Row(
                   children: <Widget>[
-                    Text(
+                    Flexible(
+                        child: Text(
                       item.getDescription(),
-                    )
+                      overflow: TextOverflow.fade,
+                      softWrap: false,
+                    ))
                   ],
                 ),
               ]),
@@ -372,6 +368,9 @@ Future<String> buildRequests() async {
   // await u!.updateLocation();
   List<Request> requests =
       await u!.readHelpRequests(); // to update when we build the page
+  for (var r in requests) {
+    await r.getUser().getLocation();
+  }
   AroundYou.requestList = requests;
   return "done";
 }

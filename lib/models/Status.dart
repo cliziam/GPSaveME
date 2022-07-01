@@ -9,7 +9,14 @@ class Status {
   static bool helpAccepted = false;
   static bool waitingAcceptOrRefuse = false;
   static bool proposalAccepted = false;
-  
+
+  static void setAllFalse() {
+    qrScanned = false;
+    waitingHelp = false;
+    helpAccepted = false;
+    waitingAcceptOrRefuse = false;
+    proposalAccepted = false;
+  }
 
   static bool areAllFalse() {
     return !waitingHelp &&
