@@ -369,7 +369,7 @@ class _ProfileState extends State<Profile> {
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.left),
-                   for (int i = 0; i < 1; i++)  
+                   for (int i = 0; i < 2; i++)  
                         // ignore: sized_box_for_whitespace
                         Container(
                           
@@ -395,8 +395,8 @@ class _ProfileState extends State<Profile> {
                           ),
                       Row(
                       children: [
-                          for (int i = 0; i < 5; i++) Icon(Icons.star,
-                      color: (i < reviews[i][0]) ?  const Color.fromRGBO(255, 183, 3, 1) : Colors.grey)
+                          for (int j = 0; j < 5; j++) Icon(Icons.star,
+                      color: (j < reviews[i][0]) ?  const Color.fromRGBO(255, 183, 3, 1) : Colors.grey)
                       ],),],
                       ),),
                         ),
