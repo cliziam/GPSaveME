@@ -396,8 +396,7 @@ class _ProfileState extends State<Profile> {
                       Row(
                       children: [
                           for (int j = 0; j < 5; j++) Icon(Icons.star,
-                      color: (j < reviews[i][0]) ?  const Color.fromRGBO(255, 183, 3, 1) : Colors.grey)
-                      ],),],
+                      color: (j < reviews[i][0]) ?  const Color.fromRGBO(255, 183, 3, 1) : Colors.grey)],),],
                       ),),
                         ),
                 ], ),),
