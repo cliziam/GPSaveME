@@ -369,7 +369,7 @@ class _ProfileState extends State<Profile> {
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.left),
-                   for (int i = 0; i < 2; i++)  
+                   for (int i = 0; i < (reviews.length < 2 ? reviews.length : 2); i++)  
                         // ignore: sized_box_for_whitespace
                         Container(
                           
