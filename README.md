@@ -8,4 +8,4 @@ In addition, to promote the utilization of the mobile application there is a rew
 
 
 For the design of the various interfaces and application usage flows was used the Figma Prototyping User Tool.
-Link [here](https://www.figma.com/proto/X2qaIoIsIhWMGxlkTlkVaO/GPSaveMe?node-id=55%3A2&scaling=min-zoom&page-id=0%3A1&starting-point-node-id=55%3A5)
+Prototype Link [here](https://www.figma.com/proto/X2qaIoIsIhWMGxlkTlkVaO/GPSaveMe?node-id=55%3A2&scaling=min-zoom&page-id=0%3A1&starting-point-node-id=55%3A5)
