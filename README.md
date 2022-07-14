@@ -7,5 +7,5 @@ To ensure the completion of the help request by another user, the app uses the N
 In addition, to promote the utilization of the mobile application there is a reward system based on the own of coins to be spent by the users to ask for help and to be accumulated by them when they offer and succeed to give help to other users.
 
 
-For the design of the various interfaces and application usage flows was used the Figma Prototyping User Tool.
+For the design of the various interfaces and application usage flows was used the Figma Prototyping User Tool.<br>
 Prototype Link [here](https://www.figma.com/proto/X2qaIoIsIhWMGxlkTlkVaO/GPSaveMe?node-id=55%3A2&scaling=min-zoom&page-id=0%3A1&starting-point-node-id=55%3A5)
