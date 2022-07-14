@@ -1,4 +1,4 @@
-#GPSaveME
+#**GPSaveME**
  
 Our objective was initially to develop a mobile application, in particular an Android
 application, which would allow the users to send and receive help requests of any kind
